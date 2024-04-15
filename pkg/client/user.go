@@ -103,3 +103,30 @@ func (c *userClient) UserEditDetails(user models.UserSignup) (models.UserDetails
 
 	return userDetails, nil
 }
+func (c *userClient) UserOtpRequest(user models.UserVerificationRequest) (models.Otp, error) {
+	res, err := c.Client.UserOtpGeneration(context.Background(), &pb.UserOtpRequest{
+		Email: user.Email,
+	})
+	if err != nil {
+		return models.Otp{}, err
+	}
+	return models.Otp{
+		Email: res.Email,
+		Otp:   int(res.Otp),
+	}, nil
+
+}
+
+func (c *userClient) UserOtpVerificationReq(user models.Otp) (models.UserDetail, error) {
+	res, err := c.Client.UserOtpVerification(context.Background(), &pb.UserOtpVerificationRequest{
+		Email: user.Email,
+		Otp:   int64(user.Otp),
+	})
+	if err != nil {
+		return models.UserDetail{}, err
+	}
+	return models.UserDetail{
+		Email: res.UserDetails.Email,b 
+	}, nil
+
+}

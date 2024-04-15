@@ -19,9 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	User_UserSignUp_FullMethodName      = "/user.User/UserSignUp"
-	User_UserLogin_FullMethodName       = "/user.User/UserLogin"
-	User_UserEditDetails_FullMethodName = "/user.User/UserEditDetails"
+	User_UserSignUp_FullMethodName          = "/user.User/UserSignUp"
+	User_UserLogin_FullMethodName           = "/user.User/UserLogin"
+	User_UserEditDetails_FullMethodName     = "/user.User/UserEditDetails"
+	User_UserOtpGeneration_FullMethodName   = "/user.User/UserOtpGeneration"
+	User_UserOtpVerification_FullMethodName = "/user.User/UserOtpVerification"
 )
 
 // UserClient is the client API for User service.
@@ -31,6 +33,8 @@ type UserClient interface {
 	UserSignUp(ctx context.Context, in *UserSignUpRequest, opts ...grpc.CallOption) (*UserSignUpResponse, error)
 	UserLogin(ctx context.Context, in *UserLoginRequest, opts ...grpc.CallOption) (*UserLoginResponse, error)
 	UserEditDetails(ctx context.Context, in *UserEditDetailsRequest, opts ...grpc.CallOption) (*UserEditDetailsResponse, error)
+	UserOtpGeneration(ctx context.Context, in *UserOtpRequest, opts ...grpc.CallOption) (*UserOtpRequestResponse, error)
+	UserOtpVerification(ctx context.Context, in *UserOtpVerificationRequest, opts ...grpc.CallOption) (*UserOtpVerificationResponse, error)
 }
 
 type userClient struct {
@@ -68,6 +72,24 @@ func (c *userClient) UserEditDetails(ctx context.Context, in *UserEditDetailsReq
 	return out, nil
 }
 
+func (c *userClient) UserOtpGeneration(ctx context.Context, in *UserOtpRequest, opts ...grpc.CallOption) (*UserOtpRequestResponse, error) {
+	out := new(UserOtpRequestResponse)
+	err := c.cc.Invoke(ctx, User_UserOtpGeneration_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) UserOtpVerification(ctx context.Context, in *UserOtpVerificationRequest, opts ...grpc.CallOption) (*UserOtpVerificationResponse, error) {
+	out := new(UserOtpVerificationResponse)
+	err := c.cc.Invoke(ctx, User_UserOtpVerification_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
@@ -75,6 +97,8 @@ type UserServer interface {
 	UserSignUp(context.Context, *UserSignUpRequest) (*UserSignUpResponse, error)
 	UserLogin(context.Context, *UserLoginRequest) (*UserLoginResponse, error)
 	UserEditDetails(context.Context, *UserEditDetailsRequest) (*UserEditDetailsResponse, error)
+	UserOtpGeneration(context.Context, *UserOtpRequest) (*UserOtpRequestResponse, error)
+	UserOtpVerification(context.Context, *UserOtpVerificationRequest) (*UserOtpVerificationResponse, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -90,6 +114,12 @@ func (UnimplementedUserServer) UserLogin(context.Context, *UserLoginRequest) (*U
 }
 func (UnimplementedUserServer) UserEditDetails(context.Context, *UserEditDetailsRequest) (*UserEditDetailsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserEditDetails not implemented")
+}
+func (UnimplementedUserServer) UserOtpGeneration(context.Context, *UserOtpRequest) (*UserOtpRequestResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserOtpGeneration not implemented")
+}
+func (UnimplementedUserServer) UserOtpVerification(context.Context, *UserOtpVerificationRequest) (*UserOtpVerificationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserOtpVerification not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -158,6 +188,42 @@ func _User_UserEditDetails_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_UserOtpGeneration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserOtpRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).UserOtpGeneration(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_UserOtpGeneration_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).UserOtpGeneration(ctx, req.(*UserOtpRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_UserOtpVerification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserOtpVerificationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).UserOtpVerification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_UserOtpVerification_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).UserOtpVerification(ctx, req.(*UserOtpVerificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +242,14 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UserEditDetails",
 			Handler:    _User_UserEditDetails_Handler,
+		},
+		{
+			MethodName: "UserOtpGeneration",
+			Handler:    _User_UserOtpGeneration_Handler,
+		},
+		{
+			MethodName: "UserOtpVerification",
+			Handler:    _User_UserOtpVerification_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

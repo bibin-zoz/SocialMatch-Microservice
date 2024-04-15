@@ -8,9 +8,27 @@ service User {
   rpc UserSignUp(UserSignUpRequest) returns (UserSignUpResponse) {};
   rpc UserLogin(UserLoginRequest) returns (UserLoginResponse) {};
   rpc UserEditDetails(UserEditDetailsRequest) returns (UserEditDetailsResponse) {};
+  rpc UserOtpGeneration(UserOtpRequest) returns (UserOtpRequestResponse){};
+  rpc UserOtpVerification(UserOtpVerificationRequest) returns (UserOtpVerificationResponse){};
 }
 
+message UserOtpRequest{
+    string email=1;
+}
+message UserOtpRequestResponse{
+    int64 status=1;
+    string email=2;
+    int64 otp=3;
 
+}
+message UserOtpVerificationRequest{
+    string email=1;
+    int64 otp=2;
+}
+message UserOtpVerificationResponse{
+    int64 status=1;
+	UserDetails  userDetails=2;
+}
 message UserSignUpRequest {
     string firstname = 1;
     string lastname = 2;

@@ -8,6 +8,8 @@ import (
 func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, adminhandler *handlers.AdminHandler) {
 	router.GET("/ping", handlers.PingHandler)
 	router.POST("/login", userHandler.Userlogin)
+	router.GET("verification", userHandler.UserOtpReq)
+	router.POST("verification", userHandler.UserOtpVerification)
 	router.POST("/signup", userHandler.UserSignup)
 	router.PUT("/profile", userHandler.UserEditDetails)
 

@@ -43,24 +43,24 @@ func (ur *UserHandler) UserSignup(c *gin.Context) {
 	c.JSON(http.StatusCreated, success)
 }
 func (ur *UserHandler) Userlogin(c *gin.Context) {
-	// var UserLoginDetail models.UserLogin
-	// if err := c.ShouldBindJSON(&UserLoginDetail); err != nil {
-	// 	errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, err.Error())
-	// 	c.JSON(http.StatusBadRequest, errs)
-	// }
-	// err := validator.New().Struct(UserLoginDetail)
-	// if err != nil {
-	// 	errs := response.ClientResponse(http.StatusBadRequest, "Constraints not statisfied", nil, err.Error())
-	// 	c.JSON(http.StatusBadRequest, errs)
-	// 	return
-	// }
-	// user, err := ur.GRPC_Client.UserLogin(UserLoginDetail)
-	// if err != nil {
-	// 	errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
-	// 	c.JSON(http.StatusBadRequest, errs)
-	// 	return
-	// }
-	success := response.ClientResponse(http.StatusCreated, "User successfully logged in with password", nil, nil)
+	var UserLoginDetail models.UserLogin
+	if err := c.ShouldBindJSON(&UserLoginDetail); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+	}
+	err := validator.New().Struct(UserLoginDetail)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Constraints not statisfied", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	user, err := ur.GRPC_Client.UserLogin(UserLoginDetail)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusCreated, "User successfully logged in with password", user, nil)
 	c.JSON(http.StatusCreated, success)
 }
 
@@ -78,6 +78,54 @@ func (ur *UserHandler) UserEditDetails(c *gin.Context) {
 		return
 	}
 	user, err := ur.GRPC_Client.UserEditDetails(EditDetails)
+
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "failed to conenct to server", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusCreated, "User Details edited successfully", user, nil)
+	c.JSON(http.StatusCreated, success)
+}
+
+func (ur *UserHandler) UserOtpReq(c *gin.Context) {
+	var EmailOtp models.UserVerificationRequest
+	if err := c.ShouldBindJSON(&EmailOtp); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Email not in correct format", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err := validator.New().Struct(EmailOtp)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Constraints not statisfied", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	user, err := ur.GRPC_Client.UserOtpRequest(EmailOtp)
+
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "failed to conenct to server", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusCreated, "User Details edited successfully", user, nil)
+	c.JSON(http.StatusCreated, success)
+}
+
+func (ur *UserHandler) UserOtpVerification(c *gin.Context) {
+	var EmailOtp models.Otp
+	if err := c.ShouldBindJSON(&EmailOtp); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Email not in correct format", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err := validator.New().Struct(EmailOtp)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Constraints not statisfied", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	user, err := ur.GRPC_Client.UserOtpVerificationReq(EmailOtp)
 
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "failed to conenct to server", nil, err.Error())
