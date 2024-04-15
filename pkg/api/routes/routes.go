@@ -5,10 +5,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler) {
+func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, adminhandler *handlers.AdminHandler) {
 	router.GET("/ping", handlers.PingHandler)
 	router.POST("/login", userHandler.Userlogin)
 	router.POST("/signup", userHandler.UserSignup)
+	router.PUT("/profile", userHandler.UserEditDetails)
+
+	router.POST("/admin/login", adminhandler.LoginHandler)
 
 	// Add more routes here
 

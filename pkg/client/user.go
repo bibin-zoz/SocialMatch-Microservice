@@ -81,3 +81,25 @@ func (c *userClient) UserLogin(user models.UserLogin) (models.TokenUser, error) 
 		RefreshToken: res.RefreshToken,
 	}, nil
 }
+func (c *userClient) UserEditDetails(user models.UserSignup) (models.UserDetails, error) {
+
+	res, err := c.Client.UserEditDetails(context.Background(), &pb.UserEditDetailsRequest{
+		Firstname: user.FirstName,
+		Lastname:  user.LastName,
+		Email:     user.Email,
+		Password:  user.Password,
+		Phone:     fmt.Sprint(user.Number),
+	})
+	if err != nil {
+		return models.UserDetails{}, err
+	}
+	userDetails := models.UserDetails{
+		ID:        uint(res.UserDetails.Id),
+		Firstname: res.UserDetails.Firstname,
+		Lastname:  res.UserDetails.Lastname,
+		Email:     res.UserDetails.Email,
+		Phone:     res.UserDetails.Phone,
+	}
+
+	return userDetails, nil
+}

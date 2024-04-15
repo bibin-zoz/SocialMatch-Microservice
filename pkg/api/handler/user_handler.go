@@ -63,3 +63,27 @@ func (ur *UserHandler) Userlogin(c *gin.Context) {
 	success := response.ClientResponse(http.StatusCreated, "User successfully logged in with password", nil, nil)
 	c.JSON(http.StatusCreated, success)
 }
+
+func (ur *UserHandler) UserEditDetails(c *gin.Context) {
+	var EditDetails models.UserSignup
+	if err := c.ShouldBindJSON(&EditDetails); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err := validator.New().Struct(EditDetails)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Constraints not statisfied", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	user, err := ur.GRPC_Client.UserEditDetails(EditDetails)
+
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "failed to conenct to server", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusCreated, "User Details edited successfully", user, nil)
+	c.JSON(http.StatusCreated, success)
+}
