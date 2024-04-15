@@ -43,3 +43,10 @@ type UserDetailsResponse struct {
 	Email     string `json:"email"`
 	Phone     string `json:"phone"`
 }
+type UserVerificationRequest struct {
+	Email string `json:"email" validate:"required,email"`
+}
+type Otp struct {
+	Email string `json:"email" validate:"required,email"`
+	Otp   int
+}
