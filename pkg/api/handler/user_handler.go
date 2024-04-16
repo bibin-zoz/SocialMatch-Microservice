@@ -22,7 +22,7 @@ func NewUserHandler(UserClient interfaces.UserClient) *UserHandler {
 func (ur *UserHandler) UserSignup(c *gin.Context) {
 	var SignupDetail models.UserSignup
 	if err := c.ShouldBindJSON(&SignupDetail); err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, nil)
+		errs := response.ClientResponse(http.StatusBadRequest, "Failed to bind Details not in correct format", nil, nil)
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
@@ -65,7 +65,7 @@ func (ur *UserHandler) Userlogin(c *gin.Context) {
 }
 
 func (ur *UserHandler) UserEditDetails(c *gin.Context) {
-	var EditDetails models.UserSignup
+	var EditDetails models.UserUpdateDetails
 	if err := c.ShouldBindJSON(&EditDetails); err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, nil)
 		c.JSON(http.StatusBadRequest, errs)
@@ -108,7 +108,7 @@ func (ur *UserHandler) UserOtpReq(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	success := response.ClientResponse(http.StatusCreated, "User Details edited successfully", user, nil)
+	success := response.ClientResponse(http.StatusCreated, "Otp sented successfully", user, nil)
 	c.JSON(http.StatusCreated, success)
 }
 
@@ -125,13 +125,24 @@ func (ur *UserHandler) UserOtpVerification(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	user, err := ur.GRPC_Client.UserOtpVerificationReq(EmailOtp)
+	_, err = ur.GRPC_Client.UserOtpVerificationReq(EmailOtp)
 
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "failed to conenct to server", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	success := response.ClientResponse(http.StatusCreated, "User Details edited successfully", user, nil)
+	success := response.ClientResponse(http.StatusCreated, "otp verified successfully", nil, nil)
 	c.JSON(http.StatusCreated, success)
+}
+func (ur *UserHandler) GetAllUsers(c *gin.Context) {
+	users, err := ur.GRPC_Client.GetAllUsers()
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "failed to conenct to server", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusCreated, "Users fetched successfully", users, nil)
+	c.JSON(http.StatusCreated, success)
+
 }

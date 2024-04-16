@@ -11,12 +11,12 @@ type AdminSignUp struct {
 	Password  string `json:"password"`
 }
 
-type AdminDetailsResponse struct {
-	ID        uint   `json:"id"`
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
-	Email     string `json:"Email"`
-}
+//	type AdminDetailsResponse struct {
+//		ID        uint   `json:"id"`
+//		Firstname string `json:"firstname"`
+//		Lastname  string `json:"lastname"`
+//		Email     string `json:"Email"`
+//	}
 type Admin struct {
 	ID        uint   `json:"id" gorm:"uniquekey; not null"`
 	Firstname string `json:"firstname" gorm:"validate:required"`

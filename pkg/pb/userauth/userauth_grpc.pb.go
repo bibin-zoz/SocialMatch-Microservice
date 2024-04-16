@@ -24,6 +24,7 @@ const (
 	User_UserEditDetails_FullMethodName     = "/user.User/UserEditDetails"
 	User_UserOtpGeneration_FullMethodName   = "/user.User/UserOtpGeneration"
 	User_UserOtpVerification_FullMethodName = "/user.User/UserOtpVerification"
+	User_GetUsers_FullMethodName            = "/user.User/GetUsers"
 )
 
 // UserClient is the client API for User service.
@@ -35,6 +36,7 @@ type UserClient interface {
 	UserEditDetails(ctx context.Context, in *UserEditDetailsRequest, opts ...grpc.CallOption) (*UserEditDetailsResponse, error)
 	UserOtpGeneration(ctx context.Context, in *UserOtpRequest, opts ...grpc.CallOption) (*UserOtpRequestResponse, error)
 	UserOtpVerification(ctx context.Context, in *UserOtpVerificationRequest, opts ...grpc.CallOption) (*UserOtpVerificationResponse, error)
+	GetUsers(ctx context.Context, in *GetUsersRequest, opts ...grpc.CallOption) (*GetUsersResponse, error)
 }
 
 type userClient struct {
@@ -90,6 +92,15 @@ func (c *userClient) UserOtpVerification(ctx context.Context, in *UserOtpVerific
 	return out, nil
 }
 
+func (c *userClient) GetUsers(ctx context.Context, in *GetUsersRequest, opts ...grpc.CallOption) (*GetUsersResponse, error) {
+	out := new(GetUsersResponse)
+	err := c.cc.Invoke(ctx, User_GetUsers_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
@@ -99,6 +110,7 @@ type UserServer interface {
 	UserEditDetails(context.Context, *UserEditDetailsRequest) (*UserEditDetailsResponse, error)
 	UserOtpGeneration(context.Context, *UserOtpRequest) (*UserOtpRequestResponse, error)
 	UserOtpVerification(context.Context, *UserOtpVerificationRequest) (*UserOtpVerificationResponse, error)
+	GetUsers(context.Context, *GetUsersRequest) (*GetUsersResponse, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -120,6 +132,9 @@ func (UnimplementedUserServer) UserOtpGeneration(context.Context, *UserOtpReques
 }
 func (UnimplementedUserServer) UserOtpVerification(context.Context, *UserOtpVerificationRequest) (*UserOtpVerificationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserOtpVerification not implemented")
+}
+func (UnimplementedUserServer) GetUsers(context.Context, *GetUsersRequest) (*GetUsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUsers not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -224,6 +239,24 @@ func _User_UserOtpVerification_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_GetUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).GetUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_GetUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).GetUsers(ctx, req.(*GetUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -250,6 +283,10 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UserOtpVerification",
 			Handler:    _User_UserOtpVerification_Handler,
+		},
+		{
+			MethodName: "GetUsers",
+			Handler:    _User_GetUsers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

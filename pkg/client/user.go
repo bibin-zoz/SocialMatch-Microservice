@@ -81,14 +81,14 @@ func (c *userClient) UserLogin(user models.UserLogin) (models.TokenUser, error) 
 		RefreshToken: res.RefreshToken,
 	}, nil
 }
-func (c *userClient) UserEditDetails(user models.UserSignup) (models.UserDetails, error) {
+func (c *userClient) UserEditDetails(user models.UserUpdateDetails) (models.UserDetails, error) {
 
 	res, err := c.Client.UserEditDetails(context.Background(), &pb.UserEditDetailsRequest{
 		Firstname: user.FirstName,
 		Lastname:  user.LastName,
 		Email:     user.Email,
 		Password:  user.Password,
-		Phone:     fmt.Sprint(user.Number),
+		Username:  user.Username,
 	})
 	if err != nil {
 		return models.UserDetails{}, err
@@ -118,15 +118,40 @@ func (c *userClient) UserOtpRequest(user models.UserVerificationRequest) (models
 }
 
 func (c *userClient) UserOtpVerificationReq(user models.Otp) (models.UserDetail, error) {
-	res, err := c.Client.UserOtpVerification(context.Background(), &pb.UserOtpVerificationRequest{
+	_, err := c.Client.UserOtpVerification(context.Background(), &pb.UserOtpVerificationRequest{
 		Email: user.Email,
 		Otp:   int64(user.Otp),
 	})
 	if err != nil {
 		return models.UserDetail{}, err
 	}
-	return models.UserDetail{
-		Email: res.UserDetails.Email,b 
-	}, nil
+	return models.UserDetail{}, nil
 
+}
+
+func (c *userClient) GetAllUsers() ([]models.Users, error) {
+	usersResponse, err := c.Client.GetUsers(context.Background(), &pb.GetUsersRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert []*pb.Users to []models.Users
+	var users []models.Users
+	for _, u := range usersResponse.Users {
+		userModel := models.Users{
+			ID:        uint(u.Id),
+			Username:  u.Username,
+			Email:     u.Email,
+			Firstname: u.Firstname,
+			Lastname:  u.Lastname,
+			Phone:     u.Phone,
+			Password:  "hidden",
+			Age:       int(u.Age),
+			GenderID:  int(u.GenderId),
+			Blocked:   u.Blocked,
+		}
+		users = append(users, userModel)
+	}
+
+	return users, nil
 }
