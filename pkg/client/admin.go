@@ -41,12 +41,6 @@ func (ad *adminClient) AdminLogin(adminDetails models.AdminLogin) (models.TokenA
 		return models.TokenAdmin{}, err
 	}
 	return models.TokenAdmin{
-		Admin: models.AdminDetailsResponse{
-			ID:        uint(admin.AdminDetails.Id),
-			Firstname: admin.AdminDetails.Firstname,
-			Lastname:  admin.AdminDetails.Lastname,
-			Email:     admin.AdminDetails.Email,
-		},
 		Token: admin.Token,
 	}, nil
 }
