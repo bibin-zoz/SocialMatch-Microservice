@@ -6,8 +6,9 @@ import (
 
 	"strings"
 
+	"github.com/bibin-zoz/api-gateway/pkg/helper"
 	response "github.com/bibin-zoz/api-gateway/pkg/utils/responce"
-	"github.com/bibin-zoz/social-match-userauth-svc/pkg/helper"
+
 	"github.com/gin-gonic/gin"
 )
 

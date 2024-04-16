@@ -5,7 +5,7 @@ import (
 
 	"time"
 
-	"github.com/bibin-zoz/social-match-userauth-svc/pkg/utils/models"
+	"github.com/bibin-zoz/api-gateway/pkg/utils/models"
 	"github.com/golang-jwt/jwt"
 )
 
