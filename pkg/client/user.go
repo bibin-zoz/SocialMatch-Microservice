@@ -155,3 +155,13 @@ func (c *userClient) GetAllUsers() ([]models.Users, error) {
 
 	return users, nil
 }
+
+func (c *userClient) UpdateUserStatus(userid int64) (models.UserDetail, error) {
+	_, err := c.Client.UpdateUserStatus(context.Background(), &pb.UpdateUserStatusRequest{
+		Userid: userid,
+	})
+	if err != nil {
+		return models.UserDetail{}, err
+	}
+	return models.UserDetail{}, nil
+}

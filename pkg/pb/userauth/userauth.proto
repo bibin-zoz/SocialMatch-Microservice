@@ -11,10 +11,16 @@ service User {
   rpc UserOtpGeneration(UserOtpRequest) returns (UserOtpRequestResponse){};
   rpc UserOtpVerification(UserOtpVerificationRequest) returns (UserOtpVerificationResponse){};
   rpc GetUsers(GetUsersRequest) returns (GetUsersResponse){};
+  rpc UpdateUserStatus(UpdateUserStatusRequest) returns (UpdateUserStatusResponce){};
 }
 
 
-
+message UpdateUserStatusRequest{
+    int64 userid=1;
+}
+message UpdateUserStatusResponce{
+    int64 status=1;
+}
 message GetUsersRequest {
     // You can leave this message empty
 }

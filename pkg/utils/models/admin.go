@@ -25,6 +25,6 @@ type Admin struct {
 	Password  string `json:"password" gorm:"validate:required"`
 }
 type TokenAdmin struct {
-	Admin AdminDetailsResponse
+	// Admin AdminDetailsResponse
 	Token string
 }

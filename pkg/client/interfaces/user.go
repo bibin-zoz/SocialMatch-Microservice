@@ -9,4 +9,5 @@ type UserClient interface {
 	UserOtpRequest(user models.UserVerificationRequest) (models.Otp, error)
 	UserOtpVerificationReq(user models.Otp) (models.UserDetail, error)
 	GetAllUsers() ([]models.Users, error)
+	UpdateUserStatus(userid int64) (models.UserDetail, error)
 }

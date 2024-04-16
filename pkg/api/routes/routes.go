@@ -2,7 +2,6 @@ package routes
 
 import (
 	handlers "github.com/bibin-zoz/api-gateway/pkg/api/handler"
-	"github.com/bibin-zoz/api-gateway/pkg/api/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,16 +14,10 @@ func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, adminhan
 
 	router.POST("/admin/login", adminhandler.LoginHandler)
 
-	router.Use(middleware.UserAuthMiddleware())
-	{
-		router.PUT("/profile", userHandler.UserEditDetails)
+	router.PUT("/profile", userHandler.UserEditDetails)
 
-	}
-
-	router.Use(middleware.AdminAuthMiddleware())
-	{
-		router.GET("/admin/users", userHandler.GetAllUsers)
-	}
+	router.GET("/admin/users", userHandler.GetAllUsers)
+	router.PUT("/admin/users", adminhandler.UpdateUserStatus)
 
 	// Add more routes here
 

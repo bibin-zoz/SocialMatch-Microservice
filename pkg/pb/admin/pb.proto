@@ -20,7 +20,5 @@ message AdminLoginInRequest{
 }
 message AdminLoginResponse{
     int64 status=1;
-    AdminDetails adminDetails=2;
-    string token=3;
-    string error=4;
+    string token=2;
 }

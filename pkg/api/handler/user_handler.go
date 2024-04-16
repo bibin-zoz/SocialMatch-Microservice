@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/bibin-zoz/api-gateway/pkg/client/interfaces"
@@ -66,6 +67,7 @@ func (ur *UserHandler) Userlogin(c *gin.Context) {
 
 func (ur *UserHandler) UserEditDetails(c *gin.Context) {
 	var EditDetails models.UserUpdateDetails
+	fmt.Println("edit", EditDetails)
 	if err := c.ShouldBindJSON(&EditDetails); err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, nil)
 		c.JSON(http.StatusBadRequest, errs)
