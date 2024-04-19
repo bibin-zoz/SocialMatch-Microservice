@@ -9,8 +9,12 @@ type User struct {
 	Email     string `json:"email" gorm:"validate:required"`
 	Password  string `json:"password" gorm:"validate:required"`
 	Phone     string `json:"phone" gorm:"validate:required"`
-	Blocked   bool   `json:"blocked" gorm:"validate:required"`
+	Blocked   bool   `json:"blocked" gorm:"default:false;validate:required"`
+	Username  string `json:"user_name"`
+	GenderID  int    `json:"gender_id"`
+	Age       int    `json:"age"`
 }
+
 type TokenUser struct {
 	User         models.UserDetails
 	AccessToken  string

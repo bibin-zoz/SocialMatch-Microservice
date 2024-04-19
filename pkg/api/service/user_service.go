@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/pb"
 
@@ -70,3 +72,56 @@ func (a *UserServer) UserLogin(ctx context.Context, loginDeatails *pb.UserLoginR
 		RefreshToken: data.RefreshToken,
 	}, nil
 }
+
+func (a *UserServer) UserEditDetails(ctx context.Context, userEditDetails *pb.UserEditDetailsRequest) (*pb.UserEditDetailsResponse, error) {
+
+	userCreateDetails := models.UserSignup{
+		FirstName: userEditDetails.Firstname,
+		LastName:  userEditDetails.Lastname,
+		Email:     userEditDetails.Email,
+		Number:    userEditDetails.Phone,
+		Password:  userEditDetails.Password,
+	}
+
+	user, err := a.userUseCase.UserEditDetails(userCreateDetails)
+	if err != nil {
+		return &pb.UserEditDetailsResponse{}, err
+	}
+	userDetails := &pb.UserDetails{Id: uint64(user.ID), Firstname: user.Firstname, Lastname: user.Lastname, Email: user.Email, Phone: user.Phone}
+	return &pb.UserEditDetailsResponse{
+		Status:      201,
+		UserDetails: userDetails,
+	}, nil
+
+}
+
+func (a *UserServer) UserOtpGeneration(ctx context.Context, userEditDetails *pb.UserOtpRequest) (*pb.UserOtpRequestResponse, error) {
+
+	email := userEditDetails.Email
+
+	res, err := a.userUseCase.UserGenerateOtp(email)
+	otp, _ := strconv.Atoi(res)
+	if err != nil {
+		return &pb.UserOtpRequestResponse{}, err
+	}
+	return &pb.UserOtpRequestResponse{
+		Status: 201,
+		Email:  email,
+		Otp:    int64(otp),
+	}, nil
+
+}
+func (a *UserServer) UserOtpVerification(ctx context.Context, req *pb.UserOtpVerificationRequest) (*pb.UserOtpVerificationResponse, error) {
+
+	_, err := a.userUseCase.UserVerifyOtp(fmt.Sprint(req.Otp), req.Email)
+	if err != nil {
+		return &pb.UserOtpVerificationResponse{}, err
+	}
+
+	return &pb.UserOtpVerificationResponse{
+		Status:      201,
+		UserDetails: nil,
+	}, nil
+
+}
+

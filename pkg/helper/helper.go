@@ -2,6 +2,7 @@ package helper
 
 import (
 	"fmt"
+	"regexp"
 
 	"github.com/golang-jwt/jwt"
 )
@@ -33,4 +34,24 @@ func ExtractUserIDFromToken(tokenString string) (int, string, error) {
 
 	return claims.Id, claims.Email, nil
 
+}
+
+func ValidateEmail(email string) bool {
+	pattern := `^[a-zA-Z0-9._%+-]+@gmail.com$`
+
+	regex := regexp.MustCompile(pattern)
+
+	return regex.MatchString(email)
+}
+func ValidatePassword(password string) bool {
+	if len(password) < 6 {
+		return false
+	}
+	lowercaseRegex := regexp.MustCompile(`[a-z]`)
+	uppercaseRegex := regexp.MustCompile(`[A-Z]`)
+	numberRegex := regexp.MustCompile(`[0-9]`)
+	if !lowercaseRegex.MatchString(password) || !uppercaseRegex.MatchString(password) || !numberRegex.MatchString(password) {
+		return false
+	}
+	return true
 }

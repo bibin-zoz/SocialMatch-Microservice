@@ -7,6 +7,75 @@ option go_package = "./pkg/pb";
 service User{
   rpc UserSignUp(UserSignUpRequest) returns (UserSignUpResponse) {};
   rpc UserLogin(UserLoginRequest) returns (UserLoginResponse) {};
+  rpc UserEditDetails(UserEditDetailsRequest) returns (UserEditDetailsResponse) {};
+  rpc UserOtpGeneration(UserOtpRequest) returns (UserOtpRequestResponse){};
+  rpc UserOtpVerification(UserOtpVerificationRequest) returns (UserOtpVerificationResponse){};
+  rpc GetUsers(GetUsersRequest) returns (GetUsersResponse);
+  rpc UpdateUserStatus(UpdateUserStatusRequest) returns (UpdateUserStatusResponce){};
+}
+
+message UpdateUserStatusRequest{
+    int64 userid=1;
+}
+message UpdateUserStatusResponce{
+    int64 status=1;
+}
+message GetUsersRequest {
+    // You can leave this message empty
+}
+message Users {
+    uint32 id = 1;
+    string firstname = 2;
+    string lastname = 3;
+    string email = 4;
+    string password = 5;
+    string phone = 6;
+    bool blocked = 7;
+    string username = 8;
+    int32 gender_id = 9;
+    int32 age = 10;
+}
+
+message GetUsersResponse {
+    int64 status=1;
+    repeated Users users = 2;
+}
+
+
+
+message UserOtpRequest{
+    string email=1;
+}
+message UserOtpRequestResponse{
+    int64 status=1;
+    string email=2;
+    int64 otp=3;
+
+}
+message UserOtpVerificationRequest{
+    string email=1;
+    int64 otp=2;
+}
+message UserOtpVerificationResponse{
+    int64 status=1;
+	UserDetails  userDetails=2;
+}
+message UserEditDetailsRequest {
+    string firstname = 1;
+    string lastname = 2;
+    string username = 3;
+    string email = 4;
+    string password = 5;
+    string phone = 6;
+    int32 genderid = 7;
+    int32 age = 8;
+}
+
+
+
+message UserEditDetailsResponse  {
+    int64 status=1;
+	UserDetails  userDetails=2;
 }
 message UserSignUpRequest{
     string firstname = 1;

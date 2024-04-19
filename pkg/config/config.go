@@ -11,6 +11,9 @@ type Config struct {
 	DBPort     string `mapstructure:"DB_PORT"`
 	DBPassword string `mapstructure:"DB_PASSWORD"`
 	Port       string `mapstructure:"PORT"`
+
+	Email    string `mapstructure:"email"`
+	Password string `mapstructure:"password"`
 }
 
 var envs = []string{

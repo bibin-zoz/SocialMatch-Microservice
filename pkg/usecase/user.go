@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/bibin-zoz/social-match-userauth-svc/pkg/config"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/domain"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/helper"
 	interfaces "github.com/bibin-zoz/social-match-userauth-svc/pkg/repository/interface"
@@ -16,11 +17,13 @@ import (
 
 type userUseCase struct {
 	userRepository interfaces.UserRepository
+	Config         config.Config
 }
 
-func NewUserUseCase(repository interfaces.UserRepository) services.UserUseCase {
+func NewUserUseCase(repository interfaces.UserRepository, config config.Config) services.UserUseCase {
 	return &userUseCase{
 		userRepository: repository,
+		Config:         config,
 	}
 }
 
@@ -47,10 +50,15 @@ func (ur *userUseCase) UsersSignUp(user models.UserSignup) (domain.TokenUser, er
 	}
 
 	// Validate email
-	if !strings.HasSuffix(strings.ToLower(user.Email), "@gmail.com") && !strings.HasSuffix(strings.ToLower(user.Email), "@sha.com") {
-		return domain.TokenUser{}, errors.New("email must end with @gmail.com or @sha.com")
+	if !helper.ValidateEmail(user.Email) {
+		return domain.TokenUser{}, errors.New("email validation failed.provide valid email")
 	}
-
+	if !strings.HasSuffix(strings.ToLower(user.Email), "@gmail.com") {
+		return domain.TokenUser{}, errors.New("email must end with @gmail.com")
+	}
+	if !helper.ValidatePassword(user.Password) {
+		return domain.TokenUser{}, errors.New("Password must be min length 6 and must contain alphabets and numbers")
+	}
 	hashPassword, err := helper.PasswordHash(user.Password)
 	if err != nil {
 		return domain.TokenUser{}, errors.New("error in hashing password")
@@ -107,5 +115,99 @@ func (ur *userUseCase) UsersLogin(user models.UserLogin) (domain.TokenUser, erro
 		User:         userDetails,
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
+	}, nil
+}
+
+func (ur *userUseCase) UserEditDetails(user models.UserSignup) (models.UserDetails, error) {
+	email, err := ur.userRepository.CheckUserExistsByEmail(user.Email)
+	fmt.Println(email)
+	if err != nil {
+		return models.UserDetails{}, errors.New("error with server")
+	}
+	if email == nil {
+		return models.UserDetails{}, errors.New("user not found")
+	}
+
+	if len(user.Password) < 6 {
+		return models.UserDetails{}, errors.New("password must be 6 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character")
+	}
+
+	hashPassword, err := helper.PasswordHash(user.Password)
+	if err != nil {
+		return models.UserDetails{}, errors.New("error in hashing password")
+	}
+	user.Password = hashPassword
+	userData, err := ur.userRepository.UserEditDetails(user)
+	if err != nil {
+		return models.UserDetails{}, errors.New("could not edit  user")
+	}
+
+	return userData, nil
+}
+
+func (ur *userUseCase) UserGenerateOtp(email string) (string, error) {
+	mail, err := ur.userRepository.CheckUserExistsByEmail(email)
+	fmt.Println(email)
+	if err != nil {
+		return "", errors.New("error with server")
+	}
+	if mail == nil {
+		return "", errors.New("user not found")
+	}
+	otp, err := helper.SendOTP(email, ur.Config)
+	if err != nil {
+		return "", errors.New("failed to generate otp")
+	}
+
+	return otp, nil
+}
+
+func (ur *userUseCase) UserVerifyOtp(otp string, email string) (bool, error) {
+	fmt.Println("otp usecase", otp)
+	mail, err := ur.userRepository.CheckUserExistsByEmail(email)
+	fmt.Println(email)
+	if err != nil {
+		return false, errors.New("error with server")
+	}
+	if mail == nil {
+		return false, errors.New("user not found")
+	}
+	if !helper.VerifyOTP(otp, email) {
+		return false, errors.New("invalid otp")
+	}
+
+	return true, nil
+}
+
+func (ur *userUseCase) GetAllUsers() ([]domain.User, error) {
+	users, err := ur.userRepository.FetchAllUsers()
+	if err != nil {
+		return []domain.User{}, errors.New("failed to fetch user details")
+	}
+	return users, nil
+}
+
+func (ur *userUseCase) UpdateUserStatus(id int) (models.UserDetail, error) {
+	user, err := ur.userRepository.GetUserByID(id)
+	if err != nil {
+		return models.UserDetail{}, errors.New("failed to fetch user status")
+	}
+	if user.Blocked {
+		err := ur.userRepository.UnblockUser(uint(id))
+		if err != nil {
+			return models.UserDetail{}, errors.New("failed to block user")
+		}
+		user.Blocked = true
+
+	} else {
+		err := ur.userRepository.BlockUser(uint(id))
+		if err != nil {
+			return models.UserDetail{}, errors.New("failed to block user")
+		}
+		user.Blocked = false
+	}
+	return models.UserDetail{
+		Firstname: user.Firstname,
+		Email:     user.Email,
 	}, nil
 }

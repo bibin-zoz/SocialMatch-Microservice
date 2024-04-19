@@ -8,4 +8,9 @@ import (
 type UserUseCase interface {
 	UsersSignUp(user models.UserSignup) (domain.TokenUser, error)
 	UsersLogin(user models.UserLogin) (domain.TokenUser, error)
+	UserEditDetails(user models.UserSignup) (models.UserDetails, error)
+	UserGenerateOtp(email string) (string, error)
+	UserVerifyOtp(otp string, email string) (bool, error)
+	GetAllUsers() ([]domain.User, error)
+	UpdateUserStatus(id int) (models.UserDetail, error)
 }
