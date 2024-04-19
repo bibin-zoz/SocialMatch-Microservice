@@ -157,6 +157,7 @@ func (c *userClient) GetAllUsers() ([]models.Users, error) {
 }
 
 func (c *userClient) UpdateUserStatus(userid int64) (models.UserDetail, error) {
+	fmt.Println("updateuserstaus cleint code")
 	_, err := c.Client.UpdateUserStatus(context.Background(), &pb.UpdateUserStatusRequest{
 		Userid: userid,
 	})

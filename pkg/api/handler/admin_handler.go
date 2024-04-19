@@ -16,9 +16,10 @@ type AdminHandler struct {
 	GRPC_USER_Client interfaces.UserClient
 }
 
-func NewAdminHandler(adminClient interfaces.AdminClient) *AdminHandler {
+func NewAdminHandler(adminClient interfaces.AdminClient, userClient interfaces.UserClient) *AdminHandler {
 	return &AdminHandler{
-		GRPC_Client: adminClient,
+		GRPC_Client:      adminClient,
+		GRPC_USER_Client: userClient,
 	}
 
 }
@@ -44,6 +45,7 @@ func (ad *AdminHandler) LoginHandler(c *gin.Context) {
 }
 func (ad *AdminHandler) UpdateUserStatus(c *gin.Context) {
 	userID := c.Query("id")
+	fmt.Println("userid", userID)
 	id, _ := strconv.Atoi(userID)
 	_, err := ad.GRPC_USER_Client.UpdateUserStatus(int64(id))
 	if err != nil {
