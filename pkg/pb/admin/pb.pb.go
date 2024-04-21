@@ -20,21 +20,317 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type Interest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id           int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	InterestName string `protobuf:"bytes,2,opt,name=interest_name,json=interestName,proto3" json:"interest_name,omitempty"`
+}
+
+func (x *Interest) Reset() {
+	*x = Interest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_pb_admin_pb_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Interest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Interest) ProtoMessage() {}
+
+func (x *Interest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_pb_admin_pb_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Interest.ProtoReflect.Descriptor instead.
+func (*Interest) Descriptor() ([]byte, []int) {
+	return file_pkg_pb_admin_pb_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Interest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *Interest) GetInterestName() string {
+	if x != nil {
+		return x.InterestName
+	}
+	return ""
+}
+
+type GetInterestsRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *GetInterestsRequest) Reset() {
+	*x = GetInterestsRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_pb_admin_pb_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetInterestsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetInterestsRequest) ProtoMessage() {}
+
+func (x *GetInterestsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_pb_admin_pb_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetInterestsRequest.ProtoReflect.Descriptor instead.
+func (*GetInterestsRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_pb_admin_pb_proto_rawDescGZIP(), []int{1}
+}
+
+type GetInterestsResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Status    int64       `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
+	Interests []*Interest `protobuf:"bytes,2,rep,name=interests,proto3" json:"interests,omitempty"`
+}
+
+func (x *GetInterestsResponse) Reset() {
+	*x = GetInterestsResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_pb_admin_pb_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetInterestsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetInterestsResponse) ProtoMessage() {}
+
+func (x *GetInterestsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_pb_admin_pb_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetInterestsResponse.ProtoReflect.Descriptor instead.
+func (*GetInterestsResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_pb_admin_pb_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GetInterestsResponse) GetStatus() int64 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *GetInterestsResponse) GetInterests() []*Interest {
+	if x != nil {
+		return x.Interests
+	}
+	return nil
+}
+
+type Preference struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id             int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	PreferenceName string `protobuf:"bytes,2,opt,name=preference_name,json=preferenceName,proto3" json:"preference_name,omitempty"`
+}
+
+func (x *Preference) Reset() {
+	*x = Preference{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_pb_admin_pb_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Preference) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Preference) ProtoMessage() {}
+
+func (x *Preference) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_pb_admin_pb_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Preference.ProtoReflect.Descriptor instead.
+func (*Preference) Descriptor() ([]byte, []int) {
+	return file_pkg_pb_admin_pb_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Preference) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *Preference) GetPreferenceName() string {
+	if x != nil {
+		return x.PreferenceName
+	}
+	return ""
+}
+
+type GetPreferencesRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *GetPreferencesRequest) Reset() {
+	*x = GetPreferencesRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_pb_admin_pb_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetPreferencesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPreferencesRequest) ProtoMessage() {}
+
+func (x *GetPreferencesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_pb_admin_pb_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPreferencesRequest.ProtoReflect.Descriptor instead.
+func (*GetPreferencesRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_pb_admin_pb_proto_rawDescGZIP(), []int{4}
+}
+
+type GetPreferencesResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Status      int64         `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
+	Preferences []*Preference `protobuf:"bytes,2,rep,name=preferences,proto3" json:"preferences,omitempty"`
+}
+
+func (x *GetPreferencesResponse) Reset() {
+	*x = GetPreferencesResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_pb_admin_pb_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetPreferencesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPreferencesResponse) ProtoMessage() {}
+
+func (x *GetPreferencesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_pb_admin_pb_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPreferencesResponse.ProtoReflect.Descriptor instead.
+func (*GetPreferencesResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_pb_admin_pb_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetPreferencesResponse) GetStatus() int64 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *GetPreferencesResponse) GetPreferences() []*Preference {
+	if x != nil {
+		return x.Preferences
+	}
+	return nil
+}
+
 type AdminDetails struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	Id        uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Firstname string `protobuf:"bytes,2,opt,name=firstname,proto3" json:"firstname,omitempty"`
-	Lastname  string `protobuf:"bytes,3,opt,name=lastname,proto3" json:"lastname,omitempty"`
+	FirstName string `protobuf:"bytes,2,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
+	LastName  string `protobuf:"bytes,3,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
 	Email     string `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`
 }
 
 func (x *AdminDetails) Reset() {
 	*x = AdminDetails{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_pb_admin_pb_proto_msgTypes[0]
+		mi := &file_pkg_pb_admin_pb_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -47,7 +343,7 @@ func (x *AdminDetails) String() string {
 func (*AdminDetails) ProtoMessage() {}
 
 func (x *AdminDetails) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_pb_admin_pb_proto_msgTypes[0]
+	mi := &file_pkg_pb_admin_pb_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -60,7 +356,7 @@ func (x *AdminDetails) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminDetails.ProtoReflect.Descriptor instead.
 func (*AdminDetails) Descriptor() ([]byte, []int) {
-	return file_pkg_pb_admin_pb_proto_rawDescGZIP(), []int{0}
+	return file_pkg_pb_admin_pb_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *AdminDetails) GetId() uint64 {
@@ -70,16 +366,16 @@ func (x *AdminDetails) GetId() uint64 {
 	return 0
 }
 
-func (x *AdminDetails) GetFirstname() string {
+func (x *AdminDetails) GetFirstName() string {
 	if x != nil {
-		return x.Firstname
+		return x.FirstName
 	}
 	return ""
 }
 
-func (x *AdminDetails) GetLastname() string {
+func (x *AdminDetails) GetLastName() string {
 	if x != nil {
-		return x.Lastname
+		return x.LastName
 	}
 	return ""
 }
@@ -91,7 +387,7 @@ func (x *AdminDetails) GetEmail() string {
 	return ""
 }
 
-type AdminLoginInRequest struct {
+type AdminLoginRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -100,23 +396,23 @@ type AdminLoginInRequest struct {
 	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 }
 
-func (x *AdminLoginInRequest) Reset() {
-	*x = AdminLoginInRequest{}
+func (x *AdminLoginRequest) Reset() {
+	*x = AdminLoginRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_pb_admin_pb_proto_msgTypes[1]
+		mi := &file_pkg_pb_admin_pb_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *AdminLoginInRequest) String() string {
+func (x *AdminLoginRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AdminLoginInRequest) ProtoMessage() {}
+func (*AdminLoginRequest) ProtoMessage() {}
 
-func (x *AdminLoginInRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_pb_admin_pb_proto_msgTypes[1]
+func (x *AdminLoginRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_pb_admin_pb_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -127,19 +423,19 @@ func (x *AdminLoginInRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AdminLoginInRequest.ProtoReflect.Descriptor instead.
-func (*AdminLoginInRequest) Descriptor() ([]byte, []int) {
-	return file_pkg_pb_admin_pb_proto_rawDescGZIP(), []int{1}
+// Deprecated: Use AdminLoginRequest.ProtoReflect.Descriptor instead.
+func (*AdminLoginRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_pb_admin_pb_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *AdminLoginInRequest) GetEmail() string {
+func (x *AdminLoginRequest) GetEmail() string {
 	if x != nil {
 		return x.Email
 	}
 	return ""
 }
 
-func (x *AdminLoginInRequest) GetPassword() string {
+func (x *AdminLoginRequest) GetPassword() string {
 	if x != nil {
 		return x.Password
 	}
@@ -158,7 +454,7 @@ type AdminLoginResponse struct {
 func (x *AdminLoginResponse) Reset() {
 	*x = AdminLoginResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_pb_admin_pb_proto_msgTypes[2]
+		mi := &file_pkg_pb_admin_pb_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -171,7 +467,7 @@ func (x *AdminLoginResponse) String() string {
 func (*AdminLoginResponse) ProtoMessage() {}
 
 func (x *AdminLoginResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_pb_admin_pb_proto_msgTypes[2]
+	mi := &file_pkg_pb_admin_pb_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -184,7 +480,7 @@ func (x *AdminLoginResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminLoginResponse.ProtoReflect.Descriptor instead.
 func (*AdminLoginResponse) Descriptor() ([]byte, []int) {
-	return file_pkg_pb_admin_pb_proto_rawDescGZIP(), []int{2}
+	return file_pkg_pb_admin_pb_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *AdminLoginResponse) GetStatus() int64 {
@@ -205,30 +501,63 @@ var File_pkg_pb_admin_pb_proto protoreflect.FileDescriptor
 
 var file_pkg_pb_admin_pb_proto_rawDesc = []byte{
 	0x0a, 0x15, 0x70, 0x6b, 0x67, 0x2f, 0x70, 0x62, 0x2f, 0x61, 0x64, 0x6d, 0x69, 0x6e, 0x2f, 0x70,
-	0x62, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x61, 0x64, 0x6d, 0x69, 0x6e, 0x22, 0x6e,
-	0x0a, 0x0c, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x73, 0x12, 0x0e,
-	0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x02, 0x69, 0x64, 0x12, 0x1c,
-	0x0a, 0x09, 0x66, 0x69, 0x72, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x09, 0x66, 0x69, 0x72, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08,
-	0x6c, 0x61, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
-	0x6c, 0x61, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69,
-	0x6c, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x22, 0x47,
-	0x0a, 0x13, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x49, 0x6e, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x1a, 0x0a, 0x08, 0x70,
-	0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70,
-	0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x22, 0x42, 0x0a, 0x12, 0x41, 0x64, 0x6d, 0x69, 0x6e,
-	0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16, 0x0a,
-	0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x73,
-	0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x32, 0x4e, 0x0a, 0x05, 0x41,
-	0x64, 0x6d, 0x69, 0x6e, 0x12, 0x45, 0x0a, 0x0a, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x4c, 0x6f, 0x67,
-	0x69, 0x6e, 0x12, 0x1a, 0x2e, 0x61, 0x64, 0x6d, 0x69, 0x6e, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e,
-	0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x49, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19,
-	0x2e, 0x61, 0x64, 0x6d, 0x69, 0x6e, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x4c, 0x6f, 0x67, 0x69,
-	0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x10, 0x5a, 0x0e, 0x2e,
-	0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x70, 0x62, 0x2f, 0x61, 0x64, 0x6d, 0x69, 0x6e, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x62, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x61, 0x64, 0x6d, 0x69, 0x6e, 0x22, 0x3f,
+	0x0a, 0x08, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x23, 0x0a, 0x0d, 0x69, 0x6e,
+	0x74, 0x65, 0x72, 0x65, 0x73, 0x74, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0c, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x65, 0x73, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x22,
+	0x15, 0x0a, 0x13, 0x47, 0x65, 0x74, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x65, 0x73, 0x74, 0x73, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x5d, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x49, 0x6e, 0x74,
+	0x65, 0x72, 0x65, 0x73, 0x74, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16,
+	0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06,
+	0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x2d, 0x0a, 0x09, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x65,
+	0x73, 0x74, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x61, 0x64, 0x6d, 0x69,
+	0x6e, 0x2e, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x65, 0x73, 0x74, 0x52, 0x09, 0x69, 0x6e, 0x74, 0x65,
+	0x72, 0x65, 0x73, 0x74, 0x73, 0x22, 0x45, 0x0a, 0x0a, 0x50, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65,
+	0x6e, 0x63, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52,
+	0x02, 0x69, 0x64, 0x12, 0x27, 0x0a, 0x0f, 0x70, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63,
+	0x65, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x70, 0x72,
+	0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x22, 0x17, 0x0a, 0x15,
+	0x47, 0x65, 0x74, 0x50, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x73, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x65, 0x0a, 0x16, 0x47, 0x65, 0x74, 0x50, 0x72, 0x65, 0x66,
+	0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52,
+	0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x33, 0x0a, 0x0b, 0x70, 0x72, 0x65, 0x66, 0x65,
+	0x72, 0x65, 0x6e, 0x63, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x11, 0x2e, 0x61,
+	0x64, 0x6d, 0x69, 0x6e, 0x2e, 0x50, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x52,
+	0x0b, 0x70, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x73, 0x22, 0x70, 0x0a, 0x0c,
+	0x41, 0x64, 0x6d, 0x69, 0x6e, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x73, 0x12, 0x0e, 0x0a, 0x02,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x02, 0x69, 0x64, 0x12, 0x1d, 0x0a, 0x0a,
+	0x66, 0x69, 0x72, 0x73, 0x74, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x09, 0x66, 0x69, 0x72, 0x73, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x1b, 0x0a, 0x09, 0x6c,
+	0x61, 0x73, 0x74, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
+	0x6c, 0x61, 0x73, 0x74, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69,
+	0x6c, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x22, 0x45,
+	0x0a, 0x11, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61, 0x73,
+	0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70, 0x61, 0x73,
+	0x73, 0x77, 0x6f, 0x72, 0x64, 0x22, 0x42, 0x0a, 0x12, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x4c, 0x6f,
+	0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x73,
+	0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x73, 0x74, 0x61,
+	0x74, 0x75, 0x73, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x32, 0xe8, 0x01, 0x0a, 0x05, 0x41, 0x64,
+	0x6d, 0x69, 0x6e, 0x12, 0x43, 0x0a, 0x0a, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x4c, 0x6f, 0x67, 0x69,
+	0x6e, 0x12, 0x18, 0x2e, 0x61, 0x64, 0x6d, 0x69, 0x6e, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x4c,
+	0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x61, 0x64,
+	0x6d, 0x69, 0x6e, 0x2e, 0x41, 0x64, 0x6d, 0x69, 0x6e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x49, 0x0a, 0x0c, 0x47, 0x65, 0x74, 0x49,
+	0x6e, 0x74, 0x65, 0x72, 0x65, 0x73, 0x74, 0x73, 0x12, 0x1a, 0x2e, 0x61, 0x64, 0x6d, 0x69, 0x6e,
+	0x2e, 0x47, 0x65, 0x74, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x65, 0x73, 0x74, 0x73, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x1b, 0x2e, 0x61, 0x64, 0x6d, 0x69, 0x6e, 0x2e, 0x47, 0x65, 0x74,
+	0x49, 0x6e, 0x74, 0x65, 0x72, 0x65, 0x73, 0x74, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x22, 0x00, 0x12, 0x4f, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x50, 0x72, 0x65, 0x66, 0x65, 0x72,
+	0x65, 0x6e, 0x63, 0x65, 0x73, 0x12, 0x1c, 0x2e, 0x61, 0x64, 0x6d, 0x69, 0x6e, 0x2e, 0x47, 0x65,
+	0x74, 0x50, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x61, 0x64, 0x6d, 0x69, 0x6e, 0x2e, 0x47, 0x65, 0x74, 0x50,
+	0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x00, 0x42, 0x10, 0x5a, 0x0e, 0x2e, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x70, 0x62,
+	0x2f, 0x61, 0x64, 0x6d, 0x69, 0x6e, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -243,20 +572,32 @@ func file_pkg_pb_admin_pb_proto_rawDescGZIP() []byte {
 	return file_pkg_pb_admin_pb_proto_rawDescData
 }
 
-var file_pkg_pb_admin_pb_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_pkg_pb_admin_pb_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_pkg_pb_admin_pb_proto_goTypes = []interface{}{
-	(*AdminDetails)(nil),        // 0: admin.AdminDetails
-	(*AdminLoginInRequest)(nil), // 1: admin.AdminLoginInRequest
-	(*AdminLoginResponse)(nil),  // 2: admin.AdminLoginResponse
+	(*Interest)(nil),               // 0: admin.Interest
+	(*GetInterestsRequest)(nil),    // 1: admin.GetInterestsRequest
+	(*GetInterestsResponse)(nil),   // 2: admin.GetInterestsResponse
+	(*Preference)(nil),             // 3: admin.Preference
+	(*GetPreferencesRequest)(nil),  // 4: admin.GetPreferencesRequest
+	(*GetPreferencesResponse)(nil), // 5: admin.GetPreferencesResponse
+	(*AdminDetails)(nil),           // 6: admin.AdminDetails
+	(*AdminLoginRequest)(nil),      // 7: admin.AdminLoginRequest
+	(*AdminLoginResponse)(nil),     // 8: admin.AdminLoginResponse
 }
 var file_pkg_pb_admin_pb_proto_depIdxs = []int32{
-	1, // 0: admin.Admin.AdminLogin:input_type -> admin.AdminLoginInRequest
-	2, // 1: admin.Admin.AdminLogin:output_type -> admin.AdminLoginResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: admin.GetInterestsResponse.interests:type_name -> admin.Interest
+	3, // 1: admin.GetPreferencesResponse.preferences:type_name -> admin.Preference
+	7, // 2: admin.Admin.AdminLogin:input_type -> admin.AdminLoginRequest
+	1, // 3: admin.Admin.GetInterests:input_type -> admin.GetInterestsRequest
+	4, // 4: admin.Admin.GetPreferences:input_type -> admin.GetPreferencesRequest
+	8, // 5: admin.Admin.AdminLogin:output_type -> admin.AdminLoginResponse
+	2, // 6: admin.Admin.GetInterests:output_type -> admin.GetInterestsResponse
+	5, // 7: admin.Admin.GetPreferences:output_type -> admin.GetPreferencesResponse
+	5, // [5:8] is the sub-list for method output_type
+	2, // [2:5] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_pkg_pb_admin_pb_proto_init() }
@@ -266,7 +607,7 @@ func file_pkg_pb_admin_pb_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_pkg_pb_admin_pb_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AdminDetails); i {
+			switch v := v.(*Interest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -278,7 +619,7 @@ func file_pkg_pb_admin_pb_proto_init() {
 			}
 		}
 		file_pkg_pb_admin_pb_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AdminLoginInRequest); i {
+			switch v := v.(*GetInterestsRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -290,6 +631,78 @@ func file_pkg_pb_admin_pb_proto_init() {
 			}
 		}
 		file_pkg_pb_admin_pb_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetInterestsResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_pb_admin_pb_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Preference); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_pb_admin_pb_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetPreferencesRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_pb_admin_pb_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetPreferencesResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_pb_admin_pb_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AdminDetails); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_pb_admin_pb_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AdminLoginRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_pb_admin_pb_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AdminLoginResponse); i {
 			case 0:
 				return &v.state
@@ -308,7 +721,7 @@ func file_pkg_pb_admin_pb_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_pkg_pb_admin_pb_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

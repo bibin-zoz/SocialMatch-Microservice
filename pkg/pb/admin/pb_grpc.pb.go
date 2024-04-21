@@ -19,14 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Admin_AdminLogin_FullMethodName = "/admin.Admin/AdminLogin"
+	Admin_AdminLogin_FullMethodName     = "/admin.Admin/AdminLogin"
+	Admin_GetInterests_FullMethodName   = "/admin.Admin/GetInterests"
+	Admin_GetPreferences_FullMethodName = "/admin.Admin/GetPreferences"
 )
 
 // AdminClient is the client API for Admin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AdminClient interface {
-	AdminLogin(ctx context.Context, in *AdminLoginInRequest, opts ...grpc.CallOption) (*AdminLoginResponse, error)
+	AdminLogin(ctx context.Context, in *AdminLoginRequest, opts ...grpc.CallOption) (*AdminLoginResponse, error)
+	GetInterests(ctx context.Context, in *GetInterestsRequest, opts ...grpc.CallOption) (*GetInterestsResponse, error)
+	GetPreferences(ctx context.Context, in *GetPreferencesRequest, opts ...grpc.CallOption) (*GetPreferencesResponse, error)
 }
 
 type adminClient struct {
@@ -37,9 +41,27 @@ func NewAdminClient(cc grpc.ClientConnInterface) AdminClient {
 	return &adminClient{cc}
 }
 
-func (c *adminClient) AdminLogin(ctx context.Context, in *AdminLoginInRequest, opts ...grpc.CallOption) (*AdminLoginResponse, error) {
+func (c *adminClient) AdminLogin(ctx context.Context, in *AdminLoginRequest, opts ...grpc.CallOption) (*AdminLoginResponse, error) {
 	out := new(AdminLoginResponse)
 	err := c.cc.Invoke(ctx, Admin_AdminLogin_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) GetInterests(ctx context.Context, in *GetInterestsRequest, opts ...grpc.CallOption) (*GetInterestsResponse, error) {
+	out := new(GetInterestsResponse)
+	err := c.cc.Invoke(ctx, Admin_GetInterests_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) GetPreferences(ctx context.Context, in *GetPreferencesRequest, opts ...grpc.CallOption) (*GetPreferencesResponse, error) {
+	out := new(GetPreferencesResponse)
+	err := c.cc.Invoke(ctx, Admin_GetPreferences_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +72,9 @@ func (c *adminClient) AdminLogin(ctx context.Context, in *AdminLoginInRequest, o
 // All implementations must embed UnimplementedAdminServer
 // for forward compatibility
 type AdminServer interface {
-	AdminLogin(context.Context, *AdminLoginInRequest) (*AdminLoginResponse, error)
+	AdminLogin(context.Context, *AdminLoginRequest) (*AdminLoginResponse, error)
+	GetInterests(context.Context, *GetInterestsRequest) (*GetInterestsResponse, error)
+	GetPreferences(context.Context, *GetPreferencesRequest) (*GetPreferencesResponse, error)
 	mustEmbedUnimplementedAdminServer()
 }
 
@@ -58,8 +82,14 @@ type AdminServer interface {
 type UnimplementedAdminServer struct {
 }
 
-func (UnimplementedAdminServer) AdminLogin(context.Context, *AdminLoginInRequest) (*AdminLoginResponse, error) {
+func (UnimplementedAdminServer) AdminLogin(context.Context, *AdminLoginRequest) (*AdminLoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AdminLogin not implemented")
+}
+func (UnimplementedAdminServer) GetInterests(context.Context, *GetInterestsRequest) (*GetInterestsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetInterests not implemented")
+}
+func (UnimplementedAdminServer) GetPreferences(context.Context, *GetPreferencesRequest) (*GetPreferencesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPreferences not implemented")
 }
 func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
 
@@ -75,7 +105,7 @@ func RegisterAdminServer(s grpc.ServiceRegistrar, srv AdminServer) {
 }
 
 func _Admin_AdminLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AdminLoginInRequest)
+	in := new(AdminLoginRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -87,7 +117,43 @@ func _Admin_AdminLogin_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: Admin_AdminLogin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).AdminLogin(ctx, req.(*AdminLoginInRequest))
+		return srv.(AdminServer).AdminLogin(ctx, req.(*AdminLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_GetInterests_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInterestsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).GetInterests(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_GetInterests_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).GetInterests(ctx, req.(*GetInterestsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_GetPreferences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPreferencesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).GetPreferences(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_GetPreferences_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).GetPreferences(ctx, req.(*GetPreferencesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -102,6 +168,14 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AdminLogin",
 			Handler:    _Admin_AdminLogin_Handler,
+		},
+		{
+			MethodName: "GetInterests",
+			Handler:    _Admin_GetInterests_Handler,
+		},
+		{
+			MethodName: "GetPreferences",
+			Handler:    _Admin_GetPreferences_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

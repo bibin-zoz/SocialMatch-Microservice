@@ -32,7 +32,7 @@ func NewAdminClient(cfg config.Config) interfaces.AdminClient {
 }
 
 func (ad *adminClient) AdminLogin(adminDetails models.AdminLogin) (models.TokenAdmin, error) {
-	admin, err := ad.Client.AdminLogin(context.Background(), &pb.AdminLoginInRequest{
+	admin, err := ad.Client.AdminLogin(context.Background(), &pb.AdminLoginRequest{
 		Email:    adminDetails.Email,
 		Password: adminDetails.Password,
 	})
@@ -43,4 +43,22 @@ func (ad *adminClient) AdminLogin(adminDetails models.AdminLogin) (models.TokenA
 	return models.TokenAdmin{
 		Token: admin.Token,
 	}, nil
+}
+func (ad *adminClient) GetIntrests() ([]models.Users, error) {
+	usersResponse, err := ad.Client.GetInterests(context.Background(), &pb.GetInterestsRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert []*pb.Users to []models.Users
+	var intrests []models.intrests
+	for _, u := range usersResponse.Interests {
+		userModel := models.intrests{
+			ID:   uint(u.Id),
+			name: u.InterestName,
+		}
+		intrests = append(users, userModel)
+	}
+
+	return users, nil
 }
