@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package admin;
+
+option go_package = "./pkg/pb/admin";
+
+service Admin {
+    rpc AdminLogin(AdminLoginRequest) returns (AdminLoginResponse) {};
+    rpc GetInterests(GetInterestsRequest) returns (GetInterestsResponse) {};
+    rpc GetPreferences(GetPreferencesRequest) returns (GetPreferencesResponse) {};
+}
+
+message Interest {
+    int64 id = 1;
+    string interest_name = 2;
+}
+
+message GetInterestsRequest {}
+
+message GetInterestsResponse {
+    int64 status = 1;
+    repeated Interest interests = 2;
+}
+
+message Preference {
+    int64 id = 1;
+    string preference_name = 2;
+}
+
+message GetPreferencesRequest {}
+
+message GetPreferencesResponse {
+    int64 status = 1;
+    repeated Preference preferences = 2;
+}
+
+message AdminDetails {
+    uint64 id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+}
+
+message AdminLoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message AdminLoginResponse {
+    int64 status = 1;
+    string token = 2;
+}
