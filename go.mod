@@ -3,7 +3,6 @@ module github.com/bibin-zoz/api-gateway
 go 1.21.1
 
 require (
-	github.com/bibin-zoz/social-match-userauth-svc v0.0.0-20240407125042-0dc41c63a438
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/validator/v10 v10.19.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
