@@ -14,6 +14,6 @@ type TokenAdmin struct {
 	Token string
 }
 type Interest struct {
-	id           int
+	ID           int
 	InterestName string
 }
