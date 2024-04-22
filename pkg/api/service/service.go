@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bibin-zoz/social-match-admin-svc/pkg/pb"
+	pb "github.com/bibin-zoz/social-match-admin-svc/pkg/pb/admin"
 	interfaces "github.com/bibin-zoz/social-match-admin-svc/pkg/usecase/interface"
 	"github.com/bibin-zoz/social-match-admin-svc/pkg/utils/models"
 )
@@ -22,7 +22,7 @@ func NewAdminServer(useCase interfaces.AdminUseCase) pb.AdminServer {
 
 }
 
-func (ad *AdminServer) AdminLogin(ctx context.Context, Req *pb.AdminLoginInRequest) (*pb.AdminLoginResponse, error) {
+func (ad *AdminServer) AdminLogin(ctx context.Context, Req *pb.AdminLoginRequest) (*pb.AdminLoginResponse, error) {
 	adminLogin := models.AdminLogin{
 		Email:    Req.Email,
 		Password: Req.Password,
@@ -37,5 +37,25 @@ func (ad *AdminServer) AdminLogin(ctx context.Context, Req *pb.AdminLoginInReque
 	return &pb.AdminLoginResponse{
 		Status: 200,
 		Token:  admin.Token,
+	}, nil
+}
+func (ad *AdminServer) GetInterests(ctx context.Context, req *pb.GetInterestsRequest) (*pb.GetInterestsResponse, error) {
+	Interest, err := ad.adminUseCase.GetInterests()
+	if err != nil {
+		return nil, err
+	}
+
+	var pbInterest []*pb.Interest
+	for _, u := range Interest {
+		pbRes := &pb.Interest{
+			Id:           (u.Id),
+			InterestName: u.InterestName,
+		}
+		pbInterest = append(pbInterest, pbRes)
+	}
+
+	return &pb.GetInterestsResponse{
+		Status:    201,
+		Interests: pbInterest,
 	}, nil
 }

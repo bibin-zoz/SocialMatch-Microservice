@@ -89,3 +89,17 @@ func (ad *adminUseCase) LoginHandler(admin models.AdminLogin) (*domain.TokenAdmi
 		Token: tokenString,
 	}, nil
 }
+func (ad *adminUseCase) GetInterests() ([]domain.Interest, error) {
+	interests, err := ad.adminRepository.FetchInterests()
+	if err != nil {
+		return []domain.Interest{}, errors.New("failed to fetch user details")
+	}
+	return interests, nil
+}
+func (ad *adminUseCase) GetPreferences() ([]models.Preference, error) {
+	Preference, err := ad.adminRepository.FetchPreference()
+	if err != nil {
+		return []models.Preference{}, errors.New("failed to fetch user details")
+	}
+	return Preference, nil
+}

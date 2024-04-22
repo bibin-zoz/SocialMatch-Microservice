@@ -12,5 +12,8 @@ type Admin struct {
 type TokenAdmin struct {
 	Admin models.AdminDetailsResponse
 	Token string
-
+}
+type Interest struct {
+	id           int
+	InterestName string
 }

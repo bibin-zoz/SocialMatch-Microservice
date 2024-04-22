@@ -46,3 +46,19 @@ func (ad *adminRepository) FindAdminByEmail(admin models.AdminLogin) (models.Adm
 	}
 	return user, nil
 }
+func (ad *adminRepository) FetchInterests() ([]domain.Interest, error) {
+	var Interest []domain.Interest
+	if err := ad.DB.Find(&Interest).Error; err != nil {
+		return nil, err
+	}
+
+	return Interest, nil
+}
+func (ad *adminRepository) FetchPreference() ([]models.Preference, error) {
+	var Preference []models.Preference
+	if err := ad.DB.Find(&Preference).Error; err != nil {
+		return nil, err
+	}
+
+	return Preference, nil
+}
