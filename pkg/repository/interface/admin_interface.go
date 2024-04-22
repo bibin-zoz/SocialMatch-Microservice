@@ -11,4 +11,14 @@ type AdminRepository interface {
 	CheckAdminExistsByEmail(email string) (*domain.Admin, error)
 	FetchPreference() ([]models.Preference, error)
 	FetchInterests() ([]domain.Interest, error)
+
+	// New methods for adding, editing, and deleting interests
+	AddInterest(interestName string) (int64, error)
+	EditInterest(id int64, interestName string) error
+	DeleteInterest(id int64) error
+
+	// New methods for adding, editing, and deleting preferences
+	AddPreference(preferenceName string) (int64, error)
+	EditPreference(id int64, preferenceName string) error
+	DeletePreference(id int64) error
 }

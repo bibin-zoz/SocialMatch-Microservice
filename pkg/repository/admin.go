@@ -62,3 +62,58 @@ func (ad *adminRepository) FetchPreference() ([]models.Preference, error) {
 
 	return Preference, nil
 }
+func (ad *adminRepository) AddInterest(interestName string) (int64, error) {
+	// Implement the logic to add interest to the database
+	// For example:
+	interest := domain.Interest{InterestName: interestName}
+	if err := ad.DB.Create(&interest).Error; err != nil {
+		return 0, err
+	}
+	return int64(interest.ID), nil
+}
+
+func (ad *adminRepository) EditInterest(id int64, interestName string) error {
+	// Implement the logic to edit interest in the database
+	// For example:
+	if err := ad.DB.Model(&domain.Interest{}).Where("id = ?", id).Update("interest_name", interestName).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ad *adminRepository) DeleteInterest(id int64) error {
+	// Implement the logic to delete interest from the database
+	// For example:
+	if err := ad.DB.Delete(&domain.Interest{}, id).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ad *adminRepository) AddPreference(preferenceName string) (int64, error) {
+	// Implement the logic to add preference to the database
+	// For example:
+	preference := models.Preference{PreferenceName: preferenceName}
+	if err := ad.DB.Create(&preference).Error; err != nil {
+		return 0, err
+	}
+	return int64(preference.ID), nil
+}
+
+func (ad *adminRepository) EditPreference(id int64, preferenceName string) error {
+	// Implement the logic to edit preference in the database
+	// For example:
+	if err := ad.DB.Model(&models.Preference{}).Where("id = ?", id).Update("preference_name", preferenceName).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ad *adminRepository) DeletePreference(id int64) error {
+	// Implement the logic to delete preference from the database
+	// For example:
+	if err := ad.DB.Delete(&models.Preference{}, id).Error; err != nil {
+		return err
+	}
+	return nil
+}

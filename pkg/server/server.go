@@ -5,7 +5,7 @@ import (
 	"net"
 
 	"github.com/bibin-zoz/social-match-admin-svc/pkg/config"
-	"github.com/bibin-zoz/social-match-admin-svc/pkg/pb"
+	pb "github.com/bibin-zoz/social-match-admin-svc/pkg/pb/admin"
 	"google.golang.org/grpc"
 )
 

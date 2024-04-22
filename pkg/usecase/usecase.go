@@ -103,3 +103,56 @@ func (ad *adminUseCase) GetPreferences() ([]models.Preference, error) {
 	}
 	return Preference, nil
 }
+func (ad *adminUseCase) AddInterest(interestName string) (int64, error) {
+	// Call the repository method to add interest
+	id, err := ad.adminRepository.AddInterest(interestName)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
+func (ad *adminUseCase) EditInterest(id int64, interestName string) error {
+	// Call the repository method to edit interest
+	err := ad.adminRepository.EditInterest(id, interestName)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ad *adminUseCase) DeleteInterest(id int64) error {
+	// Call the repository method to delete interest
+	err := ad.adminRepository.DeleteInterest(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ad *adminUseCase) AddPreference(preferenceName string) (int64, error) {
+	// Call the repository method to add preference
+	id, err := ad.adminRepository.AddPreference(preferenceName)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
+func (ad *adminUseCase) EditPreference(id int64, preferenceName string) error {
+	// Call the repository method to edit preference
+	err := ad.adminRepository.EditPreference(id, preferenceName)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ad *adminUseCase) DeletePreference(id int64) error {
+	// Call the repository method to delete preference
+	err := ad.adminRepository.DeletePreference(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}

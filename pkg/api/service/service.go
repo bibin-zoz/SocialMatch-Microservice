@@ -48,7 +48,7 @@ func (ad *AdminServer) GetInterests(ctx context.Context, req *pb.GetInterestsReq
 	var pbInterest []*pb.Interest
 	for _, u := range Interest {
 		pbRes := &pb.Interest{
-			Id:           (u.Id),
+			Id:           (int64(u.ID)),
 			InterestName: u.InterestName,
 		}
 		pbInterest = append(pbInterest, pbRes)
@@ -57,5 +57,80 @@ func (ad *AdminServer) GetInterests(ctx context.Context, req *pb.GetInterestsReq
 	return &pb.GetInterestsResponse{
 		Status:    201,
 		Interests: pbInterest,
+	}, nil
+}
+func (ad *AdminServer) AddInterest(ctx context.Context, req *pb.AddInterestRequest) (*pb.AddInterestResponse, error) {
+	interestName := req.InterestName
+	// Call the corresponding use case method to add interest
+	id, err := ad.adminUseCase.AddInterest(interestName)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.AddInterestResponse{
+		Status: 200,
+		Id:     id,
+	}, nil
+}
+
+func (ad *AdminServer) EditInterest(ctx context.Context, req *pb.EditInterestRequest) (*pb.EditInterestResponse, error) {
+	id := req.Id
+	interestName := req.InterestName
+	// Call the corresponding use case method to edit interest
+	err := ad.adminUseCase.EditInterest(id, interestName)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.EditInterestResponse{
+		Status: 200,
+	}, nil
+}
+
+func (ad *AdminServer) DeleteInterest(ctx context.Context, req *pb.DeleteInterestRequest) (*pb.DeleteInterestResponse, error) {
+	id := req.Id
+	// Call the corresponding use case method to delete interest
+	err := ad.adminUseCase.DeleteInterest(id)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.DeleteInterestResponse{
+		Status: 200,
+	}, nil
+}
+
+func (ad *AdminServer) AddPreference(ctx context.Context, req *pb.AddPreferenceRequest) (*pb.AddPreferenceResponse, error) {
+	preferenceName := req.PreferenceName
+	// Call the corresponding use case method to add preference
+	id, err := ad.adminUseCase.AddPreference(preferenceName)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.AddPreferenceResponse{
+		Status: 200,
+		Id:     id,
+	}, nil
+}
+
+func (ad *AdminServer) EditPreference(ctx context.Context, req *pb.EditPreferenceRequest) (*pb.EditPreferenceResponse, error) {
+	id := req.Id
+	preferenceName := req.PreferenceName
+	// Call the corresponding use case method to edit preference
+	err := ad.adminUseCase.EditPreference(id, preferenceName)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.EditPreferenceResponse{
+		Status: 200,
+	}, nil
+}
+
+func (ad *AdminServer) DeletePreference(ctx context.Context, req *pb.DeletePreferenceRequest) (*pb.DeletePreferenceResponse, error) {
+	id := req.Id
+	// Call the corresponding use case method to delete preference
+	err := ad.adminUseCase.DeletePreference(id)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.DeletePreferenceResponse{
+		Status: 200,
 	}, nil
 }
