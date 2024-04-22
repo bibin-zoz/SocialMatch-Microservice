@@ -1,10 +1,10 @@
 package models
 
-type intrests struct {
-	id   int
-	name string
+type Intrests struct {
+	ID   int
+	Name string
 }
-type preferences struct {
-	id   int
-	name string
+type Preferences struct {
+	ID   int
+	Name string
 }

@@ -44,21 +44,39 @@ func (ad *adminClient) AdminLogin(adminDetails models.AdminLogin) (models.TokenA
 		Token: admin.Token,
 	}, nil
 }
-func (ad *adminClient) GetIntrests() ([]models.Users, error) {
+func (ad *adminClient) GetIntrests() ([]models.Intrests, error) {
 	usersResponse, err := ad.Client.GetInterests(context.Background(), &pb.GetInterestsRequest{})
 	if err != nil {
 		return nil, err
 	}
 
 	// Convert []*pb.Users to []models.Users
-	var intrests []models.intrests
+	var Intrests []models.Intrests
 	for _, u := range usersResponse.Interests {
-		userModel := models.intrests{
-			ID:   uint(u.Id),
-			name: u.InterestName,
+		userModel := models.Intrests{
+			ID:   int(u.Id),
+			Name: u.InterestName,
 		}
-		intrests = append(users, userModel)
+		Intrests = append(Intrests, userModel)
 	}
 
-	return users, nil
+	return Intrests, nil
+}
+func (ad *adminClient) GetPreferences() ([]models.Intrests, error) {
+	usersResponse, err := ad.Client.GetPreferences(context.Background(), &pb.GetPreferencesRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert []*pb.Users to []models.Users
+	var Preferences []models.Intrests
+	for _, u := range usersResponse.Preferences {
+		PreferencesModel := models.Intrests{
+			ID:   int(u.Id),
+			Name: u.PreferenceName,
+		}
+		Preferences = append(Preferences, PreferencesModel)
+	}
+
+	return Preferences, nil
 }
