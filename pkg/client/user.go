@@ -17,8 +17,6 @@ type userClient struct {
 }
 
 func NewUserClient(cfg config.Config) interfaces.UserClient {
-	fmt.Println("sasa")
-
 	grpcConnection, err := grpc.NewClient(cfg.UserSvcUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		fmt.Println("Could not connect", err)
