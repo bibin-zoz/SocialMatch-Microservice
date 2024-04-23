@@ -289,3 +289,95 @@ func (ur *userUseCase) DeleteUserInterest(userID uint64, interestID uint64) erro
 
 	return nil
 }
+func (uu *userUseCase) AddUserPreference(userID uint64, preferenceName string) error {
+	// Check if the user exists
+	_, err := uu.userRepository.GetUserByID(int(userID))
+	if err != nil {
+		return errors.New("failed to get user details")
+	}
+
+	// Check if the preference already exists for the user
+	preferenceExists, err := uu.userRepository.CheckUserPreference(userID, preferenceName)
+	if err != nil {
+		return errors.New("failed to check user preference")
+	}
+	if preferenceExists {
+		return errors.New("preference already exists for the user")
+	}
+
+	// Add the preference for the user
+	err = uu.userRepository.AddUserPreference(userID, preferenceName)
+	if err != nil {
+		return errors.New("failed to add user preference")
+	}
+
+	return nil
+}
+
+func (uu *userUseCase) EditUserPreference(userID uint64, preferenceID uint64, newPreferenceName string) error {
+	// Check if the user exists
+	_, err := uu.userRepository.GetUserByID(int(userID))
+	if err != nil {
+		return errors.New("failed to get user details")
+	}
+
+	// Check if the preference exists for the user
+	preferenceExists, err := uu.userRepository.CheckUserPreferenceByID(userID, preferenceID)
+	if err != nil {
+		return errors.New("failed to check user preference")
+	}
+	if !preferenceExists {
+		return errors.New("preference does not exist for the user")
+	}
+
+	// Edit the user preference
+	err = uu.userRepository.EditUserPreference(userID, preferenceID, newPreferenceName)
+	if err != nil {
+		return errors.New("failed to edit user preference")
+	}
+
+	return nil
+}
+
+func (uu *userUseCase) DeleteUserPreference(userID uint64, preferenceID uint64) error {
+	// Check if the user exists
+	_, err := uu.userRepository.GetUserByID(int(userID))
+	if err != nil {
+		return errors.New("failed to get user details")
+	}
+
+	// Check if the preference exists for the user
+	preferenceExists, err := uu.userRepository.CheckUserPreferenceByID(userID, preferenceID)
+	if err != nil {
+		return errors.New("failed to check user preference")
+	}
+	if !preferenceExists {
+		return errors.New("preference does not exist for the user")
+	}
+
+	// Delete the user preference
+	err = uu.userRepository.DeleteUserPreference(userID, preferenceID)
+	if err != nil {
+		return errors.New("failed to delete user preference")
+	}
+
+	return nil
+}
+
+func (uu *userUseCase) GetUserInterests(userID uint64) ([]string, error) {
+	// Fetch the interests for the user
+	interests, err := uu.userRepository.GetUserInterests(userID)
+	if err != nil {
+		return nil, errors.New("failed to fetch user interests")
+	}
+	return interests, nil
+}
+
+func (uu *userUseCase) GetUserPreferences(userID uint64) ([]string, error) {
+	// Fetch the preferences for the user
+	preferences, err := uu.userRepository.GetUserPreferences(userID)
+	if err != nil {
+		return nil, errors.New("failed to fetch user preferences")
+	}
+	return preferences, nil
+}

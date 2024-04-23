@@ -25,6 +25,15 @@ type UserInterest struct {
 	InterestName string
 }
 type UserPreference struct {
-	UserID       int
+	UserID         int
+	PreferenceName string
+}
+type Interest struct {
+	ID           int
 	InterestName string
+}
+
+type Preference struct {
+	ID             int
+	PreferenceName string
 }

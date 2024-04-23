@@ -139,3 +139,54 @@ func (ur *userRepository) EditUserInterest(userID uint64, interestID uint64, new
 func (ur *userRepository) DeleteUserInterest(userID uint64, interestID uint64) error {
 	return ur.DB.Delete(&domain.UserInterest{}, "user_id = ? AND id = ?", userID, interestID).Error
 }
+func (ur *userRepository) CheckUserPreference(userID uint64, preferenceName string) (bool, error) {
+	var count int64
+	err := ur.DB.Model(&domain.UserPreference{}).Where("user_id = ? AND preference_name = ?", userID, preferenceName).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
+func (ur *userRepository) CheckUserPreferenceByID(userID uint64, preferenceID uint64) (bool, error) {
+	var count int64
+	err := ur.DB.Model(&domain.UserPreference{}).Where("user_id = ? AND id = ?", userID, preferenceID).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
+func (ur *userRepository) AddUserPreference(userID uint64, preferenceName string) error {
+	preference := domain.UserPreference{
+		UserID:         int(userID),
+		PreferenceName: preferenceName,
+	}
+	return ur.DB.Create(&preference).Error
+}
+
+func (ur *userRepository) EditUserPreference(userID uint64, preferenceID uint64, newPreferenceName string) error {
+	return ur.DB.Model(&domain.UserPreference{}).Where("user_id = ? AND id = ?", userID, preferenceID).Update("preference_name", newPreferenceName).Error
+}
+
+func (ur *userRepository) DeleteUserPreference(userID uint64, preferenceID uint64) error {
+	return ur.DB.Delete(&domain.UserPreference{}, "user_id = ? AND id = ?", userID, preferenceID).Error
+}
+
+func (ur *userRepository) GetUserPreferences(userID uint64) ([]string, error) {
+	var preferences []string
+	err := ur.DB.Model(&domain.UserPreference{}).Where("user_id = ?", userID).Pluck("preference_name", &preferences).Error
+	if err != nil {
+		return nil, err
+	}
+	return preferences, nil
+}
+
+func (ur *userRepository) GetUserInterests(userID uint64) ([]string, error) {
+	var interests []string
+	err := ur.DB.Model(&domain.UserInterest{}).Where("user_id = ?", userID).Pluck("interest_name", &interests).Error
+	if err != nil {
+		return nil, err
+	}
+	return interests, nil
+}

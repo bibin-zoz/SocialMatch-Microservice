@@ -20,4 +20,11 @@ type UserRepository interface {
 	AddUserInterest(userID uint64, interestName string) error
 	EditUserInterest(userID uint64, interestID uint64, newInterestName string) error
 	DeleteUserInterest(userID uint64, interestID uint64) error
+	CheckUserPreference(userID uint64, preferenceName string) (bool, error)
+	CheckUserPreferenceByID(userID uint64, preferenceID uint64) (bool, error)
+	AddUserPreference(userID uint64, preferenceName string) error
+	EditUserPreference(userID uint64, preferenceID uint64, newPreferenceName string) error
+	DeleteUserPreference(userID uint64, preferenceID uint64) error
+	GetUserPreferences(userID uint64) ([]string, error)
+	GetUserInterests(userID uint64) ([]string, error)
 }

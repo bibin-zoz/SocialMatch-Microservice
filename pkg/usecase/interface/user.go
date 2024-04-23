@@ -14,6 +14,11 @@ type UserUseCase interface {
 	GetAllUsers() ([]domain.User, error)
 	UpdateUserStatus(id int) (models.UserDetail, error)
 	AddUserInterest(userID uint64, interestName string) error
+	AddUserPreference(userID uint64, preferenceName string) error
 	EditUserInterest(userID uint64, interestID uint64, newInterestName string) error
+	EditUserPreference(userID uint64, preferenceID uint64, newPreferenceName string) error
 	DeleteUserInterest(userID uint64, interestID uint64) error
+	DeleteUserPreference(userID uint64, preferenceID uint64) error
+	GetUserInterests(userID uint64) ([]string, error)
+	GetUserPreferences(userID uint64) ([]string, error)
 }

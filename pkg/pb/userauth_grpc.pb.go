@@ -19,16 +19,21 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	User_UserSignUp_FullMethodName          = "/user.User/UserSignUp"
-	User_UserLogin_FullMethodName           = "/user.User/UserLogin"
-	User_UserEditDetails_FullMethodName     = "/user.User/UserEditDetails"
-	User_UserOtpGeneration_FullMethodName   = "/user.User/UserOtpGeneration"
-	User_UserOtpVerification_FullMethodName = "/user.User/UserOtpVerification"
-	User_GetUsers_FullMethodName            = "/user.User/GetUsers"
-	User_UpdateUserStatus_FullMethodName    = "/user.User/UpdateUserStatus"
-	User_AddUserInterest_FullMethodName     = "/user.User/AddUserInterest"
-	User_EditUserInterest_FullMethodName    = "/user.User/EditUserInterest"
-	User_DeleteUserInterest_FullMethodName  = "/user.User/DeleteUserInterest"
+	User_UserSignUp_FullMethodName           = "/user.User/UserSignUp"
+	User_UserLogin_FullMethodName            = "/user.User/UserLogin"
+	User_UserEditDetails_FullMethodName      = "/user.User/UserEditDetails"
+	User_UserOtpGeneration_FullMethodName    = "/user.User/UserOtpGeneration"
+	User_UserOtpVerification_FullMethodName  = "/user.User/UserOtpVerification"
+	User_GetUsers_FullMethodName             = "/user.User/GetUsers"
+	User_UpdateUserStatus_FullMethodName     = "/user.User/UpdateUserStatus"
+	User_AddUserInterest_FullMethodName      = "/user.User/AddUserInterest"
+	User_EditUserInterest_FullMethodName     = "/user.User/EditUserInterest"
+	User_DeleteUserInterest_FullMethodName   = "/user.User/DeleteUserInterest"
+	User_GetUserInterests_FullMethodName     = "/user.User/GetUserInterests"
+	User_AddUserPreference_FullMethodName    = "/user.User/AddUserPreference"
+	User_EditUserPreference_FullMethodName   = "/user.User/EditUserPreference"
+	User_DeleteUserPreference_FullMethodName = "/user.User/DeleteUserPreference"
+	User_GetUserPreferences_FullMethodName   = "/user.User/GetUserPreferences"
 )
 
 // UserClient is the client API for User service.
@@ -45,6 +50,11 @@ type UserClient interface {
 	AddUserInterest(ctx context.Context, in *AddUserInterestRequest, opts ...grpc.CallOption) (*AddUserInterestResponse, error)
 	EditUserInterest(ctx context.Context, in *EditUserInterestRequest, opts ...grpc.CallOption) (*EditUserInterestResponse, error)
 	DeleteUserInterest(ctx context.Context, in *DeleteUserInterestRequest, opts ...grpc.CallOption) (*DeleteUserInterestResponse, error)
+	GetUserInterests(ctx context.Context, in *GetUserInterestsRequest, opts ...grpc.CallOption) (*GetUserInterestsResponse, error)
+	AddUserPreference(ctx context.Context, in *AddUserPreferenceRequest, opts ...grpc.CallOption) (*AddUserPreferenceResponse, error)
+	EditUserPreference(ctx context.Context, in *EditUserPreferenceRequest, opts ...grpc.CallOption) (*EditUserPreferenceResponse, error)
+	DeleteUserPreference(ctx context.Context, in *DeleteUserPreferenceRequest, opts ...grpc.CallOption) (*DeleteUserPreferenceResponse, error)
+	GetUserPreferences(ctx context.Context, in *GetUserPreferencesRequest, opts ...grpc.CallOption) (*GetUserPreferencesResponse, error)
 }
 
 type userClient struct {
@@ -145,6 +155,51 @@ func (c *userClient) DeleteUserInterest(ctx context.Context, in *DeleteUserInter
 	return out, nil
 }
 
+func (c *userClient) GetUserInterests(ctx context.Context, in *GetUserInterestsRequest, opts ...grpc.CallOption) (*GetUserInterestsResponse, error) {
+	out := new(GetUserInterestsResponse)
+	err := c.cc.Invoke(ctx, User_GetUserInterests_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) AddUserPreference(ctx context.Context, in *AddUserPreferenceRequest, opts ...grpc.CallOption) (*AddUserPreferenceResponse, error) {
+	out := new(AddUserPreferenceResponse)
+	err := c.cc.Invoke(ctx, User_AddUserPreference_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) EditUserPreference(ctx context.Context, in *EditUserPreferenceRequest, opts ...grpc.CallOption) (*EditUserPreferenceResponse, error) {
+	out := new(EditUserPreferenceResponse)
+	err := c.cc.Invoke(ctx, User_EditUserPreference_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) DeleteUserPreference(ctx context.Context, in *DeleteUserPreferenceRequest, opts ...grpc.CallOption) (*DeleteUserPreferenceResponse, error) {
+	out := new(DeleteUserPreferenceResponse)
+	err := c.cc.Invoke(ctx, User_DeleteUserPreference_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) GetUserPreferences(ctx context.Context, in *GetUserPreferencesRequest, opts ...grpc.CallOption) (*GetUserPreferencesResponse, error) {
+	out := new(GetUserPreferencesResponse)
+	err := c.cc.Invoke(ctx, User_GetUserPreferences_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
@@ -159,6 +214,11 @@ type UserServer interface {
 	AddUserInterest(context.Context, *AddUserInterestRequest) (*AddUserInterestResponse, error)
 	EditUserInterest(context.Context, *EditUserInterestRequest) (*EditUserInterestResponse, error)
 	DeleteUserInterest(context.Context, *DeleteUserInterestRequest) (*DeleteUserInterestResponse, error)
+	GetUserInterests(context.Context, *GetUserInterestsRequest) (*GetUserInterestsResponse, error)
+	AddUserPreference(context.Context, *AddUserPreferenceRequest) (*AddUserPreferenceResponse, error)
+	EditUserPreference(context.Context, *EditUserPreferenceRequest) (*EditUserPreferenceResponse, error)
+	DeleteUserPreference(context.Context, *DeleteUserPreferenceRequest) (*DeleteUserPreferenceResponse, error)
+	GetUserPreferences(context.Context, *GetUserPreferencesRequest) (*GetUserPreferencesResponse, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -195,6 +255,21 @@ func (UnimplementedUserServer) EditUserInterest(context.Context, *EditUserIntere
 }
 func (UnimplementedUserServer) DeleteUserInterest(context.Context, *DeleteUserInterestRequest) (*DeleteUserInterestResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserInterest not implemented")
+}
+func (UnimplementedUserServer) GetUserInterests(context.Context, *GetUserInterestsRequest) (*GetUserInterestsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserInterests not implemented")
+}
+func (UnimplementedUserServer) AddUserPreference(context.Context, *AddUserPreferenceRequest) (*AddUserPreferenceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUserPreference not implemented")
+}
+func (UnimplementedUserServer) EditUserPreference(context.Context, *EditUserPreferenceRequest) (*EditUserPreferenceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditUserPreference not implemented")
+}
+func (UnimplementedUserServer) DeleteUserPreference(context.Context, *DeleteUserPreferenceRequest) (*DeleteUserPreferenceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserPreference not implemented")
+}
+func (UnimplementedUserServer) GetUserPreferences(context.Context, *GetUserPreferencesRequest) (*GetUserPreferencesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserPreferences not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -389,6 +464,96 @@ func _User_DeleteUserInterest_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_GetUserInterests_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserInterestsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).GetUserInterests(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_GetUserInterests_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).GetUserInterests(ctx, req.(*GetUserInterestsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_AddUserPreference_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddUserPreferenceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).AddUserPreference(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_AddUserPreference_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).AddUserPreference(ctx, req.(*AddUserPreferenceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_EditUserPreference_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditUserPreferenceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).EditUserPreference(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_EditUserPreference_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).EditUserPreference(ctx, req.(*EditUserPreferenceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_DeleteUserPreference_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserPreferenceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).DeleteUserPreference(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_DeleteUserPreference_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).DeleteUserPreference(ctx, req.(*DeleteUserPreferenceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_GetUserPreferences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserPreferencesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).GetUserPreferences(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_GetUserPreferences_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).GetUserPreferences(ctx, req.(*GetUserPreferencesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -435,6 +600,26 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteUserInterest",
 			Handler:    _User_DeleteUserInterest_Handler,
+		},
+		{
+			MethodName: "GetUserInterests",
+			Handler:    _User_GetUserInterests_Handler,
+		},
+		{
+			MethodName: "AddUserPreference",
+			Handler:    _User_AddUserPreference_Handler,
+		},
+		{
+			MethodName: "EditUserPreference",
+			Handler:    _User_EditUserPreference_Handler,
+		},
+		{
+			MethodName: "DeleteUserPreference",
+			Handler:    _User_DeleteUserPreference_Handler,
+		},
+		{
+			MethodName: "GetUserPreferences",
+			Handler:    _User_GetUserPreferences_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

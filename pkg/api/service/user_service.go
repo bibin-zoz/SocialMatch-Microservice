@@ -148,3 +148,48 @@ func (a *UserServer) DeleteUserInterest(ctx context.Context, req *pb.DeleteUserI
 	}
 	return &pb.DeleteUserInterestResponse{Status: 201}, nil
 }
+func (a *UserServer) AddUserPreference(ctx context.Context, req *pb.AddUserPreferenceRequest) (*pb.AddUserPreferenceResponse, error) {
+	err := a.userUseCase.AddUserPreference(req.UserId, req.PreferenceName)
+	if err != nil {
+		return &pb.AddUserPreferenceResponse{}, err
+	}
+	return &pb.AddUserPreferenceResponse{Status: 201}, nil
+}
+
+func (a *UserServer) EditUserPreference(ctx context.Context, req *pb.EditUserPreferenceRequest) (*pb.EditUserPreferenceResponse, error) {
+	err := a.userUseCase.EditUserPreference(req.UserId, req.PreferenceId, req.NewPreferenceName)
+	if err != nil {
+		return &pb.EditUserPreferenceResponse{}, err
+	}
+	return &pb.EditUserPreferenceResponse{Status: 201}, nil
+}
+
+func (a *UserServer) DeleteUserPreference(ctx context.Context, req *pb.DeleteUserPreferenceRequest) (*pb.DeleteUserPreferenceResponse, error) {
+	err := a.userUseCase.DeleteUserPreference(req.UserId, req.PreferenceId)
+	if err != nil {
+		return &pb.DeleteUserPreferenceResponse{}, err
+	}
+	return &pb.DeleteUserPreferenceResponse{Status: 201}, nil
+}
+
+func (a *UserServer) GetUserInterests(ctx context.Context, req *pb.GetUserInterestsRequest) (*pb.GetUserInterestsResponse, error) {
+	interests, err := a.userUseCase.GetUserInterests(req.UserId)
+	if err != nil {
+		return &pb.GetUserInterestsResponse{}, err
+	}
+	return &pb.GetUserInterestsResponse{
+		Status:    201,
+		Interests: interests,
+	}, nil
+}
+
+func (a *UserServer) GetUserPreferences(ctx context.Context, req *pb.GetUserPreferencesRequest) (*pb.GetUserPreferencesResponse, error) {
+	preferences, err := a.userUseCase.GetUserPreferences(req.UserId)
+	if err != nil {
+		return &pb.GetUserPreferencesResponse{}, err
+	}
+	return &pb.GetUserPreferencesResponse{
+		Status:      201,
+		Preferences: preferences,
+	}, nil
+}
