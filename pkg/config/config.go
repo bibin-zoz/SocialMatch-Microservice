@@ -11,10 +11,11 @@ type Config struct {
 	OrderSvcUrl   string `mapstructure:"ORDER_SVC_URL"`
 	AdminSvcUrl   string `mapstructure:"ADMIN_SVC_URL"`
 	CartSvcUrl    string `mapstructure:"CART_SVC_URL"`
+	RoomSvcUrl    string `mapstructure:"ROOM_SVC_URL"`
 }
 
 var envs = []string{
-	"PORT", "USER_SVC_URL", "PRODUCT_SVC_URL", "ORDER_SVC_URL", "ADMIN_SVC_URL", "CART_SVC_URL",
+	"PORT", "USER_SVC_URL", "PRODUCT_SVC_URL", "ORDER_SVC_URL", "ADMIN_SVC_URL", "CART_SVC_URL", "ROOM_SVC_URL",
 }
 
 func LoadConfig() (Config, error) {
