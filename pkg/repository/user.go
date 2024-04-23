@@ -106,3 +106,36 @@ func (ur *userRepository) BlockUser(userID uint) error {
 func (ur *userRepository) UnblockUser(userID uint) error {
 	return ur.DB.Model(&domain.User{}).Where("id = ?", userID).Update("blocked", false).Error
 }
+func (ur *userRepository) CheckUserInterest(userID uint64, interestName string) (bool, error) {
+	var count int64
+	err := ur.DB.Model(&domain.UserInterest{}).Where("user_id = ? AND interest_name = ?", userID, interestName).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
+func (ur *userRepository) CheckUserInterestByID(userID uint64, interestID uint64) (bool, error) {
+	var count int64
+	err := ur.DB.Model(&domain.UserInterest{}).Where("user_id = ? AND id = ?", userID, interestID).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
+func (ur *userRepository) AddUserInterest(userID uint64, interestName string) error {
+	interest := domain.UserInterest{
+		UserID:       int(userID),
+		InterestName: interestName,
+	}
+	return ur.DB.Create(&interest).Error
+}
+
+func (ur *userRepository) EditUserInterest(userID uint64, interestID uint64, newInterestName string) error {
+	return ur.DB.Model(&domain.UserInterest{}).Where("user_id = ? AND id = ?", userID, interestID).Update("interest_name", newInterestName).Error
+}
+
+func (ur *userRepository) DeleteUserInterest(userID uint64, interestID uint64) error {
+	return ur.DB.Delete(&domain.UserInterest{}, "user_id = ? AND id = ?", userID, interestID).Error
+}

@@ -36,13 +36,13 @@ func (a *UserServer) GetUsers(ctx context.Context, req *pb.GetUsersRequest) (*pb
 	}, nil
 }
 
-func (a *UserServer) UpdateUserStatus(ctx context.Context, req *pb.UpdateUserStatusRequest) (*pb.UpdateUserStatusResponce, error) {
+func (a *UserServer) UpdateUserStatus(ctx context.Context, req *pb.UpdateUserStatusRequest) (*pb.UpdateUserStatusResponse, error) {
 	fmt.Println("hiiUpdateUserStatus")
 	_, err := a.userUseCase.UpdateUserStatus(int(req.Userid))
 	if err != nil {
 		return nil, err
 	}
-	return &pb.UpdateUserStatusResponce{
+	return &pb.UpdateUserStatusResponse{
 		Status: 201,
 	}, nil
 }

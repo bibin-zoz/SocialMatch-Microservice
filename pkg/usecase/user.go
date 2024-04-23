@@ -211,3 +211,81 @@ func (ur *userUseCase) UpdateUserStatus(id int) (models.UserDetail, error) {
 		Email:     user.Email,
 	}, nil
 }
+
+func (ur *userUseCase) AddUserInterest(userID uint64, interestName string) error {
+	// Check if the user exists
+	_, err := ur.userRepository.GetUserByID(int(userID))
+	if err != nil {
+		return errors.New("failed to get user details")
+	}
+
+	// Check if the interest already exists for the user
+	interestExists, err := ur.userRepository.CheckUserInterest(userID, interestName)
+	if err != nil {
+		return errors.New("failed to check user interest")
+	}
+	if interestExists {
+		return errors.New("interest already exists for the user")
+	}
+
+	// Add the interest for the user
+	err = ur.userRepository.AddUserInterest(userID, interestName)
+	if err != nil {
+		return errors.New("failed to add user interest")
+	}
+
+	return nil
+}
+
+func (ur *userUseCase) EditUserInterest(userID uint64, interestID uint64, newInterestName string) error {
+	// Check if the user exists
+	_, err := ur.userRepository.GetUserByID(int(userID))
+	if err != nil {
+		return errors.New("failed to get user details")
+	}
+
+	// Check if the interest exists for the user
+	interestExists, err := ur.userRepository.CheckUserInterestByID(userID, interestID)
+	if err != nil {
+		return errors.New("failed to check user interest")
+	}
+	if !interestExists {
+		return errors.New("interest does not exist for the user")
+	}
+
+	// Edit the user interest
+	err = ur.userRepository.EditUserInterest(userID, interestID, newInterestName)
+	if err != nil {
+		return errors.New("failed to edit user interest")
+	}
+
+	return nil
+}
+
+func (ur *userUseCase) DeleteUserInterest(userID uint64, interestID uint64) error {
+	// Check if the user exists
+	_, err := ur.userRepository.GetUserByID(int(userID))
+	if err != nil {
+		return errors.New("failed to get user details")
+	}
+	// if user == nil {
+	// 	return errors.New("user not found")
+	// }
+
+	// Check if the interest exists for the user
+	interestExists, err := ur.userRepository.CheckUserInterestByID(userID, interestID)
+	if err != nil {
+		return errors.New("failed to check user interest")
+	}
+	if !interestExists {
+		return errors.New("interest does not exist for the user")
+	}
+
+	// Delete the user interest
+	err = ur.userRepository.DeleteUserInterest(userID, interestID)
+	if err != nil {
+		return errors.New("failed to delete user interest")
+	}
+
+	return nil
+}

@@ -1,52 +1,150 @@
 syntax = "proto3";
 
-package admin;
+package user;
 
-option go_package = "./pkg/pb/admin";
+option go_package = "./pkg/pb";
 
-service Admin {
-    rpc AdminLogin(AdminLoginRequest) returns (AdminLoginResponse) {};
-    rpc GetInterests(GetInterestsRequest) returns (GetInterestsResponse) {};
-    rpc GetPreferences(GetPreferencesRequest) returns (GetPreferencesResponse) {};
+service User {
+  rpc UserSignUp(UserSignUpRequest) returns (UserSignUpResponse) {};
+  rpc UserLogin(UserLoginRequest) returns (UserLoginResponse) {};
+  rpc UserEditDetails(UserEditDetailsRequest) returns (UserEditDetailsResponse) {};
+  rpc UserOtpGeneration(UserOtpRequest) returns (UserOtpRequestResponse){};
+  rpc UserOtpVerification(UserOtpVerificationRequest) returns (UserOtpVerificationResponse){};
+  rpc GetUsers(GetUsersRequest) returns (GetUsersResponse);
+  rpc UpdateUserStatus(UpdateUserStatusRequest) returns (UpdateUserStatusResponse){};
+  rpc AddUserInterest(AddUserInterestRequest) returns (AddUserInterestResponse) {};
+  rpc EditUserInterest(EditUserInterestRequest) returns (EditUserInterestResponse) {};
+  rpc DeleteUserInterest(DeleteUserInterestRequest) returns (DeleteUserInterestResponse) {};
 }
 
-message Interest {
-    int64 id = 1;
-    string interest_name = 2;
+message UpdateUserStatusRequest {
+  int64 userid = 1;
 }
 
-message GetInterestsRequest {}
-
-message GetInterestsResponse {
-    int64 status = 1;
-    repeated Interest interests = 2;
+message UpdateUserStatusResponse {
+  int64 status = 1;
 }
 
-message Preference {
-    int64 id = 1;
-    string preference_name = 2;
+message GetUsersRequest {
+  // You can leave this message empty
 }
 
-message GetPreferencesRequest {}
-
-message GetPreferencesResponse {
-    int64 status = 1;
-    repeated Preference preferences = 2;
+message Users {
+  uint32 id = 1;
+  string firstname = 2;
+  string lastname = 3;
+  string email = 4;
+  string password = 5;
+  string phone = 6;
+  bool blocked = 7;
+  string username = 8;
+  int32 gender_id = 9;
+  int32 age = 10;
 }
 
-message AdminDetails {
-    uint64 id = 1;
-    string first_name = 2;
-    string last_name = 3;
-    string email = 4;
+message GetUsersResponse {
+  int64 status = 1;
+  repeated Users users = 2;
 }
 
-message AdminLoginRequest {
-    string email = 1;
-    string password = 2;
+message UserOtpRequest {
+  string email = 1;
 }
 
-message AdminLoginResponse {
-    int64 status = 1;
-    string token = 2;
+message UserOtpRequestResponse {
+  int64 status = 1;
+  string email = 2;
+  int64 otp = 3;
+}
+
+message UserOtpVerificationRequest {
+  string email = 1;
+  int64 otp = 2;
+}
+
+message UserOtpVerificationResponse {
+  int64 status = 1;
+  UserDetails userDetails = 2;
+}
+
+message UserEditDetailsRequest {
+  string firstname = 1;
+  string lastname = 2;
+  string username = 3;
+  string email = 4;
+  string password = 5;
+  string phone = 6;
+  int32 genderid = 7;
+  int32 age = 8;
+}
+
+message UserEditDetailsResponse {
+  int64 status = 1;
+  UserDetails userDetails = 2;
+}
+
+message UserSignUpRequest {
+  string firstname = 1;
+  string lastname = 2;
+  string username = 3;
+  string email = 4;
+  string password = 5;
+  string phone = 6;
+  int32 genderid = 7;
+  int32 age = 8;
+}
+
+message UserDetails {
+  uint64 id = 1;
+  string firstname = 2;
+  string lastname = 3;
+  string email = 4;
+  string phone = 5;
+}
+
+message UserSignUpResponse {
+  int64 status = 1;
+  UserDetails userDetails = 2;
+  string AccessToken = 3;
+  string RefreshToken = 4;
+}
+
+message UserLoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message UserLoginResponse {
+  int64 status = 1;
+  UserDetails userDetails = 2;
+  string AccessToken = 3;
+  string RefreshToken = 4;
+}
+
+message AddUserInterestRequest {
+  uint64 userId = 1;
+  string interestName = 2;
+}
+
+message AddUserInterestResponse {
+  int64 status = 1;
+}
+
+message EditUserInterestRequest {
+  uint64 userId = 1;
+  uint64 interestId = 2;
+  string newInterestName = 3;
+}
+
+message EditUserInterestResponse {
+  int64 status = 1;
+}
+
+message DeleteUserInterestRequest {
+  uint64 userId = 1;
+  uint64 interestId = 2;
+}
+
+message DeleteUserInterestResponse {
+  int64 status = 1;
 }

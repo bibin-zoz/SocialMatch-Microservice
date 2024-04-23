@@ -20,3 +20,11 @@ type TokenUser struct {
 	AccessToken  string
 	RefreshToken string
 }
+type UserInterest struct {
+	UserID       int
+	InterestName string
+}
+type UserPreference struct {
+	UserID       int
+	InterestName string
+}
