@@ -166,3 +166,91 @@ func (c *userClient) UpdateUserStatus(userid int64) (models.UserDetail, error) {
 	}
 	return models.UserDetail{}, nil
 }
+func (c *userClient) AddUserInterest(userID uint64, interestName string) error {
+	_, err := c.Client.AddUserInterest(context.Background(), &pb.AddUserInterestRequest{
+		UserId:       userID,
+		InterestName: interestName,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *userClient) EditUserInterest(userID uint64, interestID uint64, newInterestName string) error {
+	_, err := c.Client.EditUserInterest(context.Background(), &pb.EditUserInterestRequest{
+		UserId:          userID,
+		InterestId:      interestID,
+		NewInterestName: newInterestName,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *userClient) DeleteUserInterest(userID uint64, interestID uint64) error {
+	_, err := c.Client.DeleteUserInterest(context.Background(), &pb.DeleteUserInterestRequest{
+		UserId:     userID,
+		InterestId: interestID,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (c *userClient) AddUserPreference(userID uint64, preferenceName string) error {
+	_, err := c.Client.AddUserPreference(context.Background(), &pb.AddUserPreferenceRequest{
+		UserId:         userID,
+		PreferenceName: preferenceName,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *userClient) EditUserPreference(userID uint64, preferenceID uint64, newPreferenceName string) error {
+	_, err := c.Client.EditUserPreference(context.Background(), &pb.EditUserPreferenceRequest{
+		UserId:            userID,
+		PreferenceId:      preferenceID,
+		NewPreferenceName: newPreferenceName,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *userClient) DeleteUserPreference(userID uint64, preferenceID uint64) error {
+	_, err := c.Client.DeleteUserPreference(context.Background(), &pb.DeleteUserPreferenceRequest{
+		UserId:       userID,
+		PreferenceId: preferenceID,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *userClient) GetUserInterests(userID uint64) ([]string, error) {
+	interestsResponse, err := c.Client.GetUserInterests(context.Background(), &pb.GetUserInterestsRequest{
+		UserId: userID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return interestsResponse.Interests, nil
+}
+
+func (c *userClient) GetUserPreferences(userID uint64) ([]string, error) {
+	preferencesResponse, err := c.Client.GetUserPreferences(context.Background(), &pb.GetUserPreferencesRequest{
+		UserId: userID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return preferencesResponse.Preferences, nil
+}

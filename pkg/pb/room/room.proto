@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package room;
+option go_package = "./pkg/pb/room";
+message Room {
+  uint32 id = 1;
+  string room_name = 2;
+  string description = 3;
+  uint32 max_persons = 4;
+  string status = 5;
+  // You may include other fields here
+}
+
+// RoomCreateRequest represents the request to create a room
+message RoomCreateRequest {
+  string room_name = 1;
+  string description = 2;
+  uint32 max_persons = 3;
+  string status=5;
+  repeated string preferences = 6;
+}
+
+// RoomEditRequest represents the request to edit a room
+message RoomEditRequest {
+  uint32 room_id = 1;
+  string room_name = 2;
+  string description = 3;
+  uint32 max_persons = 4;
+  string status=5;
+  repeated string preferences = 6;
+}
+
+// ChangeStatusRequest represents the request to change the status of a room
+message ChangeStatusRequest {
+  uint32 room_id = 1;
+  string status = 2;
+}
+
+// AddMembersRequest represents the request to add members to a room
+message AddMembersRequest {
+  uint32 room_id = 1;
+  repeated uint32 user_ids = 2;
+}
+
+// RoomJoinRequestsRequest represents the request to see room join requests
+message RoomJoinRequestsRequest {
+  uint32 room_id = 1;
+}
+
+// RoomJoinRequestsResponse represents the response containing room join requests
+message RoomJoinRequestsResponse {
+  repeated RoomJoinRequest room_join_requests = 1;
+}
+
+// RoomJoinRequest represents a request to join a room
+message RoomJoinRequest {
+  uint32 user_id = 1;
+  string username = 2;
+}
+
+// RoomService represents the RPC service for room operations
+service RoomService {
+  // CreateRoom creates a new room
+  rpc CreateRoom(RoomCreateRequest) returns (Room);
+
+  // EditRoom edits an existing room
+  rpc EditRoom(RoomEditRequest) returns (Room);
+
+  // ChangeStatus changes the status of a room
+  rpc ChangeStatus(ChangeStatusRequest) returns (Room);
+
+  // AddMembers adds members to a room
+  rpc AddMembers(AddMembersRequest) returns (Room);
+
+  // SeeRoomJoinRequests retrieves join requests for a room
+  rpc SeeRoomJoinRequests(RoomJoinRequestsRequest) returns (RoomJoinRequestsResponse);
+}

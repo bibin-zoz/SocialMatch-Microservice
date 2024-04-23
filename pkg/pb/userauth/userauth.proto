@@ -11,14 +11,21 @@ service User {
   rpc UserOtpGeneration(UserOtpRequest) returns (UserOtpRequestResponse){};
   rpc UserOtpVerification(UserOtpVerificationRequest) returns (UserOtpVerificationResponse){};
   rpc GetUsers(GetUsersRequest) returns (GetUsersResponse){};
-  rpc UpdateUserStatus(UpdateUserStatusRequest) returns (UpdateUserStatusResponce){};
+  rpc UpdateUserStatus(UpdateUserStatusRequest) returns (UpdateUserStatusResponse){};
+  rpc AddUserInterest(AddUserInterestRequest) returns (AddUserInterestResponse) {};
+  rpc EditUserInterest(EditUserInterestRequest) returns (EditUserInterestResponse) {};
+  rpc DeleteUserInterest(DeleteUserInterestRequest) returns (DeleteUserInterestResponse) {};
+  rpc GetUserInterests(GetUserInterestsRequest) returns (GetUserInterestsResponse) {}; // New RPC for interests
+  rpc AddUserPreference(AddUserPreferenceRequest) returns (AddUserPreferenceResponse) {}; // New RPC for preferences
+  rpc EditUserPreference(EditUserPreferenceRequest) returns (EditUserPreferenceResponse) {}; // New RPC for preferences
+  rpc DeleteUserPreference(DeleteUserPreferenceRequest) returns (DeleteUserPreferenceResponse) {}; // New RPC for preferences
+  rpc GetUserPreferences(GetUserPreferencesRequest) returns (GetUserPreferencesResponse) {}; // New RPC for preferences
 }
-
 
 message UpdateUserStatusRequest{
     int64 userid=1;
 }
-message UpdateUserStatusResponce{
+message UpdateUserStatusResponse{
     int64 status=1;
 }
 message GetUsersRequest {
@@ -42,7 +49,6 @@ message GetUsersResponse {
     repeated Users users = 2;
 }
 
-
 message UserOtpRequest{
     string email=1;
 }
@@ -50,7 +56,6 @@ message UserOtpRequestResponse{
     int64 status=1;
     string email=2;
     int64 otp=3;
-
 }
 message UserOtpVerificationRequest{
     string email=1;
@@ -58,7 +63,7 @@ message UserOtpVerificationRequest{
 }
 message UserOtpVerificationResponse{
     int64 status=1;
-	UserDetails  userDetails=2;
+    UserDetails  userDetails=2;
 }
 message UserSignUpRequest {
     string firstname = 1;
@@ -81,14 +86,12 @@ message UserEditDetailsRequest {
     int32 age = 8;
 }
 
-
-
 message UserEditDetailsResponse  {
     int64 status=1;
-	UserDetails  userDetails=2;
+    UserDetails  userDetails=2;
 }
 message UserDetails  {
-	uint64 id=1;
+    uint64 id=1;
     string firstname=2;
     string lastname=3;
     string email=4;
@@ -96,9 +99,9 @@ message UserDetails  {
 }
 message UserSignUpResponse  {
     int64 status=1;
-	UserDetails  userDetails=2;
-	string AccessToken=3; 
-	string RefreshToken =4;
+    UserDetails  userDetails=2;
+    string AccessToken=3; 
+    string RefreshToken =4;
 }
 message UserLoginRequest{
     string email=1;
@@ -106,7 +109,82 @@ message UserLoginRequest{
 }
 message UserLoginResponse{
     int64 status=1;
-	UserDetails  userDetails=2;
-	string AccessToken=3; 
-	string RefreshToken =4;
+    UserDetails  userDetails=2;
+    string AccessToken=3; 
+    string RefreshToken =4;
+}
+
+message AddUserInterestRequest {
+    uint64 user_id = 1;
+    string interest_name = 2;
+}
+
+message AddUserInterestResponse {
+    int64 status = 1;
+}
+
+message EditUserInterestRequest {
+    uint64 user_id = 1;
+    uint64 interest_id = 2;
+    string new_interest_name = 3;
+}
+
+message EditUserInterestResponse {
+    int64 status = 1;
+}
+
+message DeleteUserInterestRequest {
+    uint64 user_id = 1;
+    uint64 interest_id = 2;
+}
+
+message DeleteUserInterestResponse {
+    int64 status = 1;
+}
+
+// New messages for managing user preferences
+message AddUserPreferenceRequest {
+    uint64 user_id = 1;
+    string preference_name = 2;
+}
+
+message AddUserPreferenceResponse {
+    int64 status = 1;
+}
+
+message EditUserPreferenceRequest {
+    uint64 user_id = 1;
+    uint64 preference_id = 2;
+    string new_preference_name = 3;
+}
+
+message EditUserPreferenceResponse {
+    int64 status = 1;
+}
+
+message DeleteUserPreferenceRequest {
+    uint64 user_id = 1;
+    uint64 preference_id = 2;
+}
+
+message DeleteUserPreferenceResponse {
+    int64 status = 1;
+}
+
+message GetUserInterestsRequest {
+    uint64 user_id = 1;
+}
+
+message GetUserInterestsResponse {
+    int64 status = 1;
+    repeated string interests = 2;
+}
+
+message GetUserPreferencesRequest {
+    uint64 user_id = 1;
+}
+
+message GetUserPreferencesResponse {
+    int64 status = 1;
+    repeated string preferences = 2;
 }

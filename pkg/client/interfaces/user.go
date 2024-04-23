@@ -10,4 +10,12 @@ type UserClient interface {
 	UserOtpVerificationReq(user models.Otp) (models.UserDetail, error)
 	GetAllUsers() ([]models.Users, error)
 	UpdateUserStatus(userid int64) (models.UserDetail, error)
+	AddUserInterest(userID uint64, interestName string) error
+	EditUserInterest(userID uint64, interestID uint64, newInterestName string) error
+	DeleteUserInterest(userID uint64, interestID uint64) error
+	AddUserPreference(userID uint64, preferenceName string) error
+	EditUserPreference(userID uint64, preferenceID uint64, newPreferenceName string) error
+	DeleteUserPreference(userID uint64, preferenceID uint64) error
+	GetUserInterests(userID uint64) ([]string, error)
+	GetUserPreferences(userID uint64) ([]string, error)
 }
