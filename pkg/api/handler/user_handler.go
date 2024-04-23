@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/bibin-zoz/api-gateway/pkg/client/interfaces"
 	"github.com/bibin-zoz/api-gateway/pkg/utils/models"
@@ -147,4 +148,166 @@ func (ur *UserHandler) GetAllUsers(c *gin.Context) {
 	success := response.ClientResponse(http.StatusCreated, "Users fetched successfully", users, nil)
 	c.JSON(http.StatusCreated, success)
 
+}
+func (ur *UserHandler) AddUserInterest(c *gin.Context) {
+	var addUserInterest models.AddUserInterestRequest
+	if err := c.ShouldBindJSON(&addUserInterest); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err := validator.New().Struct(addUserInterest)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Constraints not satisfied", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err = ur.GRPC_Client.AddUserInterest(addUserInterest.UserID, addUserInterest.InterestName)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Failed to connect to server", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusCreated, "User interest added successfully", nil, nil)
+	c.JSON(http.StatusCreated, success)
+}
+
+func (ur *UserHandler) EditUserInterest(c *gin.Context) {
+	var editUserInterest models.EditUserInterestRequest
+	if err := c.ShouldBindJSON(&editUserInterest); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err := validator.New().Struct(editUserInterest)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Constraints not satisfied", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err = ur.GRPC_Client.EditUserInterest(editUserInterest.UserID, editUserInterest.InterestID, editUserInterest.NewInterestName)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Failed to connect to server", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusCreated, "User interest edited successfully", nil, nil)
+	c.JSON(http.StatusCreated, success)
+}
+
+func (ur *UserHandler) DeleteUserInterest(c *gin.Context) {
+	var deleteUserInterest models.DeleteUserInterestRequest
+	if err := c.ShouldBindJSON(&deleteUserInterest); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err := validator.New().Struct(deleteUserInterest)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Constraints not satisfied", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err = ur.GRPC_Client.DeleteUserInterest(deleteUserInterest.UserID, deleteUserInterest.InterestID)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Failed to connect to server", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusCreated, "User interest deleted successfully", nil, nil)
+	c.JSON(http.StatusCreated, success)
+}
+func (ur *UserHandler) AddUserPreference(c *gin.Context) {
+	var addUserPreference models.AddUserPreferenceRequest
+	if err := c.ShouldBindJSON(&addUserPreference); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err := validator.New().Struct(addUserPreference)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Constraints not satisfied", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err = ur.GRPC_Client.AddUserPreference(addUserPreference.UserID, addUserPreference.PreferenceName)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Failed to connect to server", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusCreated, "User preference added successfully", nil, nil)
+	c.JSON(http.StatusCreated, success)
+}
+
+func (ur *UserHandler) EditUserPreference(c *gin.Context) {
+	var editUserPreference models.EditUserPreferenceRequest
+	if err := c.ShouldBindJSON(&editUserPreference); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err := validator.New().Struct(editUserPreference)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Constraints not satisfied", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err = ur.GRPC_Client.EditUserPreference(editUserPreference.UserID, editUserPreference.PreferenceID, editUserPreference.NewPreferenceName)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Failed to connect to server", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusCreated, "User preference edited successfully", nil, nil)
+	c.JSON(http.StatusCreated, success)
+}
+
+func (ur *UserHandler) DeleteUserPreference(c *gin.Context) {
+	var deleteUserPreference models.DeleteUserPreferenceRequest
+	if err := c.ShouldBindJSON(&deleteUserPreference); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err := validator.New().Struct(deleteUserPreference)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Constraints not satisfied", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err = ur.GRPC_Client.DeleteUserPreference(deleteUserPreference.UserID, deleteUserPreference.PreferenceID)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Failed to connect to server", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusCreated, "User preference deleted successfully", nil, nil)
+	c.JSON(http.StatusCreated, success)
+}
+
+func (ur *UserHandler) GetUserInterests(c *gin.Context) {
+	userID := c.Param("user_id")
+	id, err := strconv.Atoi(userID)
+	interests, err := ur.GRPC_Client.GetUserInterests(uint64(id))
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Failed to fetch user interests", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusOK, "User interests fetched successfully", interests, nil)
+	c.JSON(http.StatusOK, success)
+}
+
+func (ur *UserHandler) GetUserPreferences(c *gin.Context) {
+	userID := c.Param("user_id")
+	id, err := strconv.Atoi(userID)
+	preferences, err := ur.GRPC_Client.GetUserPreferences(uint64(id))
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Failed to fetch user preferences", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusOK, "User preferences fetched successfully", preferences, nil)
+	c.JSON(http.StatusOK, success)
 }

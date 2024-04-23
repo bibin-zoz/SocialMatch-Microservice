@@ -8,6 +8,12 @@ service Admin {
     rpc AdminLogin(AdminLoginRequest) returns (AdminLoginResponse) {};
     rpc GetInterests(GetInterestsRequest) returns (GetInterestsResponse) {};
     rpc GetPreferences(GetPreferencesRequest) returns (GetPreferencesResponse) {};
+    rpc AddInterest(AddInterestRequest) returns (AddInterestResponse) {};
+    rpc EditInterest(EditInterestRequest) returns (EditInterestResponse) {};
+    rpc DeleteInterest(DeleteInterestRequest) returns (DeleteInterestResponse) {};
+    rpc AddPreference(AddPreferenceRequest) returns (AddPreferenceResponse) {};
+    rpc EditPreference(EditPreferenceRequest) returns (EditPreferenceResponse) {};
+    rpc DeletePreference(DeletePreferenceRequest) returns (DeletePreferenceResponse) {};
 }
 
 message Interest {
@@ -49,4 +55,56 @@ message AdminLoginRequest {
 message AdminLoginResponse {
     int64 status = 1;
     string token = 2;
+}
+
+message AddInterestRequest {
+    string interest_name = 1;
+}
+
+message AddInterestResponse {
+    int64 status = 1;
+    int64 id = 2;
+}
+
+message EditInterestRequest {
+    int64 id = 1;
+    string interest_name = 2;
+}
+
+message EditInterestResponse {
+    int64 status = 1;
+}
+
+message DeleteInterestRequest {
+    int64 id = 1;
+}
+
+message DeleteInterestResponse {
+    int64 status = 1;
+}
+
+message AddPreferenceRequest {
+    string preference_name = 1;
+}
+
+message AddPreferenceResponse {
+    int64 status = 1;
+    int64 id = 2;
+}
+
+message EditPreferenceRequest {
+    int64 id = 1;
+    string preference_name = 2;
+}
+
+message EditPreferenceResponse {
+    int64 status = 1;
+}
+
+message DeletePreferenceRequest {
+    int64 id = 1;
+}
+
+message DeletePreferenceResponse {
+    int64 status = 1;
 }

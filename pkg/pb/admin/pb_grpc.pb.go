@@ -19,9 +19,15 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Admin_AdminLogin_FullMethodName     = "/admin.Admin/AdminLogin"
-	Admin_GetInterests_FullMethodName   = "/admin.Admin/GetInterests"
-	Admin_GetPreferences_FullMethodName = "/admin.Admin/GetPreferences"
+	Admin_AdminLogin_FullMethodName       = "/admin.Admin/AdminLogin"
+	Admin_GetInterests_FullMethodName     = "/admin.Admin/GetInterests"
+	Admin_GetPreferences_FullMethodName   = "/admin.Admin/GetPreferences"
+	Admin_AddInterest_FullMethodName      = "/admin.Admin/AddInterest"
+	Admin_EditInterest_FullMethodName     = "/admin.Admin/EditInterest"
+	Admin_DeleteInterest_FullMethodName   = "/admin.Admin/DeleteInterest"
+	Admin_AddPreference_FullMethodName    = "/admin.Admin/AddPreference"
+	Admin_EditPreference_FullMethodName   = "/admin.Admin/EditPreference"
+	Admin_DeletePreference_FullMethodName = "/admin.Admin/DeletePreference"
 )
 
 // AdminClient is the client API for Admin service.
@@ -31,6 +37,12 @@ type AdminClient interface {
 	AdminLogin(ctx context.Context, in *AdminLoginRequest, opts ...grpc.CallOption) (*AdminLoginResponse, error)
 	GetInterests(ctx context.Context, in *GetInterestsRequest, opts ...grpc.CallOption) (*GetInterestsResponse, error)
 	GetPreferences(ctx context.Context, in *GetPreferencesRequest, opts ...grpc.CallOption) (*GetPreferencesResponse, error)
+	AddInterest(ctx context.Context, in *AddInterestRequest, opts ...grpc.CallOption) (*AddInterestResponse, error)
+	EditInterest(ctx context.Context, in *EditInterestRequest, opts ...grpc.CallOption) (*EditInterestResponse, error)
+	DeleteInterest(ctx context.Context, in *DeleteInterestRequest, opts ...grpc.CallOption) (*DeleteInterestResponse, error)
+	AddPreference(ctx context.Context, in *AddPreferenceRequest, opts ...grpc.CallOption) (*AddPreferenceResponse, error)
+	EditPreference(ctx context.Context, in *EditPreferenceRequest, opts ...grpc.CallOption) (*EditPreferenceResponse, error)
+	DeletePreference(ctx context.Context, in *DeletePreferenceRequest, opts ...grpc.CallOption) (*DeletePreferenceResponse, error)
 }
 
 type adminClient struct {
@@ -68,6 +80,60 @@ func (c *adminClient) GetPreferences(ctx context.Context, in *GetPreferencesRequ
 	return out, nil
 }
 
+func (c *adminClient) AddInterest(ctx context.Context, in *AddInterestRequest, opts ...grpc.CallOption) (*AddInterestResponse, error) {
+	out := new(AddInterestResponse)
+	err := c.cc.Invoke(ctx, Admin_AddInterest_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) EditInterest(ctx context.Context, in *EditInterestRequest, opts ...grpc.CallOption) (*EditInterestResponse, error) {
+	out := new(EditInterestResponse)
+	err := c.cc.Invoke(ctx, Admin_EditInterest_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) DeleteInterest(ctx context.Context, in *DeleteInterestRequest, opts ...grpc.CallOption) (*DeleteInterestResponse, error) {
+	out := new(DeleteInterestResponse)
+	err := c.cc.Invoke(ctx, Admin_DeleteInterest_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) AddPreference(ctx context.Context, in *AddPreferenceRequest, opts ...grpc.CallOption) (*AddPreferenceResponse, error) {
+	out := new(AddPreferenceResponse)
+	err := c.cc.Invoke(ctx, Admin_AddPreference_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) EditPreference(ctx context.Context, in *EditPreferenceRequest, opts ...grpc.CallOption) (*EditPreferenceResponse, error) {
+	out := new(EditPreferenceResponse)
+	err := c.cc.Invoke(ctx, Admin_EditPreference_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) DeletePreference(ctx context.Context, in *DeletePreferenceRequest, opts ...grpc.CallOption) (*DeletePreferenceResponse, error) {
+	out := new(DeletePreferenceResponse)
+	err := c.cc.Invoke(ctx, Admin_DeletePreference_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminServer is the server API for Admin service.
 // All implementations must embed UnimplementedAdminServer
 // for forward compatibility
@@ -75,6 +141,12 @@ type AdminServer interface {
 	AdminLogin(context.Context, *AdminLoginRequest) (*AdminLoginResponse, error)
 	GetInterests(context.Context, *GetInterestsRequest) (*GetInterestsResponse, error)
 	GetPreferences(context.Context, *GetPreferencesRequest) (*GetPreferencesResponse, error)
+	AddInterest(context.Context, *AddInterestRequest) (*AddInterestResponse, error)
+	EditInterest(context.Context, *EditInterestRequest) (*EditInterestResponse, error)
+	DeleteInterest(context.Context, *DeleteInterestRequest) (*DeleteInterestResponse, error)
+	AddPreference(context.Context, *AddPreferenceRequest) (*AddPreferenceResponse, error)
+	EditPreference(context.Context, *EditPreferenceRequest) (*EditPreferenceResponse, error)
+	DeletePreference(context.Context, *DeletePreferenceRequest) (*DeletePreferenceResponse, error)
 	mustEmbedUnimplementedAdminServer()
 }
 
@@ -90,6 +162,24 @@ func (UnimplementedAdminServer) GetInterests(context.Context, *GetInterestsReque
 }
 func (UnimplementedAdminServer) GetPreferences(context.Context, *GetPreferencesRequest) (*GetPreferencesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPreferences not implemented")
+}
+func (UnimplementedAdminServer) AddInterest(context.Context, *AddInterestRequest) (*AddInterestResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddInterest not implemented")
+}
+func (UnimplementedAdminServer) EditInterest(context.Context, *EditInterestRequest) (*EditInterestResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditInterest not implemented")
+}
+func (UnimplementedAdminServer) DeleteInterest(context.Context, *DeleteInterestRequest) (*DeleteInterestResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteInterest not implemented")
+}
+func (UnimplementedAdminServer) AddPreference(context.Context, *AddPreferenceRequest) (*AddPreferenceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddPreference not implemented")
+}
+func (UnimplementedAdminServer) EditPreference(context.Context, *EditPreferenceRequest) (*EditPreferenceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditPreference not implemented")
+}
+func (UnimplementedAdminServer) DeletePreference(context.Context, *DeletePreferenceRequest) (*DeletePreferenceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletePreference not implemented")
 }
 func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
 
@@ -158,6 +248,114 @@ func _Admin_GetPreferences_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_AddInterest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddInterestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).AddInterest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_AddInterest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).AddInterest(ctx, req.(*AddInterestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_EditInterest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditInterestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).EditInterest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_EditInterest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).EditInterest(ctx, req.(*EditInterestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_DeleteInterest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteInterestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).DeleteInterest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_DeleteInterest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).DeleteInterest(ctx, req.(*DeleteInterestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_AddPreference_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddPreferenceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).AddPreference(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_AddPreference_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).AddPreference(ctx, req.(*AddPreferenceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_EditPreference_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditPreferenceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).EditPreference(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_EditPreference_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).EditPreference(ctx, req.(*EditPreferenceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_DeletePreference_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletePreferenceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).DeletePreference(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_DeletePreference_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).DeletePreference(ctx, req.(*DeletePreferenceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +374,30 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPreferences",
 			Handler:    _Admin_GetPreferences_Handler,
+		},
+		{
+			MethodName: "AddInterest",
+			Handler:    _Admin_AddInterest_Handler,
+		},
+		{
+			MethodName: "EditInterest",
+			Handler:    _Admin_EditInterest_Handler,
+		},
+		{
+			MethodName: "DeleteInterest",
+			Handler:    _Admin_DeleteInterest_Handler,
+		},
+		{
+			MethodName: "AddPreference",
+			Handler:    _Admin_AddPreference_Handler,
+		},
+		{
+			MethodName: "EditPreference",
+			Handler:    _Admin_EditPreference_Handler,
+		},
+		{
+			MethodName: "DeletePreference",
+			Handler:    _Admin_DeletePreference_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
