@@ -125,3 +125,48 @@ func (a *UserServer) UserOtpVerification(ctx context.Context, req *pb.UserOtpVer
 
 }
 
+func (a *UserServer) AddUserInterest(ctx context.Context, req *pb.AddUserInterestRequest) (*pb.AddUserInterestResponse, error) {
+	// Convert request parameters to domain model
+	interest := models.Interest{
+		// Add necessary fields from req to interest model
+	}
+
+	// Call use case method to add user interest
+	err := a.userUseCase.AddUserInterest(req.UserId, interest)
+	if err != nil {
+		return &pb.AddUserInterestResponse{}, err
+	}
+
+	return &pb.AddUserInterestResponse{
+		Status: 201,
+	}, nil
+}
+
+func (a *UserServer) EditUserInterest(ctx context.Context, req *pb.EditUserInterestRequest) (*pb.EditUserInterestResponse, error) {
+	// Convert request parameters to domain model
+	interest := models.Interest{
+		// Add necessary fields from req to interest model
+	}
+
+	// Call use case method to edit user interest
+	err := a.userUseCase.EditUserInterest(req.UserId, req.InterestId, interest)
+	if err != nil {
+		return &pb.EditUserInterestResponse{}, err
+	}
+
+	return &pb.EditUserInterestResponse{
+		Status: 201,
+	}, nil
+}
+
+func (a *UserServer) DeleteUserInterest(ctx context.Context, req *pb.DeleteUserInterestRequest) (*pb.DeleteUserInterestResponse, error) {
+	// Call use case method to delete user interest
+	err := a.userUseCase.DeleteUserInterest(req.UserId, req.InterestId)
+	if err != nil {
+		return &pb.DeleteUserInterestResponse{}, err
+	}
+
+	return &pb.DeleteUserInterestResponse{
+		Status: 201,
+	}, nil
+}
