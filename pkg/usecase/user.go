@@ -212,7 +212,7 @@ func (ur *userUseCase) UpdateUserStatus(id int) (models.UserDetail, error) {
 	}, nil
 }
 
-func (ur *userUseCase) AddUserInterest(userID uint64, interestName string) error {
+func (ur *userUseCase) AddUserInterest(userID uint64, interestID int) error {
 	// Check if the user exists
 	_, err := ur.userRepository.GetUserByID(int(userID))
 	if err != nil {
@@ -220,7 +220,7 @@ func (ur *userUseCase) AddUserInterest(userID uint64, interestName string) error
 	}
 
 	// Check if the interest already exists for the user
-	interestExists, err := ur.userRepository.CheckUserInterest(userID, interestName)
+	interestExists, err := ur.userRepository.CheckUserInterestByID(userID, uint64(interestID))
 	if err != nil {
 		return errors.New("failed to check user interest")
 	}
@@ -229,7 +229,7 @@ func (ur *userUseCase) AddUserInterest(userID uint64, interestName string) error
 	}
 
 	// Add the interest for the user
-	err = ur.userRepository.AddUserInterest(userID, interestName)
+	err = ur.userRepository.AddUserInterest(userID, interestID)
 	if err != nil {
 		return errors.New("failed to add user interest")
 	}
@@ -289,7 +289,7 @@ func (ur *userUseCase) DeleteUserInterest(userID uint64, interestID uint64) erro
 
 	return nil
 }
-func (uu *userUseCase) AddUserPreference(userID uint64, preferenceName string) error {
+func (uu *userUseCase) AddUserPreference(userID uint64, preferenceID int) error {
 	// Check if the user exists
 	_, err := uu.userRepository.GetUserByID(int(userID))
 	if err != nil {
@@ -297,7 +297,7 @@ func (uu *userUseCase) AddUserPreference(userID uint64, preferenceName string) e
 	}
 
 	// Check if the preference already exists for the user
-	preferenceExists, err := uu.userRepository.CheckUserPreference(userID, preferenceName)
+	preferenceExists, err := uu.userRepository.CheckUserPreferenceByID(userID, uint64(preferenceID))
 	if err != nil {
 		return errors.New("failed to check user preference")
 	}
@@ -306,7 +306,7 @@ func (uu *userUseCase) AddUserPreference(userID uint64, preferenceName string) e
 	}
 
 	// Add the preference for the user
-	err = uu.userRepository.AddUserPreference(userID, preferenceName)
+	err = uu.userRepository.AddUserPreference(userID, preferenceID)
 	if err != nil {
 		return errors.New("failed to add user preference")
 	}

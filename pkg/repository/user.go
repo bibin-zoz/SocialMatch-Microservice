@@ -117,17 +117,17 @@ func (ur *userRepository) CheckUserInterest(userID uint64, interestName string) 
 
 func (ur *userRepository) CheckUserInterestByID(userID uint64, interestID uint64) (bool, error) {
 	var count int64
-	err := ur.DB.Model(&domain.UserInterest{}).Where("user_id = ? AND id = ?", userID, interestID).Count(&count).Error
+	err := ur.DB.Model(&domain.UserInterest{}).Where("user_id = ? AND interest_id = ?", userID, interestID).Count(&count).Error
 	if err != nil {
 		return false, err
 	}
 	return count > 0, nil
 }
 
-func (ur *userRepository) AddUserInterest(userID uint64, interestName string) error {
+func (ur *userRepository) AddUserInterest(userID uint64, interestID int) error {
 	interest := domain.UserInterest{
-		UserID:       int(userID),
-		InterestName: interestName,
+		UserID:     int(userID),
+		InterestID: interestID,
 	}
 	return ur.DB.Create(&interest).Error
 }
@@ -157,10 +157,10 @@ func (ur *userRepository) CheckUserPreferenceByID(userID uint64, preferenceID ui
 	return count > 0, nil
 }
 
-func (ur *userRepository) AddUserPreference(userID uint64, preferenceName string) error {
+func (ur *userRepository) AddUserPreference(userID uint64, preferenceID int) error {
 	preference := domain.UserPreference{
-		UserID:         int(userID),
-		PreferenceName: preferenceName,
+		UserID:       int(userID),
+		PreferenceID: preferenceID,
 	}
 	return ur.DB.Create(&preference).Error
 }
@@ -175,7 +175,7 @@ func (ur *userRepository) DeleteUserPreference(userID uint64, preferenceID uint6
 
 func (ur *userRepository) GetUserPreferences(userID uint64) ([]string, error) {
 	var preferences []string
-	err := ur.DB.Model(&domain.UserPreference{}).Where("user_id = ?", userID).Pluck("preference_name", &preferences).Error
+	err := ur.DB.Model(&domain.UserPreference{}).Where("user_id = ?", userID).Pluck("preference_id", &preferences).Error
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +184,8 @@ func (ur *userRepository) GetUserPreferences(userID uint64) ([]string, error) {
 
 func (ur *userRepository) GetUserInterests(userID uint64) ([]string, error) {
 	var interests []string
-	err := ur.DB.Model(&domain.UserInterest{}).Where("user_id = ?", userID).Pluck("interest_name", &interests).Error
+	fmt.Println("id", userID)
+	err := ur.DB.Model(&domain.UserInterest{}).Where("user_id = ?", userID).Pluck("interest_id", &interests).Error
 	if err != nil {
 		return nil, err
 	}

@@ -17,12 +17,12 @@ type UserRepository interface {
 	UnblockUser(userID uint) error
 	CheckUserInterest(userID uint64, interestName string) (bool, error)
 	CheckUserInterestByID(userID uint64, interestID uint64) (bool, error)
-	AddUserInterest(userID uint64, interestName string) error
+	AddUserInterest(userID uint64, interestID int) error
 	EditUserInterest(userID uint64, interestID uint64, newInterestName string) error
 	DeleteUserInterest(userID uint64, interestID uint64) error
 	CheckUserPreference(userID uint64, preferenceName string) (bool, error)
 	CheckUserPreferenceByID(userID uint64, preferenceID uint64) (bool, error)
-	AddUserPreference(userID uint64, preferenceName string) error
+	AddUserPreference(userID uint64, preferenceID int) error
 	EditUserPreference(userID uint64, preferenceID uint64, newPreferenceName string) error
 	DeleteUserPreference(userID uint64, preferenceID uint64) error
 	GetUserPreferences(userID uint64) ([]string, error)

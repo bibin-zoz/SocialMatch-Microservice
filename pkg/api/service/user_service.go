@@ -126,7 +126,7 @@ func (a *UserServer) UserOtpVerification(ctx context.Context, req *pb.UserOtpVer
 }
 
 func (a *UserServer) AddUserInterest(ctx context.Context, req *pb.AddUserInterestRequest) (*pb.AddUserInterestResponse, error) {
-	err := a.userUseCase.AddUserInterest(req.UserId, req.InterestName)
+	err := a.userUseCase.AddUserInterest(req.UserId, int(req.InterestId))
 	if err != nil {
 		return &pb.AddUserInterestResponse{}, err
 	}
@@ -149,7 +149,7 @@ func (a *UserServer) DeleteUserInterest(ctx context.Context, req *pb.DeleteUserI
 	return &pb.DeleteUserInterestResponse{Status: 201}, nil
 }
 func (a *UserServer) AddUserPreference(ctx context.Context, req *pb.AddUserPreferenceRequest) (*pb.AddUserPreferenceResponse, error) {
-	err := a.userUseCase.AddUserPreference(req.UserId, req.PreferenceName)
+	err := a.userUseCase.AddUserPreference(req.UserId, int(req.PreferenceId))
 	if err != nil {
 		return &pb.AddUserPreferenceResponse{}, err
 	}

@@ -13,8 +13,8 @@ type UserUseCase interface {
 	UserVerifyOtp(otp string, email string) (bool, error)
 	GetAllUsers() ([]domain.User, error)
 	UpdateUserStatus(id int) (models.UserDetail, error)
-	AddUserInterest(userID uint64, interestName string) error
-	AddUserPreference(userID uint64, preferenceName string) error
+	AddUserInterest(userID uint64, interestID int) error
+	AddUserPreference(userID uint64, preferenceID int) error
 	EditUserInterest(userID uint64, interestID uint64, newInterestName string) error
 	EditUserPreference(userID uint64, preferenceID uint64, newPreferenceName string) error
 	DeleteUserInterest(userID uint64, interestID uint64) error

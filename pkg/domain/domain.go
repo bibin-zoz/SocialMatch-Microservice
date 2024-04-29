@@ -21,12 +21,12 @@ type TokenUser struct {
 	RefreshToken string
 }
 type UserInterest struct {
-	UserID       int
-	InterestName string
+	UserID     int
+	InterestID int
 }
 type UserPreference struct {
-	UserID         int
-	PreferenceName string
+	UserID       int
+	PreferenceID int
 }
 type Interest struct {
 	ID           int
