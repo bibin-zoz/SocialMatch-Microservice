@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/bibin-zoz/social-match-admin-svc/pkg/domain"
 	interfaces "github.com/bibin-zoz/social-match-admin-svc/pkg/repository/interface"
@@ -59,7 +60,7 @@ func (ad *adminRepository) FetchPreference() ([]models.Preference, error) {
 	if err := ad.DB.Find(&Preference).Error; err != nil {
 		return nil, err
 	}
-
+	fmt.Println("Preference")
 	return Preference, nil
 }
 func (ad *adminRepository) AddInterest(interestName string) (int64, error) {

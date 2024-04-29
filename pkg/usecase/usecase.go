@@ -66,13 +66,11 @@ func (ad *adminUseCase) LoginHandler(admin models.AdminLogin) (*domain.TokenAdmi
 	if err != nil {
 		return &domain.TokenAdmin{}, err
 	}
-	// compare password from database and that provided from admins
 	err = bcrypt.CompareHashAndPassword([]byte(admindeatils.Password), []byte(admin.Password))
 	if err != nil {
 		return &domain.TokenAdmin{}, errors.New("password not matching")
 	}
 	var adminDetailsResponse models.AdminDetailsResponse
-	//  copy all details except password and sent it back to the front end
 	err = copier.Copy(&adminDetailsResponse, &admindeatils)
 	if err != nil {
 		return &domain.TokenAdmin{}, err
@@ -104,16 +102,15 @@ func (ad *adminUseCase) GetPreferences() ([]models.Preference, error) {
 	return Preference, nil
 }
 func (ad *adminUseCase) AddInterest(interestName string) (int64, error) {
-	// Call the repository method to add interest
 	id, err := ad.adminRepository.AddInterest(interestName)
 	if err != nil {
 		return 0, err
 	}
+	fmt.Println("usecase", interestName)
 	return id, nil
 }
 
 func (ad *adminUseCase) EditInterest(id int64, interestName string) error {
-	// Call the repository method to edit interest
 	err := ad.adminRepository.EditInterest(id, interestName)
 	if err != nil {
 		return err
@@ -122,7 +119,6 @@ func (ad *adminUseCase) EditInterest(id int64, interestName string) error {
 }
 
 func (ad *adminUseCase) DeleteInterest(id int64) error {
-	// Call the repository method to delete interest
 	err := ad.adminRepository.DeleteInterest(id)
 	if err != nil {
 		return err
@@ -131,7 +127,6 @@ func (ad *adminUseCase) DeleteInterest(id int64) error {
 }
 
 func (ad *adminUseCase) AddPreference(preferenceName string) (int64, error) {
-	// Call the repository method to add preference
 	id, err := ad.adminRepository.AddPreference(preferenceName)
 	if err != nil {
 		return 0, err
@@ -140,7 +135,6 @@ func (ad *adminUseCase) AddPreference(preferenceName string) (int64, error) {
 }
 
 func (ad *adminUseCase) EditPreference(id int64, preferenceName string) error {
-	// Call the repository method to edit preference
 	err := ad.adminRepository.EditPreference(id, preferenceName)
 	if err != nil {
 		return err
@@ -149,7 +143,6 @@ func (ad *adminUseCase) EditPreference(id int64, preferenceName string) error {
 }
 
 func (ad *adminUseCase) DeletePreference(id int64) error {
-	// Call the repository method to delete preference
 	err := ad.adminRepository.DeletePreference(id)
 	if err != nil {
 		return err

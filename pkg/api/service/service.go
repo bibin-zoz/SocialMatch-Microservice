@@ -134,3 +134,23 @@ func (ad *AdminServer) DeletePreference(ctx context.Context, req *pb.DeletePrefe
 		Status: 200,
 	}, nil
 }
+func (ad *AdminServer) GetPreferences(ctx context.Context, req *pb.GetPreferencesRequest) (*pb.GetPreferencesResponse, error) {
+	preference, err := ad.adminUseCase.GetPreferences()
+	if err != nil {
+		return nil, err
+	}
+
+	var pbPreferences []*pb.Preference
+	for _, u := range preference {
+		pbRes := &pb.Preference{
+			Id:             (int64(u.ID)),
+			PreferenceName: u.PreferenceName,
+		}
+		pbPreferences = append(pbPreferences, pbRes)
+	}
+
+	return &pb.GetPreferencesResponse{
+		Status:      201,
+		Preferences: pbPreferences,
+	}, nil
+}
