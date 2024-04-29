@@ -164,10 +164,10 @@ func (c *userClient) UpdateUserStatus(userid int64) (models.UserDetail, error) {
 	}
 	return models.UserDetail{}, nil
 }
-func (c *userClient) AddUserInterest(userID uint64, interestName string) error {
+func (c *userClient) AddUserInterest(userID uint64, interestID int) error {
 	_, err := c.Client.AddUserInterest(context.Background(), &pb.AddUserInterestRequest{
-		UserId:       userID,
-		InterestName: interestName,
+		UserId:     userID,
+		InterestId: uint64(interestID),
 	})
 	if err != nil {
 		return err
@@ -197,10 +197,10 @@ func (c *userClient) DeleteUserInterest(userID uint64, interestID uint64) error 
 	}
 	return nil
 }
-func (c *userClient) AddUserPreference(userID uint64, preferenceName string) error {
+func (c *userClient) AddUserPreference(userID uint64, preference_id int) error {
 	_, err := c.Client.AddUserPreference(context.Background(), &pb.AddUserPreferenceRequest{
-		UserId:         userID,
-		PreferenceName: preferenceName,
+		UserId:       userID,
+		PreferenceId: uint64(preference_id),
 	})
 	if err != nil {
 		return err

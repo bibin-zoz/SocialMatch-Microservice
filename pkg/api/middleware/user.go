@@ -16,13 +16,15 @@ func UserAuthMiddleware() gin.HandlerFunc {
 			var err error
 			tokenString, err = c.Cookie("Authorization")
 			if err != nil {
+				response := response.ClientResponse(http.StatusUnauthorized, "user not loginned", nil, err.Error())
+				c.JSON(http.StatusUnauthorized, response)
 				c.AbortWithStatus(http.StatusUnauthorized)
 				return
 			}
 		}
 		userID, userEmail, err := helper.ExtractUserIDFromToken(tokenString)
 		if err != nil {
-			response := response.ClientResponse(http.StatusUnauthorized, "Invalid Token ", nil, err.Error())
+			response := response.ClientResponse(http.StatusUnauthorized, "Invalid Token", nil, err.Error())
 			c.JSON(http.StatusUnauthorized, response)
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return

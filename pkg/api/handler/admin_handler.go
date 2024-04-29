@@ -68,6 +68,7 @@ func (ad *AdminHandler) GetInterests(c *gin.Context) {
 }
 
 func (ad *AdminHandler) GetPreferences(c *gin.Context) {
+	fmt.Println("hiii")
 	preferences, err := ad.GRPC_Client.GetPreferences()
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "Failed to fetch preferences", nil, err.Error())

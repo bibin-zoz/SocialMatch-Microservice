@@ -15,8 +15,8 @@ type AddInterest struct {
 	Name string `json:"interest_name"  binding:"min=4"`
 }
 type AddUserInterestRequest struct {
-	UserID       uint64 `json:"user_id"`
-	InterestName string `json:"interest_name" binding:"min=4"`
+	UserID     uint64 `json:"user_id"`
+	InterestID int    `json:"interest_id"`
 }
 
 type EditUserInterestRequest struct {
@@ -30,8 +30,8 @@ type DeleteUserInterestRequest struct {
 }
 
 type AddUserPreferenceRequest struct {
-	UserID         uint64 `json:"user_id"`
-	PreferenceName string `json:"Preference_name" binding:"min=4"`
+	UserID       uint64 `json:"user_id"`
+	PreferenceID int    `json:"Preference_id"`
 }
 
 type EditUserPreferenceRequest struct {
