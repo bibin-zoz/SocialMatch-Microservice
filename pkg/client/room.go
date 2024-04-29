@@ -19,14 +19,14 @@ type RoomClient struct {
 }
 
 func NewRoomServiceClient(cfg config.Config) interfaces.RoomClient {
-	grpcConnection, err := grpc.NewClient(cfg.RoomSvcUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	grpcConnection, err := grpc.Dial(cfg.RoomSvcUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		fmt.Println("Could not connect", err)
 		return nil
 	}
 
 	grpcClient := pb.NewRoomServiceClient(grpcConnection)
-	roomGrpcConnection, err := grpc.NewClient(cfg.RoomSvcUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	roomGrpcConnection, err := grpc.Dial(cfg.RoomSvcUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		fmt.Println("Could not connect to room service", err)
 		return nil
@@ -40,13 +40,14 @@ func NewRoomServiceClient(cfg config.Config) interfaces.RoomClient {
 
 }
 
-func (c *RoomClient) CreateRoom(roomData models.RoomData) (models.Room, error) {
+func (c *RoomClient) CreateRoom(roomData models.RoomData, userid int) (models.Room, error) {
 	res, err := c.RoomClient.CreateRoom(context.Background(), &room.RoomCreateRequest{
 		RoomName:    roomData.RoomName,
 		Description: roomData.Description,
 		MaxPersons:  roomData.MaxPersons,
 		Status:      roomData.Status,
 		Preferences: roomData.Preferences,
+		CreatorID:   int32(userid),
 	})
 	if err != nil {
 		return models.Room{}, err
@@ -57,7 +58,6 @@ func (c *RoomClient) CreateRoom(roomData models.RoomData) (models.Room, error) {
 		Description: res.Description,
 		MaxPersons:  res.MaxPersons,
 		Status:      res.Status,
-		// Preferences: res.P,
 	}, nil
 }
 
@@ -79,7 +79,6 @@ func (c *RoomClient) EditRoom(roomData models.RoomData) (models.Room, error) {
 		Description: res.Description,
 		MaxPersons:  res.MaxPersons,
 		Status:      res.Status,
-		// Preferences: res.Preferences,
 	}, nil
 }
 
@@ -97,7 +96,6 @@ func (c *RoomClient) ChangeRoomStatus(roomID uint32, status string) (models.Room
 		Description: res.Description,
 		MaxPersons:  res.MaxPersons,
 		Status:      res.Status,
-		// Preferences: res.Preferences,
 	}, nil
 }
 
@@ -115,7 +113,6 @@ func (c *RoomClient) AddMembersToRoom(roomID uint32, userIds []uint32) (models.R
 		Description: res.Description,
 		MaxPersons:  res.MaxPersons,
 		Status:      res.Status,
-		// Preferences: res.Preferences,
 	}, nil
 
 }
@@ -135,4 +132,43 @@ func (c *RoomClient) GetRoomJoinRequests(roomID uint32) ([]models.RoomJoinReques
 		}
 	}
 	return joinRequests, nil
+}
+
+func (c *RoomClient) GetAllRooms() ([]models.Room, error) {
+	res, err := c.Client.GetAllRooms(context.Background(), &pb.GetAllRoomsRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	var rooms []models.Room
+	for _, pbRoom := range res.Rooms {
+		room := models.Room{
+			ID:          pbRoom.Id,
+			RoomName:    pbRoom.RoomName,
+			Description: pbRoom.Description,
+			MaxPersons:  pbRoom.MaxPersons,
+			Status:      pbRoom.Status,
+		}
+		rooms = append(rooms, room)
+	}
+
+	return rooms, nil
+}
+
+func (c *RoomClient) GetRoomMembers(roomID uint32) ([]models.RoomMember, error) {
+	res, err := c.RoomClient.GetGroupMembers(context.Background(), &room.GetGroupMembersRequest{RoomId: roomID})
+	if err != nil {
+		return nil, err
+	}
+
+	var members []models.RoomMember
+	for _, pbMember := range res.Members {
+		member := models.RoomMember{
+			UserID:   pbMember.UserId,
+			Username: pbMember.Username,
+		}
+		members = append(members, member)
+	}
+
+	return members, nil
 }

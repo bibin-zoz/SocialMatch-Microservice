@@ -2,10 +2,11 @@ package routes
 
 import (
 	handlers "github.com/bibin-zoz/api-gateway/pkg/api/handler"
+	"github.com/bibin-zoz/api-gateway/pkg/api/middleware"
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, adminhandler *handlers.AdminHandler) {
+func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, adminhandler *handlers.AdminHandler, roomHandler *handlers.RoomHandler) {
 	router.GET("/ping", handlers.PingHandler)
 	router.POST("/login", userHandler.Userlogin)
 	router.GET("/verify", userHandler.UserOtpReq)
@@ -36,5 +37,12 @@ func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, adminhan
 	router.POST("/user/preferences", userHandler.AddUserPreference)
 	router.PUT("/user/preferences", userHandler.EditUserPreference)
 	router.DELETE("/user/preferences", userHandler.DeleteUserPreference)
+
+	//rooms
+	router.GET("/user/room", middleware.UserAuthMiddleware(), roomHandler.GetAllRooms)
+	router.POST("/user/room", middleware.UserAuthMiddleware(), roomHandler.CreateRoom)
+	router.PUT("/user/room", middleware.UserAuthMiddleware(), roomHandler.EditRoom)
+	router.POST("/user/room/members", middleware.UserAuthMiddleware(), roomHandler.AddMembersToRoom)
+	router.GET("/user/room/members/:room_id", roomHandler.GetRoomMembers)
 
 }

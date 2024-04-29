@@ -116,7 +116,7 @@ message UserLoginResponse{
 
 message AddUserInterestRequest {
     uint64 user_id = 1;
-    string interest_name = 2;
+    uint64 interest_id= 2;
 }
 
 message AddUserInterestResponse {
@@ -145,7 +145,7 @@ message DeleteUserInterestResponse {
 // New messages for managing user preferences
 message AddUserPreferenceRequest {
     uint64 user_id = 1;
-    string preference_name = 2;
+    uint64 preference_id = 2;
 }
 
 message AddUserPreferenceResponse {

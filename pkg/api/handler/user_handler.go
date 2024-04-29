@@ -162,7 +162,7 @@ func (ur *UserHandler) AddUserInterest(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	err = ur.GRPC_Client.AddUserInterest(addUserInterest.UserID, addUserInterest.InterestName)
+	err = ur.GRPC_Client.AddUserInterest(addUserInterest.UserID, addUserInterest.InterestID)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Failed to connect to server", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
@@ -230,7 +230,7 @@ func (ur *UserHandler) AddUserPreference(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	err = ur.GRPC_Client.AddUserPreference(addUserPreference.UserID, addUserPreference.PreferenceName)
+	err = ur.GRPC_Client.AddUserPreference(addUserPreference.UserID, addUserPreference.PreferenceID)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Failed to connect to server", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
