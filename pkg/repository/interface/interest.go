@@ -1,5 +1,5 @@
 package interfaces
 
-type InterestUseCase interface {
+type InterestRepository interface {
 	CheckInterest(interestID string) (bool, error)
 }

@@ -18,10 +18,12 @@ func InitializeAPI(cfg config.Config) (*server.Server, error) {
 
 	adminRepository := repository.NewAdminRepository(gormDB)
 	adminUseCase := usecase.NewAdminUseCase(adminRepository)
-	interestUseCase := usecase.NewInterestUseCase()
+	interestRepo := repository.NewInterestRepository(gormDB)
+	interestUseCase := usecase.NewInterestUseCase(interestRepo)
+	interestServiceServer := service.NewAdminServer(interestUseCase)
 
 	adminServiceServer := service.NewAdminServer(adminUseCase)
-	grpcServer, err := server.NewGRPCServer(cfg, adminServiceServer)
+	grpcServer, err := server.NewGRPCServer(cfg, adminServiceServer, interestServiceServer)
 
 	if err != nil {
 		return &server.Server{}, err
