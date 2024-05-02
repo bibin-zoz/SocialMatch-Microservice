@@ -5,19 +5,20 @@ import (
 )
 
 type Config struct {
-	DBHost     string `mapstructure:"DB_HOST"`
-	DBName     string `mapstructure:"DB_NAME"`
-	DBUser     string `mapstructure:"DB_USER"`
-	DBPort     string `mapstructure:"DB_PORT"`
-	DBPassword string `mapstructure:"DB_PASSWORD"`
-	Port       string `mapstructure:"PORT"`
+	DBHost      string `mapstructure:"DB_HOST"`
+	DBName      string `mapstructure:"DB_NAME"`
+	DBUser      string `mapstructure:"DB_USER"`
+	DBPort      string `mapstructure:"DB_PORT"`
+	DBPassword  string `mapstructure:"DB_PASSWORD"`
+	Port        string `mapstructure:"PORT"`
+	AdminSvcUrl string `mapstructure:"ADMIN_SVC_URL"`
 
 	Email    string `mapstructure:"email"`
 	Password string `mapstructure:"password"`
 }
 
 var envs = []string{
-	"DB_HOST", "DB_NAME", "DB_USER", "DB_PORT", "DB_PASSWORD", "PORT",
+	"DB_HOST", "DB_NAME", "DB_USER", "DB_PORT", "DB_PASSWORD", "PORT", "ADMIN_SVC_URL",
 }
 
 func LoadConfig() (Config, error) {

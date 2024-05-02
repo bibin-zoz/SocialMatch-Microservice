@@ -3,6 +3,7 @@ package di
 import (
 	server "github.com/bibin-zoz/social-match-userauth-svc/pkg"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/api/service"
+	"github.com/bibin-zoz/social-match-userauth-svc/pkg/client"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/config"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/db"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/repository"
@@ -15,9 +16,9 @@ func InitializeAPI(cfg config.Config) (*server.Server, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	interestClient := client.NewInterestClient(cfg)
 	userRepository := repository.NewUserRepository(gormDB)
-	adminUseCase := usecase.NewUserUseCase(userRepository, cfg)
+	adminUseCase := usecase.NewUserUseCase(userRepository, cfg, interestClient)
 
 	userServiceServer := service.NewUserServer(adminUseCase)
 	grpcServer, err := server.NewGRPCServer(cfg, userServiceServer)

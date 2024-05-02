@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	client "github.com/bibin-zoz/social-match-userauth-svc/pkg/client/interface"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/config"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/domain"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/helper"
@@ -18,12 +19,14 @@ import (
 type userUseCase struct {
 	userRepository interfaces.UserRepository
 	Config         config.Config
+	InterestClient client.InterestClientInterface // Inject InterestClientInterface
 }
 
-func NewUserUseCase(repository interfaces.UserRepository, config config.Config) services.UserUseCase {
+func NewUserUseCase(repository interfaces.UserRepository, config config.Config, interestClient client.InterestClientInterface) services.UserUseCase {
 	return &userUseCase{
 		userRepository: repository,
 		Config:         config,
+		InterestClient: interestClient, // Inject InterestClientInterface
 	}
 }
 
@@ -217,6 +220,11 @@ func (ur *userUseCase) AddUserInterest(userID uint64, interestID int) error {
 	_, err := ur.userRepository.GetUserByID(int(userID))
 	if err != nil {
 		return errors.New("failed to get user details")
+	}
+	exist, err := ur.InterestClient.CheckInterest(string(interestID))
+	if !exist {
+
+		return errors.New("invalid interest id")
 	}
 
 	// Check if the interest already exists for the user

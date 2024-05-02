@@ -175,7 +175,7 @@ func (ur *userRepository) DeleteUserPreference(userID uint64, preferenceID uint6
 
 func (ur *userRepository) GetUserPreferences(userID uint64) ([]string, error) {
 	var preferences []string
-	err := ur.DB.Model(&domain.UserPreference{}).Where("user_id = ?", userID).Pluck("preference_id", &preferences).Error
+	err := ur.DB.Model(&domain.UserPreference{}).Where("user_id = ?", userID).Pluck("preference_id ", &preferences).Error
 	if err != nil {
 		return nil, err
 	}
