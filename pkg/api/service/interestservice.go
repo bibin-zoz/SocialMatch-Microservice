@@ -4,6 +4,8 @@ package service
 
 import (
 	"context"
+
+	"github.com/bibin-zoz/social-match-admin-svc/pkg/pb/interest"
 )
 
 // InterestServiceServer is the server for the InterestService.
