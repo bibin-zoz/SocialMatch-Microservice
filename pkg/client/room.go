@@ -172,3 +172,43 @@ func (c *RoomClient) GetRoomMembers(roomID uint32) ([]models.RoomMember, error) 
 
 	return members, nil
 }
+func (c *RoomClient) SendMessage(message models.Message) (models.Message, error) {
+	req := &room.SendMessageRequest{
+		RoomId:   uint32(message.RoomID),
+		SenderId: uint32(message.UserID),
+		Content:  message.Content,
+		Media:    message.Media,
+	}
+	res, err := c.RoomClient.SendMessage(context.Background(), req)
+	if err != nil {
+		return models.Message{}, err
+	}
+	return models.Message{
+		ID:        uint(res.MessageId),
+		RoomID:    uint(res.RoomId),
+		UserID:    uint(res.SenderId),
+		Content:   res.Content,
+		CreatedAt: res.Timestamp.AsTime(), // Convert Protobuf timestamp to Go time
+	}, nil
+}
+
+func (c *RoomClient) ReadMessages(roomID uint32) ([]models.Message, error) {
+	req := &room.ReadMessagesRequest{
+		RoomId: roomID,
+	}
+	res, err := c.RoomClient.ReadMessages(context.Background(), req)
+	if err != nil {
+		return nil, err
+	}
+	messages := make([]models.Message, len(res.Messages))
+	for i, pbMsg := range res.Messages {
+		messages[i] = models.Message{
+			ID:        uint(pbMsg.MessageId),
+			RoomID:    uint(pbMsg.RoomId),
+			UserID:    uint(pbMsg.SenderId),
+			Content:   pbMsg.Content,
+			CreatedAt: pbMsg.Timestamp.AsTime(), // Convert Protobuf timestamp to Go time
+		}
+	}
+	return messages, nil
+}

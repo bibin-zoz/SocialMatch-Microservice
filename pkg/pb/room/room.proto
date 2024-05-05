@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 package room;
 option go_package = "./pkg/pb/room";
 
@@ -67,6 +69,31 @@ message GetGroupMembersResponse {
   repeated RoomJoinRequest members = 1;
 }
 
+// New message for sending a message in a room
+message SendMessageRequest {
+  uint32 room_id = 1;
+  uint32 sender_id = 2;
+  string content = 3;
+}
+
+// New message for receiving a message in a room
+message Message {
+  uint32 message_id = 1;
+  uint32 room_id = 2;
+  uint32 sender_id = 3;
+  string content = 4;
+  google.protobuf.Timestamp timestamp = 5;
+}
+
+// New message for reading messages in a room
+message ReadMessagesRequest {
+  uint32 room_id = 1;
+}
+
+message ReadMessagesResponse {
+  repeated Message messages = 1;
+}
+
 service RoomService {
   // CreateRoom creates a new room
   rpc CreateRoom(RoomCreateRequest) returns (Room);
@@ -88,4 +115,10 @@ service RoomService {
 
   // New RPC method to get group members using room ID
   rpc GetGroupMembers(GetGroupMembersRequest) returns (GetGroupMembersResponse);
+
+  // New RPC method to send a message in a room
+  rpc SendMessage(SendMessageRequest) returns (Message);
+
+  // New RPC method to read messages in a room
+  rpc ReadMessages(ReadMessagesRequest) returns (ReadMessagesResponse);
 }

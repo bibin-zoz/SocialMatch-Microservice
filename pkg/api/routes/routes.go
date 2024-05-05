@@ -45,4 +45,8 @@ func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, adminhan
 	router.POST("/user/room/members", middleware.UserAuthMiddleware(), roomHandler.AddMembersToRoom)
 	router.GET("/user/room/members/:room_id", roomHandler.GetRoomMembers)
 
+	//messages
+	router.POST("/user/room/:room_id", roomHandler.SendMessage)
+	router.GET("/user/room/:room_id", roomHandler.ReadMessages)
+
 }

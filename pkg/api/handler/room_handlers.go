@@ -156,3 +156,62 @@ func (rh *RoomHandler) GetRoomMembers(c *gin.Context) {
 
 	c.JSON(http.StatusOK, members)
 }
+func (rh *RoomHandler) SendMessage(c *gin.Context) {
+	var requestData struct {
+		Content string         `json:"content"`
+		Media   []models.Media `json:"media"`
+	}
+	if err := c.ShouldBindJSON(&requestData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to bind JSON"})
+		return
+	}
+
+	roomID, err := strconv.ParseUint(c.Param("room_id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid room ID"})
+		return
+	}
+	authHeader := c.GetHeader("Authorization")
+	token := helper.GetTokenFromHeader(authHeader)
+	senderID, _, err := helper.ExtractUserIDFromToken(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	// Prepare the message object
+	message := models.Message{
+		RoomID:  uint(roomID),
+		UserID:  uint(senderID),
+		Content: requestData.Content,
+		Media:   requestData.Media,
+	}
+
+	// Send the message
+	sentMessage, err := rh.GRPC_RoomClient.SendMessage(message)
+	if err != nil {
+		errorMessage := fmt.Sprintf("Failed to send message: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": errorMessage})
+		return
+	}
+
+	c.JSON(http.StatusCreated, sentMessage)
+}
+
+func (rh *RoomHandler) ReadMessages(c *gin.Context) {
+	// Extract room ID from request context
+	roomID, err := strconv.ParseUint(c.Param("room_id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid room ID"})
+		return
+	}
+
+	messages, err := rh.GRPC_RoomClient.ReadMessages(uint32(roomID))
+	if err != nil {
+		errorMessage := fmt.Sprintf("Failed to read messages: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": errorMessage})
+		return
+	}
+
+	c.JSON(http.StatusOK, messages)
+}
