@@ -10,4 +10,6 @@ type RoomClient interface {
 	GetRoomJoinRequests(roomID uint32) ([]models.RoomJoinRequest, error)
 	GetAllRooms() ([]models.Room, error)
 	GetRoomMembers(roomID uint32) ([]models.RoomMember, error)
+	SendMessage(roomID uint32, senderID uint32, content string) (models.Message, error)
+	ReadMessages(roomID uint32) ([]models.Message, error)
 }

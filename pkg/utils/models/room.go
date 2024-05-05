@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 // Room represents a room entity
 type Room struct {
 	ID          uint32   `json:"id"`
@@ -29,4 +31,16 @@ type RoomData struct {
 type RoomMember struct {
 	UserID   uint32 `json:"user_id"`
 	Username string `json:"username"`
+}
+type Message struct {
+	ID        uint `gorm:"primaryKey"`
+	RoomID    uint
+	UserID    uint
+	Content   string
+	CreatedAt time.Time
+	Media     []Media `json:"media"`
+}
+type Media struct {
+	ID       uint   `json:"id"`
+	Filename string `json:"filename"`
 }
