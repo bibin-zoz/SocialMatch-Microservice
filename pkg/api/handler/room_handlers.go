@@ -156,6 +156,7 @@ func (rh *RoomHandler) GetRoomMembers(c *gin.Context) {
 
 	c.JSON(http.StatusOK, members)
 }
+
 func (rh *RoomHandler) SendMessage(c *gin.Context) {
 	var requestData struct {
 		Content string         `json:"content"`

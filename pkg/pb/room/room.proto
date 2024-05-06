@@ -69,11 +69,12 @@ message GetGroupMembersResponse {
   repeated RoomJoinRequest members = 1;
 }
 
-// New message for sending a message in a room
+// New message for sending a message in a room with media
 message SendMessageRequest {
   uint32 room_id = 1;
   uint32 sender_id = 2;
   string content = 3;
+  repeated Media media = 4;
 }
 
 // New message for receiving a message in a room
@@ -83,6 +84,7 @@ message Message {
   uint32 sender_id = 3;
   string content = 4;
   google.protobuf.Timestamp timestamp = 5;
+  repeated Media media = 6; // Added media field
 }
 
 // New message for reading messages in a room
@@ -92,6 +94,13 @@ message ReadMessagesRequest {
 
 message ReadMessagesResponse {
   repeated Message messages = 1;
+}
+
+// Media message representing media attachments
+message Media {
+  uint32 id = 1;
+  string filename = 2;
+  // Add other fields as needed, such as media type, size, etc.
 }
 
 service RoomService {

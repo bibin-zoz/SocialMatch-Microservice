@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/bibin-zoz/api-gateway/pkg/client/interfaces"
+	"github.com/bibin-zoz/api-gateway/pkg/helper"
 	"github.com/bibin-zoz/api-gateway/pkg/utils/models"
 	response "github.com/bibin-zoz/api-gateway/pkg/utils/responce"
 	"github.com/gin-gonic/gin"
@@ -310,4 +311,45 @@ func (ur *UserHandler) GetUserPreferences(c *gin.Context) {
 	}
 	success := response.ClientResponse(http.StatusOK, "User preferences fetched successfully", preferences, nil)
 	c.JSON(http.StatusOK, success)
+}
+func (rh *UserHandler) SendMessage(c *gin.Context) {
+	var requestData struct {
+		Content string         `json:"content"`
+		Media   []models.Media `json:"media"`
+	}
+	if err := c.ShouldBindJSON(&requestData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to bind JSON"})
+		return
+	}
+
+	recipentID, err := strconv.ParseUint(c.Param("user_id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid room ID"})
+		return
+	}
+	authHeader := c.GetHeader("Authorization")
+	token := helper.GetTokenFromHeader(authHeader)
+	senderID, _, err := helper.ExtractUserIDFromToken(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	// Prepare the message object
+	message := models.UserMessage{
+		SenderID:   uint(senderID),
+		RecipentID: uint(recipentID),
+		Content:    requestData.Content,
+		Media:      requestData.Media,
+	}
+
+	// Send the message
+	sentMessage, err := rh.GRPC_Client.SendMessage(message)
+	if err != nil {
+		errorMessage := fmt.Sprintf("Failed to send message: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": errorMessage})
+		return
+	}
+
+	c.JSON(http.StatusCreated, sentMessage)
 }
