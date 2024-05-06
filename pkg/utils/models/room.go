@@ -44,3 +44,12 @@ type Media struct {
 	ID       uint   `json:"id"`
 	Filename string `json:"filename"`
 }
+type UserMessage struct {
+	ID         uint `gorm:"primaryKey"`
+	SenderID   uint
+	RecipentID uint
+	Content    string
+	CreatedAt  time.Time
+	Read       bool    `dafault:"false"`
+	Media      []Media `json:"media"`
+}

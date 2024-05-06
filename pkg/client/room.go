@@ -173,12 +173,20 @@ func (c *RoomClient) GetRoomMembers(roomID uint32) ([]models.RoomMember, error) 
 	return members, nil
 }
 func (c *RoomClient) SendMessage(message models.Message) (models.Message, error) {
+	var mediaList []*room.Media
+	for _, m := range message.Media {
+		mediaList = append(mediaList, &room.Media{
+			Id:       uint32(m.ID),
+			Filename: m.Filename,
+		})
+	}
 	req := &room.SendMessageRequest{
 		RoomId:   uint32(message.RoomID),
 		SenderId: uint32(message.UserID),
 		Content:  message.Content,
-		Media:    message.Media,
+		Media:    mediaList, // Assign []*room.Media
 	}
+
 	res, err := c.RoomClient.SendMessage(context.Background(), req)
 	if err != nil {
 		return models.Message{}, err
