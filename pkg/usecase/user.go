@@ -388,3 +388,36 @@ func (uu *userUseCase) GetUserPreferences(userID uint64) ([]string, error) {
 	}
 	return preferences, nil
 }
+func (uu *userUseCase) FollowUser(senderID, userID int64) error {
+	reqExist, err := uu.userRepository.CheckConnectionRequestExist(uint(senderID), uint(userID))
+	if err != nil {
+		return errors.New("failed to check connection request")
+	}
+
+	if reqExist {
+		// If a connection request exists, add them as friends
+		err := uu.userRepository.AddConnection(uint(senderID), uint(userID))
+		if err != nil {
+			return errors.New("failed to add connection as friend")
+		}
+		return nil
+	}
+
+	// Check if they are already friends
+	areFriends, err := uu.userRepository.CheckFriends(uint(senderID), uint(userID))
+	if err != nil {
+		return errors.New("failed to check if users are already friends")
+	}
+
+	if areFriends {
+		return errors.New("users are already friends")
+	}
+
+	// If no connection request exists and they are not friends, send a new request
+	err = uu.userRepository.AddConnectionRequest(uint(senderID), uint(userID))
+	if err != nil {
+		return errors.New("failed to send connection request")
+	}
+
+	return nil
+}

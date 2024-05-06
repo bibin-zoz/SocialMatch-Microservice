@@ -21,4 +21,5 @@ type UserUseCase interface {
 	DeleteUserPreference(userID uint64, preferenceID uint64) error
 	GetUserInterests(userID uint64) ([]string, error)
 	GetUserPreferences(userID uint64) ([]string, error)
+	FollowUser(senderID, userID int64) error
 }

@@ -20,8 +20,16 @@ service User {
   rpc EditUserPreference(EditUserPreferenceRequest) returns (EditUserPreferenceResponse) {}; // New RPC for preferences
   rpc DeleteUserPreference(DeleteUserPreferenceRequest) returns (DeleteUserPreferenceResponse) {}; // New RPC for preferences
   rpc GetUserPreferences(GetUserPreferencesRequest) returns (GetUserPreferencesResponse) {}; // New RPC for preferences
+  rpc FollowUser(FollowUserRequest)returns(FollowUserResponce){};
 }
 
+message FollowUserRequest{
+    int64 userid=1;
+    int64 senderid=2;
+}
+message FollowUserResponce{
+    int64 status=1;
+}
 message UpdateUserStatusRequest{
     int64 userid=1;
 }

@@ -193,3 +193,12 @@ func (a *UserServer) GetUserPreferences(ctx context.Context, req *pb.GetUserPref
 		Preferences: preferences,
 	}, nil
 }
+func (a *UserServer) FollowUser(ctx context.Context, req *pb.FollowUserRequest) (*pb.FollowUserResponce, error) {
+	err := a.userUseCase.FollowUser(req.Senderid, req.Userid)
+	if err != nil {
+		return &pb.FollowUserResponce{}, err
+	}
+	return &pb.FollowUserResponce{
+		Status: 201,
+	}, nil
+}

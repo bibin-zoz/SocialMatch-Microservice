@@ -7,16 +7,19 @@ import (
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/domain"
 	interfaces "github.com/bibin-zoz/social-match-userauth-svc/pkg/repository/interface"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/utils/models"
+	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
 )
 
 type userRepository struct {
-	DB *gorm.DB
+	DB          *gorm.DB
+	MongoClient *mongo.Client
 }
 
-func NewUserRepository(DB *gorm.DB) interfaces.UserRepository {
+func NewUserRepository(DB *gorm.DB, mongoClient *mongo.Client) interfaces.UserRepository {
 	return &userRepository{
-		DB: DB,
+		DB:          DB,
+		MongoClient: mongoClient,
 	}
 
 }
@@ -190,4 +193,60 @@ func (ur *userRepository) GetUserInterests(userID uint64) ([]string, error) {
 		return nil, err
 	}
 	return interests, nil
+}
+
+//	func (ur *userRepository) FollowUser(senderID uint64, userID uint64) ([]string, error) {
+//		var followReq domain.FollowUSer
+//		fmt.Println("id", userID)
+//		err := ur.DB.Model(&domain.UserInterest{}).Where("user_id = ?", userID).Pluck("interest_id", &interests).Error
+//		if err != nil {
+//			return nil, err
+//		}
+//		return interests, nil
+//	}
+func (ur *userRepository) CheckConnectionRequestExist(senderID, userID uint) (bool, error) {
+	var connection domain.Connections
+	result := ur.DB.Where("(user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)", senderID, userID, userID, senderID).First(&connection)
+	if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return false, result.Error
+	}
+	return result.RowsAffected > 0, nil
+}
+
+// AddConnection adds a connection between senderID and userID
+func (ur *userRepository) AddConnection(senderID, userID uint) error {
+	connection := domain.Connections{
+		UserID:   senderID,
+		FriendID: userID,
+		Status:   "friends",
+	}
+	result := ur.DB.Create(&connection)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+// CheckFriends checks if senderID and userID are already friends
+func (ur *userRepository) CheckFriends(senderID, userID uint) (bool, error) {
+	var connection domain.Connections
+	result := ur.DB.Where("(user_id = ? AND friend_id = ?) AND status = 'friends'", senderID, userID).First(&connection)
+	if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return false, result.Error
+	}
+	return result.RowsAffected > 0, nil
+}
+
+// AddConnectionRequest adds a connection request between senderID and userID
+func (ur *userRepository) AddConnectionRequest(senderID, userID uint) error {
+	connection := domain.Connections{
+		UserID:   senderID,
+		FriendID: userID,
+		Status:   "pending",
+	}
+	result := ur.DB.Create(&connection)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
 }

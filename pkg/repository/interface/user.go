@@ -27,4 +27,8 @@ type UserRepository interface {
 	DeleteUserPreference(userID uint64, preferenceID uint64) error
 	GetUserPreferences(userID uint64) ([]string, error)
 	GetUserInterests(userID uint64) ([]string, error)
+	CheckConnectionRequestExist(senderID, userID uint) (bool, error)
+	AddConnection(senderID, userID uint) error
+	CheckFriends(senderID, userID uint) (bool, error)
+	AddConnectionRequest(senderID, userID uint) error
 }

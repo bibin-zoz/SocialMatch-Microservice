@@ -12,12 +12,12 @@ import (
 
 func InitializeAPI(cfg config.Config) (*server.Server, error) {
 
-	gormDB, err := db.ConnectDatabase(cfg)
+	gormDB, mongoClient, err := db.ConnectDatabase(cfg)
 	if err != nil {
 		return nil, err
 	}
 	interestClient := client.NewInterestClient(cfg)
-	userRepository := repository.NewUserRepository(gormDB)
+	userRepository := repository.NewUserRepository(gormDB, mongoClient)
 	adminUseCase := usecase.NewUserUseCase(userRepository, cfg, interestClient)
 
 	userServiceServer := service.NewUserServer(adminUseCase)

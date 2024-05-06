@@ -37,3 +37,10 @@ type Preference struct {
 	ID             int
 	PreferenceName string
 }
+
+type Connections struct {
+	ID       uint `gorm:"primaryKey"`
+	UserID   uint
+	FriendID uint
+	Status   string `gorm:"check:status IN ('pending', 'friends', 'blocked')"`
+}
