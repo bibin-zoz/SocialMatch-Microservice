@@ -4,6 +4,7 @@ package client
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/config"
 	interest "github.com/bibin-zoz/social-match-userauth-svc/pkg/pb/interest"
@@ -18,9 +19,13 @@ type InterestClient struct {
 
 // NewInterestClient creates a new instance of InterestClient.
 func NewInterestClient(cfg config.Config) *InterestClient {
+	// Print debug information
+	fmt.Println("Dialing gRPC server at:", cfg.AdminSvcUrl)
+
 	// Dial the gRPC server
 	conn, err := grpc.Dial(cfg.AdminSvcUrl, grpc.WithInsecure())
 	if err != nil {
+		fmt.Println("Failed to dial gRPC server:", err)
 		return nil
 	}
 

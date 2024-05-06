@@ -222,8 +222,7 @@ func (ur *userUseCase) AddUserInterest(userID uint64, interestID int) error {
 		return errors.New("failed to get user details")
 	}
 	exist, err := ur.InterestClient.CheckInterest(string(interestID))
-	if !exist {
-
+	if exist {
 		return errors.New("invalid interest id")
 	}
 
