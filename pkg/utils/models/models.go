@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type UserLogin struct {
 	Email    string
 	Password string
@@ -30,4 +32,18 @@ type UserDetail struct {
 	Email     string
 	Phone     string
 	Password  string
+}
+type Media struct {
+	// ID       uint   `json:"id"`
+	MessageID int
+	Filename  string `json:"filename"`
+}
+type UserMessage struct {
+	ID         uint `gorm:"primaryKey"`
+	SenderID   uint
+	RecipentID uint
+	Content    string
+	CreatedAt  time.Time
+	Read       bool    `dafault:"false"`
+	Media      []Media `json:"media"`
 }

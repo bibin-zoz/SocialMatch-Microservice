@@ -1,6 +1,11 @@
 package domain
 
-import "github.com/bibin-zoz/social-match-userauth-svc/pkg/utils/models"
+import (
+	"time"
+
+	"github.com/bibin-zoz/social-match-userauth-svc/pkg/utils/models"
+	"gorm.io/gorm"
+)
 
 type User struct {
 	ID        uint   `json:"id" gorm:"uniquekey; not null"`
@@ -43,4 +48,19 @@ type Connections struct {
 	UserID   uint
 	FriendID uint
 	Status   string `gorm:"check:status IN ('pending', 'friends', 'blocked')"`
+}
+
+type Media struct {
+	gorm.Model
+	Message_id int    `gorm:foriegnKey"`
+	Filename   string `json:"filename"`
+}
+type UserMessage struct {
+	ID         uint `gorm:"primaryKey"`
+	SenderID   uint
+	RecipentID uint
+	Content    string
+	CreatedAt  time.Time
+	Read       bool `dafault:"false"`
+	// Media      []Media `json:"media"`
 }

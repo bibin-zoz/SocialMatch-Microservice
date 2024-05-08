@@ -220,7 +220,19 @@ func (ur *userRepository) AddConnection(senderID, userID uint) error {
 		FriendID: userID,
 		Status:   "friends",
 	}
-	result := ur.DB.Create(&connection)
+	result := ur.DB.Where("user_id=? and friend_id=?", senderID, userID).Or("user_id=? and friend_id=?", userID, senderID).Updates(&connection)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+func (ur *userRepository) BlockConnection(senderID, userID uint) error {
+	connection := domain.Connections{
+		UserID:   senderID,
+		FriendID: userID,
+		Status:   "blocked",
+	}
+	result := ur.DB.Where("user_id=? and friend_id=?", senderID, userID).Or("user_id=? and friend_id=?", userID, senderID).Updates(&connection)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -248,5 +260,24 @@ func (ur *userRepository) AddConnectionRequest(senderID, userID uint) error {
 	if result.Error != nil {
 		return result.Error
 	}
+	return nil
+}
+func (ur *userRepository) SaveMessage(message *domain.UserMessage) (uint, error) {
+	result := ur.DB.Create(message)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return message.ID, nil
+}
+
+func (ur *userRepository) SaveMedia(media *domain.Media) error {
+	fmt.Println("repohiii")
+	fmt.Println(media)
+	result := ur.DB.Create(media)
+
+	if result.Error != nil {
+		return result.Error
+	}
+	fmt.Println("nill")
 	return nil
 }

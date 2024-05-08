@@ -31,4 +31,7 @@ type UserRepository interface {
 	AddConnection(senderID, userID uint) error
 	CheckFriends(senderID, userID uint) (bool, error)
 	AddConnectionRequest(senderID, userID uint) error
+	BlockConnection(senderID, userID uint) error
+	SaveMessage(message *domain.UserMessage) (uint, error)
+	SaveMedia(media *domain.Media) error
 }

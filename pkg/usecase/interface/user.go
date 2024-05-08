@@ -22,4 +22,7 @@ type UserUseCase interface {
 	GetUserInterests(userID uint64) ([]string, error)
 	GetUserPreferences(userID uint64) ([]string, error)
 	FollowUser(senderID, userID int64) error
+	BlockConnection(senderID, userID int64) error
+	SendMessage(message *models.UserMessage) error
+	SendMessageKafka(message *models.UserMessage) error
 }

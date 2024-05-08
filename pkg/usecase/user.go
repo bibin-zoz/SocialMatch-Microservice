@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -20,6 +21,7 @@ type userUseCase struct {
 	userRepository interfaces.UserRepository
 	Config         config.Config
 	InterestClient client.InterestClientInterface // Inject InterestClientInterface
+	
 }
 
 func NewUserUseCase(repository interfaces.UserRepository, config config.Config, interestClient client.InterestClientInterface) services.UserUseCase {
@@ -417,6 +419,67 @@ func (uu *userUseCase) FollowUser(senderID, userID int64) error {
 	err = uu.userRepository.AddConnectionRequest(uint(senderID), uint(userID))
 	if err != nil {
 		return errors.New("failed to send connection request")
+	}
+
+	return nil
+}
+func (uu *userUseCase) BlockConnection(senderID, userID int64) error {
+	reqExist, err := uu.userRepository.CheckConnectionRequestExist(uint(senderID), uint(userID))
+	if err != nil {
+		return errors.New("no request found")
+	}
+
+	if reqExist {
+
+		err := uu.userRepository.BlockConnection(uint(senderID), uint(userID))
+		if err != nil {
+			return errors.New("failed to block user")
+		}
+		return nil
+	}
+
+	return nil
+}
+func (ur *userUseCase) SendMessage(message *models.UserMessage) error {
+	// Assuming you have a repository method to save the message
+	usermsg := &domain.UserMessage{
+		SenderID:   message.SenderID,
+		RecipentID: message.RecipentID,
+		Content:    message.Content,
+		CreatedAt:  message.CreatedAt,
+	}
+	msgID, err := ur.userRepository.SaveMessage(usermsg)
+	if err != nil {
+		return errors.New("failed to save message")
+	}
+	if message.Media != nil {
+		fmt.Println("hiii")
+		for _, m := range message.Media {
+			media := &domain.Media{
+				Message_id: int(msgID),
+				Filename:   m.Filename,
+			}
+			fmt.Println("hi2")
+			err := ur.userRepository.SaveMedia(media)
+			if err != nil {
+				return errors.New("failed to save message")
+			}
+		}
+
+	}
+	return nil
+}
+func (ur *userUseCase) SendMessageKafka(message *models.UserMessage) error {
+	// Serialize the message to JSON
+	messageJSON, err := json.Marshal(message)
+	if err != nil {
+		return errors.New("failed to serialize message")
+	}
+
+	// Produce the message to Kafka
+	err = ur.kafkaProducer.ProduceMessage("your-kafka-topic", messageJSON)
+	if err != nil {
+		return errors.New("failed to produce message to Kafka")
 	}
 
 	return nil

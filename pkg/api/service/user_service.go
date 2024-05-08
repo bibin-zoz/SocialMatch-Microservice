@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/pb"
+	"github.com/golang/protobuf/ptypes/timestamp"
 
 	interfaces "github.com/bibin-zoz/social-match-userauth-svc/pkg/usecase/interface"
 
@@ -200,5 +202,43 @@ func (a *UserServer) FollowUser(ctx context.Context, req *pb.FollowUserRequest) 
 	}
 	return &pb.FollowUserResponce{
 		Status: 201,
+	}, nil
+}
+func (a *UserServer) BlockUser(ctx context.Context, req *pb.BlockUserRequest) (*pb.BlockUserResponce, error) {
+	err := a.userUseCase.BlockConnection(req.Senderid, req.Userid)
+	if err != nil {
+		return &pb.BlockUserResponce{}, err
+	}
+	return &pb.BlockUserResponce{
+		Status: 201,
+	}, nil
+}
+func (a *UserServer) SendMessage(ctx context.Context, req *pb.SendMessageRequest) (*pb.SendMessageResponce, error) {
+	media := make([]models.Media, len(req.Media))
+	for i, m := range req.Media {
+		media[i] = models.Media{
+			Filename: m.Filename,
+		}
+	}
+
+	message := &models.UserMessage{
+		SenderID:   uint(req.SenterId),
+		RecipentID: uint(req.ReceiverId),
+		Content:    req.Content,
+		CreatedAt:  time.Now(),
+		Media:      media,
+	}
+	err := a.userUseCase.SendMessage(message)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.SendMessageResponce{
+		MessageId:  123,
+		SenterId:   req.SenterId,
+		ReceiverId: req.ReceiverId,
+		Content:    req.Content,
+		Timestamp:  &timestamp.Timestamp{},
+		Media:      req.Media,
 	}, nil
 }
