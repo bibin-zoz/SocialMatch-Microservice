@@ -18,4 +18,8 @@ type UserClient interface {
 	DeleteUserPreference(userID uint64, preferenceID uint64) error
 	GetUserInterests(userID uint64) ([]string, error)
 	GetUserPreferences(userID uint64) ([]string, error)
+	FollowUser(userID int, senderID int) error
+	BlockUser(userID int, senderID int) error
+	SendMessage(message models.UserMessage) (models.UserMessage, error)
+	ReadMessages(userid uint32) ([]models.UserMessage, error)
 }
