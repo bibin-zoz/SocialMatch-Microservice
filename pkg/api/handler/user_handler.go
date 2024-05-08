@@ -1,16 +1,23 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
+	"sync"
+	"time"
 
+	"github.com/IBM/sarama"
 	"github.com/bibin-zoz/api-gateway/pkg/client/interfaces"
 	"github.com/bibin-zoz/api-gateway/pkg/helper"
 	"github.com/bibin-zoz/api-gateway/pkg/utils/models"
 	response "github.com/bibin-zoz/api-gateway/pkg/utils/responce"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/gorilla/websocket"
+	"gorm.io/gorm"
 )
 
 type UserHandler struct {
@@ -313,7 +320,60 @@ func (ur *UserHandler) GetUserPreferences(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
-func (ur *UserHandler) SendMessage(c *gin.Context) {
+// func (ur *UserHandler) SendMessage(c *gin.Context) {
+// 	var requestData struct {
+// 		Content    string         `json:"content"`
+// 		Media      []models.Media `json:"media"`
+// 		RecipentID int            `json:"user_id"`
+// 	}
+// 	if err := c.ShouldBindJSON(&requestData); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to bind JSON"})
+// 		return
+// 	}
+
+// 	// recipentID, err := strconv.ParseUint(c.Param("user_id"), 10, 32)
+// 	// if err != nil {
+// 	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid room ID"})
+// 	// 	return
+// 	// }
+// 	authHeader := c.GetHeader("Authorization")
+// 	token := helper.GetTokenFromHeader(authHeader)
+// 	senderID, _, err := helper.ExtractUserIDFromToken(token)
+// 	if err != nil {
+// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+// 		return
+// 	}
+
+// 	// Prepare the message object
+// 	message := models.UserMessage{
+// 		SenderID:   uint(senderID),
+// 		RecipentID: uint(requestData.RecipentID),
+// 		Content:    requestData.Content,
+// 		Media:      requestData.Media,
+// 	}
+
+// 	// Send the message
+// 	_, err = ur.GRPC_Client.SendMessage(message)
+// 	if err != nil {
+// 		errorMessage := fmt.Sprintf("Failed to send message: %s", err.Error())
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": errorMessage})
+// 		return
+// 	}
+
+//		c.JSON(http.StatusCreated, message)
+//	}
+
+func (ur *UserHandler) SendMessageKafka(c *gin.Context) {
+	fmt.Println("hii kafka")
+	// Initialize Kafka producer
+	producer, err := sarama.NewAsyncProducer([]string{"localhost:9092"}, nil)
+	if err != nil {
+		fmt.Println("err", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to initialize Kafka producer"})
+		return
+	}
+	defer producer.Close()
+
 	var requestData struct {
 		Content    string         `json:"content"`
 		Media      []models.Media `json:"media"`
@@ -344,17 +404,24 @@ func (ur *UserHandler) SendMessage(c *gin.Context) {
 		Content:    requestData.Content,
 		Media:      requestData.Media,
 	}
-
-	// Send the message
-	_, err = ur.GRPC_Client.SendMessage(message)
+	// Prepare message
+	jsonData, err := json.Marshal(message)
 	if err != nil {
-		errorMessage := fmt.Sprintf("Failed to send message: %s", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": errorMessage})
+		fmt.Println("failedddddddd")
 		return
 	}
+	kafkaMessage := &sarama.ProducerMessage{
+		Topic: "chat", // Adjust topic name here
+		Value: sarama.StringEncoder(jsonData),
+		// Add other message attributes as needed
+	}
 
-	c.JSON(http.StatusCreated, message)
+	// Send message to Kafka topic
+	producer.Input() <- kafkaMessage
+
+	c.JSON(http.StatusCreated, gin.H{"message": "Message sent to Kafka"})
 }
+
 func (ur *UserHandler) ReadMessages(c *gin.Context) {
 	// Extract room ID from request context
 	userID, err := strconv.ParseUint(c.Param("user_id"), 10, 32)
@@ -371,4 +438,147 @@ func (ur *UserHandler) ReadMessages(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, messages)
+}
+
+var (
+	db            *gorm.DB
+	upgrader      = websocket.Upgrader{}
+	rooms         = make(map[string]*Room)
+	connectionsMu sync.Mutex
+)
+
+type Message struct {
+	SenderID   int64     `json:"sender_id"`
+	ReceiverID int64     `json:"receiver_id"`
+	Message    string    `json:"message"`
+	Time       time.Time `json:"time"`
+}
+
+type User struct {
+	UserID int64  `json:"user_id" gorm:"primary_key"`
+	Name   string `json:"name"`
+}
+
+type Room struct {
+	User1       int64
+	User2       int64
+	Connections []*websocket.Conn
+	Ch          chan *Message
+}
+
+func (ur *UserHandler) handleWebSocket(c *gin.Context) {
+	// Upgrade initial GET request to a WebSocket
+	ws, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		log.Printf("Error upgrading to WebSocket: %v", err)
+		return
+	}
+	defer ws.Close()
+
+	// Get user ID from query parameters
+	userID, err := strconv.ParseInt(c.Query("user_id"), 10, 64)
+	if err != nil {
+		log.Printf("Invalid user ID: %v", err)
+		return
+	}
+
+	// Get receiver ID from query parameters
+	receiverID, err := strconv.ParseInt(c.Query("receiver_id"), 10, 64)
+	if err != nil {
+		log.Printf("Invalid receiver ID: %v", err)
+		return
+	}
+
+	roomID := generateRoomID(userID, receiverID)
+
+	// Create a new room if it doesn't exist
+	connectionsMu.Lock()
+	if _, ok := rooms[roomID]; !ok {
+		rooms[roomID] = &Room{
+			User1:       userID,
+			User2:       receiverID,
+			Connections: []*websocket.Conn{ws},
+			Ch:          make(chan *Message),
+		}
+		go broadcastMessages(roomID)
+	} else {
+		rooms[roomID].Connections = append(rooms[roomID].Connections, ws)
+	}
+	connectionsMu.Unlock()
+
+	// Fetch previous messages from the database
+	prevMessages, err := getPreviousMessages(userID, receiverID)
+	if err != nil {
+		log.Printf("Error fetching previous messages: %v", err)
+	} else {
+		// Send previous messages to the client
+		for _, msg := range prevMessages {
+			if err := ws.WriteJSON(msg); err != nil {
+				log.Printf("Error sending previous message to connection: %v", err)
+			}
+		}
+	}
+
+	// Remove connection when this function returns
+	defer func() {
+		connectionsMu.Lock()
+		for i, conn := range rooms[roomID].Connections {
+			if conn == ws {
+				rooms[roomID].Connections = append(rooms[roomID].Connections[:i], rooms[roomID].Connections[i+1:]...)
+				break
+			}
+		}
+		connectionsMu.Unlock()
+	}()
+
+	// Listen for incoming messages
+	for {
+		var msg Message
+		if err := ws.ReadJSON(&msg); err != nil {
+			log.Printf("Error reading message: %v", err)
+			break
+		}
+		// Save message to database
+		msg.Time = time.Now()
+		userMessage := models.UserMessage{
+			SenderID:   uint(msg.SenderID),
+			RecipentID: uint(msg.ReceiverID),
+			Content:    msg.Message,
+			CreatedAt:  time.Now(),
+		}
+		if _, err := ur.GRPC_Client.SendMessage(userMessage); err != nil {
+			log.Printf("Error saving message: %v", err)
+			continue
+		}
+
+		// Send message to other user in the room
+		rooms[roomID].Ch <- &msg
+	}
+}
+
+func getPreviousMessages(userID, receiverID int64) ([]*Message, error) {
+	var messages []*Message
+	if err := db.Where("(sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)", userID, receiverID, receiverID, userID).Order("time").Find(&messages).Error; err != nil {
+		return nil, err
+	}
+	return messages, nil
+}
+
+func generateRoomID(user1, user2 int64) string {
+	// Sort user IDs to ensure consistency
+	if user1 > user2 {
+		user1, user2 = user2, user1
+	}
+	return strconv.FormatInt(user1, 10) + "-" + strconv.FormatInt(user2, 10)
+}
+
+func broadcastMessages(roomID string) {
+	room := rooms[roomID]
+	for msg := range room.Ch {
+		for _, conn := range room.Connections {
+			if err := conn.WriteJSON(msg); err != nil {
+				log.Printf("Error sending message to connection: %v", err)
+			}
+		}
+	}
 }
