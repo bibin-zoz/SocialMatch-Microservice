@@ -176,7 +176,6 @@ func (c *RoomClient) SendMessage(message models.Message) (models.Message, error)
 	var mediaList []*room.Media
 	for _, m := range message.Media {
 		mediaList = append(mediaList, &room.Media{
-			Id:       uint32(m.ID),
 			Filename: m.Filename,
 		})
 	}

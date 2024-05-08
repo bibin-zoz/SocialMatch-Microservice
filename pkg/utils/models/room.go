@@ -40,8 +40,9 @@ type Message struct {
 	CreatedAt time.Time
 	Media     []Media `json:"media"`
 }
+
 type Media struct {
-	ID       uint   `json:"id"`
+	// ID       uint   `json:"id"`
 	Filename string `json:"filename"`
 }
 type UserMessage struct {

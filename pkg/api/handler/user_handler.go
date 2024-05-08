@@ -302,7 +302,7 @@ func (ur *UserHandler) GetUserInterests(c *gin.Context) {
 
 func (ur *UserHandler) GetUserPreferences(c *gin.Context) {
 	userID := c.Param("user_id")
-	id, err := strconv.Atoi(userID)
+	id, _ := strconv.Atoi(userID)
 	preferences, err := ur.GRPC_Client.GetUserPreferences(uint64(id))
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Failed to fetch user preferences", nil, err.Error())
@@ -312,21 +312,23 @@ func (ur *UserHandler) GetUserPreferences(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "User preferences fetched successfully", preferences, nil)
 	c.JSON(http.StatusOK, success)
 }
-func (rh *UserHandler) SendMessage(c *gin.Context) {
+
+func (ur *UserHandler) SendMessage(c *gin.Context) {
 	var requestData struct {
-		Content string         `json:"content"`
-		Media   []models.Media `json:"media"`
+		Content    string         `json:"content"`
+		Media      []models.Media `json:"media"`
+		RecipentID int            `json:"user_id"`
 	}
 	if err := c.ShouldBindJSON(&requestData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to bind JSON"})
 		return
 	}
 
-	recipentID, err := strconv.ParseUint(c.Param("user_id"), 10, 32)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid room ID"})
-		return
-	}
+	// recipentID, err := strconv.ParseUint(c.Param("user_id"), 10, 32)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid room ID"})
+	// 	return
+	// }
 	authHeader := c.GetHeader("Authorization")
 	token := helper.GetTokenFromHeader(authHeader)
 	senderID, _, err := helper.ExtractUserIDFromToken(token)
@@ -338,18 +340,35 @@ func (rh *UserHandler) SendMessage(c *gin.Context) {
 	// Prepare the message object
 	message := models.UserMessage{
 		SenderID:   uint(senderID),
-		RecipentID: uint(recipentID),
+		RecipentID: uint(requestData.RecipentID),
 		Content:    requestData.Content,
 		Media:      requestData.Media,
 	}
 
 	// Send the message
-	sentMessage, err := rh.GRPC_Client.SendMessage(message)
+	_, err = ur.GRPC_Client.SendMessage(message)
 	if err != nil {
 		errorMessage := fmt.Sprintf("Failed to send message: %s", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": errorMessage})
 		return
 	}
 
-	c.JSON(http.StatusCreated, sentMessage)
+	c.JSON(http.StatusCreated, message)
+}
+func (ur *UserHandler) ReadMessages(c *gin.Context) {
+	// Extract room ID from request context
+	userID, err := strconv.ParseUint(c.Param("user_id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	messages, err := ur.GRPC_Client.ReadMessages(uint32(userID))
+	if err != nil {
+		errorMessage := fmt.Sprintf("Failed to read messages: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": errorMessage})
+		return
+	}
+
+	c.JSON(http.StatusOK, messages)
 }

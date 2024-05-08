@@ -252,3 +252,72 @@ func (c *userClient) GetUserPreferences(userID uint64) ([]string, error) {
 
 	return preferencesResponse.Preferences, nil
 }
+
+func (c *userClient) FollowUser(userID int, senderID int) error {
+	_, err := c.Client.FollowUser(context.Background(), &pb.FollowUserRequest{
+		Userid:   int64(userID),
+		Senderid: int64(senderID),
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func (c *userClient) BlockUser(userID int, senderID int) error {
+	_, err := c.Client.BlockUser(context.Background(), &pb.BlockUserRequest{
+		Userid:   int64(userID),
+		Senderid: int64(senderID),
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *userClient) SendMessage(message models.UserMessage) (models.UserMessage, error) {
+	var mediaList []*pb.Media
+	for _, m := range message.Media {
+		mediaList = append(mediaList, &pb.Media{
+			Filename: m.Filename,
+		})
+	}
+	req := &pb.SendMessageRequest{
+		SenterId:   uint32(message.SenderID),
+		ReceiverId: uint32(message.RecipentID),
+		Content:    message.Content,
+		Media:      mediaList, // Assign []*room.Media
+	}
+
+	res, err := c.Client.SendMessage(context.Background(), req)
+	if err != nil {
+		return models.UserMessage{}, err
+	}
+	return models.UserMessage{
+		ID:         uint(res.MessageId),
+		SenderID:   uint(res.SenterId),
+		RecipentID: uint(res.ReceiverId),
+		Content:    res.Content,
+		CreatedAt:  res.Timestamp.AsTime(), // Convert Protobuf timestamp to Go time
+	}, nil
+}
+func (c *userClient) ReadMessages(userid uint32) ([]models.UserMessage, error) {
+	req := &pb.ReadMessagesRequest{
+		UserId: userid,
+	}
+	res, err := c.Client.ReadMessages(context.Background(), req)
+	if err != nil {
+		return nil, err
+	}
+	messages := make([]models.UserMessage, len(res.Messages))
+	for i, pbMsg := range res.Messages {
+		messages[i] = models.UserMessage{
+			ID:        uint(pbMsg.MessageId),
+			SenderID:  uint(pbMsg.SenderId),
+			Content:   pbMsg.Content,
+			CreatedAt: pbMsg.Timestamp.AsTime(), // Convert Protobuf timestamp to Go time
+		}
+	}
+	return messages, nil
+}

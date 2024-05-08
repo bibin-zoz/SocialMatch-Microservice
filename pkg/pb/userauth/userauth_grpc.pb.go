@@ -34,6 +34,10 @@ const (
 	User_EditUserPreference_FullMethodName   = "/user.User/EditUserPreference"
 	User_DeleteUserPreference_FullMethodName = "/user.User/DeleteUserPreference"
 	User_GetUserPreferences_FullMethodName   = "/user.User/GetUserPreferences"
+	User_FollowUser_FullMethodName           = "/user.User/FollowUser"
+	User_BlockUser_FullMethodName            = "/user.User/BlockUser"
+	User_SendMessage_FullMethodName          = "/user.User/SendMessage"
+	User_ReadMessages_FullMethodName         = "/user.User/ReadMessages"
 )
 
 // UserClient is the client API for User service.
@@ -55,6 +59,11 @@ type UserClient interface {
 	EditUserPreference(ctx context.Context, in *EditUserPreferenceRequest, opts ...grpc.CallOption) (*EditUserPreferenceResponse, error)
 	DeleteUserPreference(ctx context.Context, in *DeleteUserPreferenceRequest, opts ...grpc.CallOption) (*DeleteUserPreferenceResponse, error)
 	GetUserPreferences(ctx context.Context, in *GetUserPreferencesRequest, opts ...grpc.CallOption) (*GetUserPreferencesResponse, error)
+	FollowUser(ctx context.Context, in *FollowUserRequest, opts ...grpc.CallOption) (*FollowUserResponce, error)
+	BlockUser(ctx context.Context, in *BlockUserRequest, opts ...grpc.CallOption) (*BlockUserResponce, error)
+	SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*SendMessageResponce, error)
+	// New RPC method to read messages in a room
+	ReadMessages(ctx context.Context, in *ReadMessagesRequest, opts ...grpc.CallOption) (*ReadMessagesResponse, error)
 }
 
 type userClient struct {
@@ -200,6 +209,42 @@ func (c *userClient) GetUserPreferences(ctx context.Context, in *GetUserPreferen
 	return out, nil
 }
 
+func (c *userClient) FollowUser(ctx context.Context, in *FollowUserRequest, opts ...grpc.CallOption) (*FollowUserResponce, error) {
+	out := new(FollowUserResponce)
+	err := c.cc.Invoke(ctx, User_FollowUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) BlockUser(ctx context.Context, in *BlockUserRequest, opts ...grpc.CallOption) (*BlockUserResponce, error) {
+	out := new(BlockUserResponce)
+	err := c.cc.Invoke(ctx, User_BlockUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*SendMessageResponce, error) {
+	out := new(SendMessageResponce)
+	err := c.cc.Invoke(ctx, User_SendMessage_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) ReadMessages(ctx context.Context, in *ReadMessagesRequest, opts ...grpc.CallOption) (*ReadMessagesResponse, error) {
+	out := new(ReadMessagesResponse)
+	err := c.cc.Invoke(ctx, User_ReadMessages_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
@@ -219,6 +264,11 @@ type UserServer interface {
 	EditUserPreference(context.Context, *EditUserPreferenceRequest) (*EditUserPreferenceResponse, error)
 	DeleteUserPreference(context.Context, *DeleteUserPreferenceRequest) (*DeleteUserPreferenceResponse, error)
 	GetUserPreferences(context.Context, *GetUserPreferencesRequest) (*GetUserPreferencesResponse, error)
+	FollowUser(context.Context, *FollowUserRequest) (*FollowUserResponce, error)
+	BlockUser(context.Context, *BlockUserRequest) (*BlockUserResponce, error)
+	SendMessage(context.Context, *SendMessageRequest) (*SendMessageResponce, error)
+	// New RPC method to read messages in a room
+	ReadMessages(context.Context, *ReadMessagesRequest) (*ReadMessagesResponse, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -270,6 +320,18 @@ func (UnimplementedUserServer) DeleteUserPreference(context.Context, *DeleteUser
 }
 func (UnimplementedUserServer) GetUserPreferences(context.Context, *GetUserPreferencesRequest) (*GetUserPreferencesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserPreferences not implemented")
+}
+func (UnimplementedUserServer) FollowUser(context.Context, *FollowUserRequest) (*FollowUserResponce, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FollowUser not implemented")
+}
+func (UnimplementedUserServer) BlockUser(context.Context, *BlockUserRequest) (*BlockUserResponce, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BlockUser not implemented")
+}
+func (UnimplementedUserServer) SendMessage(context.Context, *SendMessageRequest) (*SendMessageResponce, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMessage not implemented")
+}
+func (UnimplementedUserServer) ReadMessages(context.Context, *ReadMessagesRequest) (*ReadMessagesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReadMessages not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -554,6 +616,78 @@ func _User_GetUserPreferences_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_FollowUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FollowUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).FollowUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_FollowUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).FollowUser(ctx, req.(*FollowUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_BlockUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BlockUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).BlockUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_BlockUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).BlockUser(ctx, req.(*BlockUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_SendMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).SendMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_SendMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).SendMessage(ctx, req.(*SendMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_ReadMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReadMessagesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).ReadMessages(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_ReadMessages_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).ReadMessages(ctx, req.(*ReadMessagesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -620,6 +754,22 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserPreferences",
 			Handler:    _User_GetUserPreferences_Handler,
+		},
+		{
+			MethodName: "FollowUser",
+			Handler:    _User_FollowUser_Handler,
+		},
+		{
+			MethodName: "BlockUser",
+			Handler:    _User_BlockUser_Handler,
+		},
+		{
+			MethodName: "SendMessage",
+			Handler:    _User_SendMessage_Handler,
+		},
+		{
+			MethodName: "ReadMessages",
+			Handler:    _User_ReadMessages_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
