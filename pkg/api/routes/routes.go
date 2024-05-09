@@ -49,10 +49,11 @@ func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, adminhan
 	router.POST("/user/room/:room_id", roomHandler.SendMessage)
 	router.GET("/user/room/:room_id", roomHandler.ReadMessages)
 	// router.POST("/user/message", userHandler.SendMessageHandler)
-	router.POST("/user/message", userHandler.SendMessageKafka)
+	// router.POST("/user/message", userHandler.SendMessageKafka)
 
 	//friend
 	router.POST("/user/connections", userHandler.UserFollow)
 	router.DELETE("/user/connections", userHandler.BlockUser)
 
+	router.GET("ws", userHandler.HandleWebSocket)
 }
