@@ -24,5 +24,5 @@ type UserUseCase interface {
 	FollowUser(senderID, userID int64) error
 	BlockConnection(senderID, userID int64) error
 	SendMessage(message *models.UserMessage) error
-	SendMessageKafka(message *models.UserMessage) error
+	ConsumeAndProcessMessages()
 }

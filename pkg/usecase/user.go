@@ -1,10 +1,14 @@
 package usecase
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 
 	client "github.com/bibin-zoz/social-match-userauth-svc/pkg/client/interface"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/config"
@@ -14,6 +18,7 @@ import (
 	services "github.com/bibin-zoz/social-match-userauth-svc/pkg/usecase/interface"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/utils/models"
 	"github.com/jinzhu/copier"
+	"github.com/segmentio/kafka-go"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -21,14 +26,14 @@ type userUseCase struct {
 	userRepository interfaces.UserRepository
 	Config         config.Config
 	InterestClient client.InterestClientInterface // Inject InterestClientInterface
-	
+
 }
 
 func NewUserUseCase(repository interfaces.UserRepository, config config.Config, interestClient client.InterestClientInterface) services.UserUseCase {
 	return &userUseCase{
 		userRepository: repository,
 		Config:         config,
-		InterestClient: interestClient, // Inject InterestClientInterface
+		InterestClient: interestClient,
 	}
 }
 
@@ -441,6 +446,7 @@ func (uu *userUseCase) BlockConnection(senderID, userID int64) error {
 	return nil
 }
 func (ur *userUseCase) SendMessage(message *models.UserMessage) error {
+	fmt.Println("usecase")
 	// Assuming you have a repository method to save the message
 	usermsg := &domain.UserMessage{
 		SenderID:   message.SenderID,
@@ -453,7 +459,7 @@ func (ur *userUseCase) SendMessage(message *models.UserMessage) error {
 		return errors.New("failed to save message")
 	}
 	if message.Media != nil {
-		fmt.Println("hiii")
+
 		for _, m := range message.Media {
 			media := &domain.Media{
 				Message_id: int(msgID),
@@ -467,20 +473,64 @@ func (ur *userUseCase) SendMessage(message *models.UserMessage) error {
 		}
 
 	}
+	fmt.Println("messaged saved successfully")
 	return nil
 }
-func (ur *userUseCase) SendMessageKafka(message *models.UserMessage) error {
-	// Serialize the message to JSON
-	messageJSON, err := json.Marshal(message)
-	if err != nil {
-		return errors.New("failed to serialize message")
+func (ur *userUseCase) ConsumeAndProcessMessages() {
+	// Configure Kafka consumer settings
+	config := kafka.ReaderConfig{
+		Brokers: []string{"localhost:9092"},
+		GroupID: "1",
+		Topic:   "chat",
 	}
 
-	// Produce the message to Kafka
-	err = ur.kafkaProducer.ProduceMessage("your-kafka-topic", messageJSON)
-	if err != nil {
-		return errors.New("failed to produce message to Kafka")
-	}
+	consumer := kafka.NewReader(config)
 
-	return nil
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
+	defer signal.Stop(signals)
+
+	// Handle signals
+	go func() {
+		sig := <-signals
+		fmt.Printf("Received signal: %v\n", sig)
+		fmt.Println("Shutting down...")
+
+		// Close Kafka consumer
+		if err := consumer.Close(); err != nil {
+			fmt.Printf("Error closing Kafka consumer: %v\n", err)
+		}
+
+		// Perform any additional cleanup tasks here
+
+		os.Exit(0)
+	}()
+
+	// Continuously consume messages
+	for {
+		msg, err := consumer.ReadMessage(context.Background())
+		if err != nil {
+			fmt.Printf("Error reading message: %v\n", err)
+			continue
+		}
+
+		var userMessage models.UserMessage
+		if err := json.Unmarshal(msg.Value, &userMessage); err != nil {
+			fmt.Printf("Failed to deserialize message: %v\n", err)
+			continue
+		}
+
+		// Save the message to the database
+		usermsg := &models.UserMessage{
+			SenderID:   userMessage.SenderID,
+			RecipentID: userMessage.RecipentID,
+			Content:    userMessage.Content,
+			CreatedAt:  userMessage.CreatedAt,
+		}
+
+		if err := ur.SendMessage(usermsg); err != nil {
+			fmt.Printf("Failed to process message: %v\n", err)
+		}
+		fmt.Println("usermsg", userMessage)
+	}
 }
