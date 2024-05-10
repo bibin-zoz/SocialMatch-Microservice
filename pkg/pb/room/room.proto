@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package room;
+option go_package = "./pkg/pb/room";
+
+message Room {
+  uint32 id = 1;
+  string room_name = 2;
+  string description = 3;
+  uint32 max_persons = 4;
+  string status = 5;
+}
+
+message RoomCreateRequest {
+  string room_name = 1;
+  string description = 2;
+  uint32 max_persons = 3;
+  string status = 4;
+  repeated string preferences = 5;
+  int32 CreatorID = 6;
+}
+
+message RoomEditRequest {
+  uint32 room_id = 1;
+  string room_name = 2;
+  string description = 3;
+  uint32 max_persons = 4;
+  string status = 5;
+  repeated string preferences = 6;
+}
+
+message ChangeStatusRequest {
+  uint32 room_id = 1;
+  string status = 2;
+}
+
+message AddMembersRequest {
+  uint32 room_id = 1;
+  repeated uint32 user_ids = 2;
+}
+
+message RoomJoinRequestsRequest {
+  uint32 room_id = 1;
+}
+
+message RoomJoinRequestsResponse {
+  repeated RoomJoinRequest room_join_requests = 1;
+}
+
+message RoomJoinRequest {
+  uint32 user_id = 1;
+  string username = 2;
+}
+
+message GetAllRoomsRequest {}
+
+message GetAllRoomsResponse {
+  repeated Room rooms = 1;
+}
+
+// New message for getting group members
+message GetGroupMembersRequest {
+  uint32 room_id = 1;
+}
+
+message GetGroupMembersResponse {
+  repeated RoomJoinRequest members = 1;
+}
+
+// New message for sending a message in a room with media
+message SendMessageRequest {
+  uint32 room_id = 1;
+  uint32 sender_id = 2;
+  string content = 3;
+  repeated Media media = 4;
+}
+
+// New message for receiving a message in a room
+message Message {
+  uint32 message_id = 1;
+  uint32 room_id = 2;
+  uint32 sender_id = 3;
+  string content = 4;
+  google.protobuf.Timestamp timestamp = 5;
+  repeated Media media = 6; // Added media field
+}
+
+// New message for reading messages in a room
+message ReadMessagesRequest {
+  uint32 room_id = 1;
+}
+
+message ReadMessagesResponse {
+  repeated Message messages = 1;
+}
+
+// Media message representing media attachments
+message Media {
+  uint32 id = 1;
+  string filename = 2;
+  // Add other fields as needed, such as media type, size, etc.
+}
+
+service RoomService {
+  // CreateRoom creates a new room
+  rpc CreateRoom(RoomCreateRequest) returns (Room);
+
+  // EditRoom edits an existing room
+  rpc EditRoom(RoomEditRequest) returns (Room);
+
+  // ChangeStatus changes the status of a room
+  rpc ChangeStatus(ChangeStatusRequest) returns (Room);
+
+  // AddMembers adds members to a room
+  rpc AddMembers(AddMembersRequest) returns (Room);
+
+  // SeeRoomJoinRequests retrieves join requests for a room
+  rpc SeeRoomJoinRequests(RoomJoinRequestsRequest) returns (RoomJoinRequestsResponse);
+
+  // GetAllRooms retrieves all rooms
+  rpc GetAllRooms(GetAllRoomsRequest) returns (GetAllRoomsResponse);
+
+  // New RPC method to get group members using room ID
+  rpc GetGroupMembers(GetGroupMembersRequest) returns (GetGroupMembersResponse);
+
+  // New RPC method to send a message in a room
+  rpc SendMessage(SendMessageRequest) returns (Message);
+
+  // New RPC method to read messages in a room
+  rpc ReadMessages(ReadMessagesRequest) returns (ReadMessagesResponse);
+}
