@@ -26,9 +26,21 @@ service User {
 
   // New RPC method to read messages in a room
   rpc ReadMessages(ReadMessagesRequest) returns (ReadMessagesResponse);
+   rpc GetConnections(GetConnectionsRequest) returns (GetConnectionsResponse) {};
 }
+
+message GetConnectionsResponse {
+    int64 status = 1;
+    repeated UserDetails UserDetails = 2;
+}
+
+message GetConnectionsRequest {
+    uint64 user_id = 1;
+}
+
 message ReadMessagesRequest {
-  uint32 room_id = 1;
+  uint32 senter_id = 1;
+  uint32 receiver_id =2;
 }
 
 message ReadMessagesResponse {
@@ -42,12 +54,13 @@ message SendMessageRequest {
 }
 message Message {
   uint32 message_id = 1;
-  uint32 room_id = 2;
+  uint32 receiver_id = 2;
   uint32 sender_id = 3;
   string content = 4;
   google.protobuf.Timestamp timestamp = 5;
   repeated Media media = 6; // Added media field
 }
+
 
 
 // New message for receiving a message in a room

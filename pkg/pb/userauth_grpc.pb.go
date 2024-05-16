@@ -38,6 +38,7 @@ const (
 	User_BlockUser_FullMethodName            = "/user.User/BlockUser"
 	User_SendMessage_FullMethodName          = "/user.User/SendMessage"
 	User_ReadMessages_FullMethodName         = "/user.User/ReadMessages"
+	User_GetConnections_FullMethodName       = "/user.User/GetConnections"
 )
 
 // UserClient is the client API for User service.
@@ -64,6 +65,7 @@ type UserClient interface {
 	SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*SendMessageResponce, error)
 	// New RPC method to read messages in a room
 	ReadMessages(ctx context.Context, in *ReadMessagesRequest, opts ...grpc.CallOption) (*ReadMessagesResponse, error)
+	GetConnections(ctx context.Context, in *GetConnectionsRequest, opts ...grpc.CallOption) (*GetConnectionsResponse, error)
 }
 
 type userClient struct {
@@ -245,6 +247,15 @@ func (c *userClient) ReadMessages(ctx context.Context, in *ReadMessagesRequest, 
 	return out, nil
 }
 
+func (c *userClient) GetConnections(ctx context.Context, in *GetConnectionsRequest, opts ...grpc.CallOption) (*GetConnectionsResponse, error) {
+	out := new(GetConnectionsResponse)
+	err := c.cc.Invoke(ctx, User_GetConnections_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
@@ -269,6 +280,7 @@ type UserServer interface {
 	SendMessage(context.Context, *SendMessageRequest) (*SendMessageResponce, error)
 	// New RPC method to read messages in a room
 	ReadMessages(context.Context, *ReadMessagesRequest) (*ReadMessagesResponse, error)
+	GetConnections(context.Context, *GetConnectionsRequest) (*GetConnectionsResponse, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -332,6 +344,9 @@ func (UnimplementedUserServer) SendMessage(context.Context, *SendMessageRequest)
 }
 func (UnimplementedUserServer) ReadMessages(context.Context, *ReadMessagesRequest) (*ReadMessagesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReadMessages not implemented")
+}
+func (UnimplementedUserServer) GetConnections(context.Context, *GetConnectionsRequest) (*GetConnectionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetConnections not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -688,6 +703,24 @@ func _User_ReadMessages_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_GetConnections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetConnectionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).GetConnections(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_GetConnections_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).GetConnections(ctx, req.(*GetConnectionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -770,6 +803,10 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReadMessages",
 			Handler:    _User_ReadMessages_Handler,
+		},
+		{
+			MethodName: "GetConnections",
+			Handler:    _User_GetConnections_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

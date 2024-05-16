@@ -23,17 +23,18 @@ import (
 )
 
 type userUseCase struct {
-	userRepository interfaces.UserRepository
-	Config         config.Config
-	InterestClient client.InterestClientInterface // Inject InterestClientInterface
-
+	userRepository   interfaces.UserRepository
+	Config           config.Config
+	InterestClient   client.InterestClientInterface
+	ConnectionClient client.ConnectionClientInterface
 }
 
-func NewUserUseCase(repository interfaces.UserRepository, config config.Config, interestClient client.InterestClientInterface) services.UserUseCase {
+func NewUserUseCase(repository interfaces.UserRepository, config config.Config, interestClient client.InterestClientInterface, connectionClient client.ConnectionClientInterface) services.UserUseCase {
 	return &userUseCase{
-		userRepository: repository,
-		Config:         config,
-		InterestClient: interestClient,
+		userRepository:   repository,
+		Config:           config,
+		InterestClient:   interestClient,
+		ConnectionClient: connectionClient,
 	}
 }
 
@@ -396,51 +397,17 @@ func (uu *userUseCase) GetUserPreferences(userID uint64) ([]string, error) {
 	return preferences, nil
 }
 func (uu *userUseCase) FollowUser(senderID, userID int64) error {
-	reqExist, err := uu.userRepository.CheckConnectionRequestExist(uint(senderID), uint(userID))
+	_, err := uu.ConnectionClient.FollowUser(int64(senderID), int64(userID))
 	if err != nil {
-		return errors.New("failed to check connection request")
-	}
-
-	if reqExist {
-		// If a connection request exists, add them as friends
-		err := uu.userRepository.AddConnection(uint(senderID), uint(userID))
-		if err != nil {
-			return errors.New("failed to add connection as friend")
-		}
-		return nil
-	}
-
-	// Check if they are already friends
-	areFriends, err := uu.userRepository.CheckFriends(uint(senderID), uint(userID))
-	if err != nil {
-		return errors.New("failed to check if users are already friends")
-	}
-
-	if areFriends {
-		return errors.New("users are already friends")
-	}
-
-	// If no connection request exists and they are not friends, send a new request
-	err = uu.userRepository.AddConnectionRequest(uint(senderID), uint(userID))
-	if err != nil {
-		return errors.New("failed to send connection request")
+		return err
 	}
 
 	return nil
 }
 func (uu *userUseCase) BlockConnection(senderID, userID int64) error {
-	reqExist, err := uu.userRepository.CheckConnectionRequestExist(uint(senderID), uint(userID))
+	_, err := uu.ConnectionClient.BlockUserConnection(int64(senderID), int64(userID))
 	if err != nil {
-		return errors.New("no request found")
-	}
-
-	if reqExist {
-
-		err := uu.userRepository.BlockConnection(uint(senderID), uint(userID))
-		if err != nil {
-			return errors.New("failed to block user")
-		}
-		return nil
+		return err
 	}
 
 	return nil
@@ -477,7 +444,6 @@ func (ur *userUseCase) SendMessage(message *models.UserMessage) error {
 	return nil
 }
 func (ur *userUseCase) ConsumeAndProcessMessages() {
-	// Configure Kafka consumer settings
 	config := kafka.ReaderConfig{
 		Brokers: []string{"localhost:9092"},
 		GroupID: "1",
@@ -501,8 +467,6 @@ func (ur *userUseCase) ConsumeAndProcessMessages() {
 			fmt.Printf("Error closing Kafka consumer: %v\n", err)
 		}
 
-		// Perform any additional cleanup tasks here
-
 		os.Exit(0)
 	}()
 
@@ -520,7 +484,6 @@ func (ur *userUseCase) ConsumeAndProcessMessages() {
 			continue
 		}
 
-		// Save the message to the database
 		usermsg := &models.UserMessage{
 			SenderID:   userMessage.SenderID,
 			RecipentID: userMessage.RecipentID,
@@ -533,4 +496,34 @@ func (ur *userUseCase) ConsumeAndProcessMessages() {
 		}
 		fmt.Println("usermsg", userMessage)
 	}
+}
+
+func (ur *userUseCase) GetMessages(receiverID, senderID uint64) ([]models.UserMessage, error) {
+	messages, err := ur.userRepository.GetMessages(receiverID, senderID)
+	if err != nil {
+		return nil, errors.New("error retrieving messages")
+	}
+	return messages, nil
+}
+func (ur *userUseCase) GetConnections(userID uint64) ([]models.UserDetails, error) {
+	// Fetch connections from the ConnectionClient
+	connections, err := ur.ConnectionClient.GetConnections(userID)
+	if err != nil {
+		return nil, errors.New("error retrieving connections")
+	}
+
+	// Convert []*connections.UserDetails to []models.UserDetails
+	var userDetails []models.UserDetails
+	for _, conn := range connections {
+		userDetails = append(userDetails, models.UserDetails{
+			ID: uint(conn.Id),
+			// Name:      conn.Name,
+			// Email:     conn.Email,
+			// Number:    conn.Number,
+			// Status:    conn.Status,
+			// CreatedAt: conn.CreatedAt,
+		})
+	}
+
+	return userDetails, nil
 }

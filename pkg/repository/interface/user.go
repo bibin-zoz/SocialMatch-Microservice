@@ -27,11 +27,13 @@ type UserRepository interface {
 	DeleteUserPreference(userID uint64, preferenceID uint64) error
 	GetUserPreferences(userID uint64) ([]string, error)
 	GetUserInterests(userID uint64) ([]string, error)
-	CheckConnectionRequestExist(senderID, userID uint) (bool, error)
+	// CheckConnectionRequestExist(senderID, userID uint) (bool, error)
 	AddConnection(senderID, userID uint) error
 	CheckFriends(senderID, userID uint) (bool, error)
-	AddConnectionRequest(senderID, userID uint) error
-	BlockConnection(senderID, userID uint) error
+	// AddConnectionRequest(senderID, userID uint) error
+	// BlockConnection(senderID, userID uint) error
 	SaveMessage(message *domain.UserMessage) (uint, error)
 	SaveMedia(media *domain.Media) error
+	GetMessages(receiverID, senderID uint64) ([]models.UserMessage, error)
+	// GetConnections(userID uint) ([]models.UserDetails, error)
 }

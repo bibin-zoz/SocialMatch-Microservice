@@ -25,4 +25,6 @@ type UserUseCase interface {
 	BlockConnection(senderID, userID int64) error
 	SendMessage(message *models.UserMessage) error
 	ConsumeAndProcessMessages()
+	GetMessages(receiverID, senderID uint64) ([]models.UserMessage, error)
+	GetConnections(userID uint64) ([]models.UserDetails, error)
 }

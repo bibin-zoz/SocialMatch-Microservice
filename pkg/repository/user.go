@@ -281,3 +281,26 @@ func (ur *userRepository) SaveMedia(media *domain.Media) error {
 	fmt.Println("nill")
 	return nil
 }
+func (ur *userRepository) GetMessages(receiverID, senderID uint64) ([]models.UserMessage, error) {
+	var messages []models.UserMessage
+
+	// Preload media for each message
+	if err := ur.DB.Preload("Media").Where("(recipent_id = ? AND sender_id = ?) OR ( recipent_id = ? AND sender_id = ?)", receiverID, senderID, senderID, receiverID).Find(&messages).Error; err != nil {
+		return nil, errors.New("error retrieving messages")
+	}
+
+	return messages, nil
+}
+func (ur *userRepository) GetConnections(userID uint) ([]models.UserDetails, error) {
+	// Query the database to fetch connections for the specified user ID
+	var connections []models.UserDetails
+	err := ur.DB.Table("connections").
+		Joins("INNER JOIN users ON connections.friend_id = users.id").
+		Select("users.id, users.firstname, users.lastname, users.email, users.phone").
+		Where("connections.user_id = ? AND connections.status = 'friends'", userID).Or("connections.friend_id = ? AND connections.status = 'friends'", userID).
+		Find(&connections).Error
+	if err != nil {
+		return nil, err
+	}
+	return connections, nil
+}

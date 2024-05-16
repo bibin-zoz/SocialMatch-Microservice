@@ -45,5 +45,5 @@ type UserMessage struct {
 	Content    string
 	CreatedAt  time.Time
 	Read       bool    `dafault:"false"`
-	Media      []Media `json:"media"`
+	Media      []Media `gorm:"foreignKey:MessageID"`
 }

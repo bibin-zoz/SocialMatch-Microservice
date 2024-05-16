@@ -8,6 +8,7 @@ import (
 
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/pb"
 	"github.com/golang/protobuf/ptypes/timestamp"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	interfaces "github.com/bibin-zoz/social-match-userauth-svc/pkg/usecase/interface"
 
@@ -240,5 +241,56 @@ func (a *UserServer) SendMessage(ctx context.Context, req *pb.SendMessageRequest
 		Content:    req.Content,
 		Timestamp:  &timestamp.Timestamp{},
 		Media:      req.Media,
+	}, nil
+}
+func (a *UserServer) ReadMessages(ctx context.Context, req *pb.ReadMessagesRequest) (*pb.ReadMessagesResponse, error) {
+	// Call the use case method to get messages for the specified room
+	messages, err := a.userUseCase.GetMessages(uint64(req.ReceiverId), uint64(req.SenterId))
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the returned messages to protobuf format and return
+	var pbMessages []*pb.Message
+	for _, message := range messages {
+		timestamp := timestamppb.New(message.CreatedAt)
+		pbMessage := &pb.Message{
+			MessageId:  uint32(message.ID),
+			ReceiverId: uint32(message.RecipentID),
+			SenderId:   uint32(message.SenderID),
+			Content:    message.Content,
+			Timestamp:  timestamp,
+		}
+		pbMessages = append(pbMessages, pbMessage)
+	}
+
+	return &pb.ReadMessagesResponse{
+		Messages: pbMessages,
+	}, nil
+}
+func (a *UserServer) GetConnections(ctx context.Context, req *pb.GetConnectionsRequest) (*pb.GetConnectionsResponse, error) {
+	// Call the use case method to get connections for the specified user ID
+	connections, err := a.userUseCase.GetConnections(req.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the returned connections to protobuf format and return
+	var pbConnections []*pb.UserDetails
+	for _, connection := range connections {
+		pbConnection := &pb.UserDetails{
+			Id:        uint64(connection.ID),
+			Firstname: connection.Firstname,
+			Lastname:  connection.Lastname,
+			Email:     connection.Email,
+			Phone:     connection.Phone,
+			// Populate other fields as needed
+		}
+		pbConnections = append(pbConnections, pbConnection)
+	}
+	fmt.Println("userdetails", pbConnections)
+	return &pb.GetConnectionsResponse{
+		Status:      201,
+		UserDetails: pbConnections,
 	}, nil
 }
