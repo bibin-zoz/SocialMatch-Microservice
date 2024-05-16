@@ -22,9 +22,11 @@ func InitializeAPI(cfg config.Config) (*server.ServerHTTP, error) {
 	adminClient := client.NewAdminClient(cfg)
 	adminHandler := handlers.NewAdminHandler(adminClient, userClient)
 	roomClient := client.NewRoomServiceClient(cfg)
+	// hub := websocket.NewHub()
 	roomHandler := handlers.NewRoomHandler(roomClient)
-
-	serverHTTP := server.NewServerHTTP(userHandler, adminHandler, roomHandler)
+	UserChatHandler := handlers.NewUserChatHandler(userClient)
+	videocallHandler := handlers.NewVideoCallHandler()
+	serverHTTP := server.NewServerHTTP(userHandler, adminHandler, roomHandler, UserChatHandler, videocallHandler)
 
 	return serverHTTP, nil
 }

@@ -200,6 +200,7 @@ func (c *RoomClient) SendMessage(message models.Message) (models.Message, error)
 }
 
 func (c *RoomClient) ReadMessages(roomID uint32) ([]models.Message, error) {
+	fmt.Println("afadf")
 	req := &room.ReadMessagesRequest{
 		RoomId: roomID,
 	}
@@ -218,4 +219,16 @@ func (c *RoomClient) ReadMessages(roomID uint32) ([]models.Message, error) {
 		}
 	}
 	return messages, nil
+}
+
+func (c *RoomClient) CheckRoomConnection(userID uint32, roomID uint32) error {
+	req := &room.CheckRoomConnectionRequest{
+		UserId: userID,
+		RoomId: roomID,
+	}
+	_, err := c.RoomClient.CheckRoomConnection(context.Background(), req)
+	if err != nil {
+		return err
+	}
+	return nil
 }

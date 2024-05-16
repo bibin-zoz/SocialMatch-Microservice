@@ -62,3 +62,20 @@ func (ur *UserHandler) BlockUser(c *gin.Context) {
 	success := response.ClientResponse(http.StatusCreated, "successfully Blocked user", nil, nil)
 	c.JSON(http.StatusCreated, success)
 }
+func (ur *UserHandler) GetConnections(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+	token := helper.GetTokenFromHeader(authHeader)
+	userID, _, err := helper.ExtractUserIDFromToken(token)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "error fetching user details, make sure logged in", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	connections, err := ur.GRPC_Client.GetConnections(uint64(userID))
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "failed to connect to server", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	c.JSON(http.StatusOK, connections)
+}

@@ -21,5 +21,6 @@ type UserClient interface {
 	FollowUser(userID int, senderID int) error
 	BlockUser(userID int, senderID int) error
 	SendMessage(message models.UserMessage) (models.UserMessage, error)
-	ReadMessages(userid uint32) ([]models.UserMessage, error)
+	ReadMessages(userid uint32, senterid uint32) ([]models.UserMessage, error)
+	GetConnections(userID uint64) ([]models.UserDetail, error)
 }

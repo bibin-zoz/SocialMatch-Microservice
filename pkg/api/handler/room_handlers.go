@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
+	"sync"
 
 	"github.com/bibin-zoz/api-gateway/pkg/client/interfaces"
 	"github.com/bibin-zoz/api-gateway/pkg/helper"
@@ -11,15 +13,23 @@ import (
 	response "github.com/bibin-zoz/api-gateway/pkg/utils/responce"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/gorilla/websocket"
 )
 
 type RoomHandler struct {
 	GRPC_RoomClient interfaces.RoomClient
+	Upgrader        websocket.Upgrader
+	rooms           map[string]*models.GroupChatRoomRoom
+	connectionsMu   sync.Mutex
+	// Room            models.GroupChatRoomRoom
 }
 
 func NewRoomHandler(RoomClient interfaces.RoomClient) *RoomHandler {
 	return &RoomHandler{
 		GRPC_RoomClient: RoomClient,
+		Upgrader:        websocket.Upgrader{},
+		rooms:           make(map[string]*models.GroupChatRoomRoom),
+		// Room:            models.GroupChatRoomRoom{},
 	}
 }
 
@@ -215,4 +225,87 @@ func (rh *RoomHandler) ReadMessages(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, messages)
+}
+func (rh *RoomHandler) HandleWebSocket(c *gin.Context) {
+
+	// Upgrade initial GET request to a WebSocket
+	ws, err := rh.Upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		log.Printf("Error upgrading to WebSocket: %v", err)
+		return
+	}
+	defer ws.Close()
+
+	// Get user ID and group ID from query parameters
+	userID, err := strconv.ParseInt(c.Query("user_id"), 10, 64)
+	if err != nil {
+		fmt.Println("userID", userID)
+		log.Printf("Invalid user ID: %v", err)
+		return
+	}
+
+	groupID, err := strconv.ParseInt(c.Query("group_id"), 10, 64)
+	if err != nil {
+		log.Printf("Invalid group ID: %v", err)
+		return
+	}
+
+	roomID := strconv.FormatInt(groupID, 10) // Use group ID as room ID for simplicity
+
+	// Create a new room if it doesn't exist
+	rh.connectionsMu.Lock()
+	if _, ok := rh.rooms[roomID]; !ok {
+		rh.rooms[roomID] = &models.GroupChatRoomRoom{
+			GroupID:     groupID,
+			Connections: []*websocket.Conn{ws},
+			Ch:          make(chan *models.UserMessage),
+		}
+		go broadcastMessages(roomID, rh.rooms)
+	} else {
+		rh.rooms[roomID].Connections = append(rh.rooms[roomID].Connections, ws)
+	}
+	rh.connectionsMu.Unlock()
+
+	// Fetch previous messages from the database (if needed)
+
+	// Remove connection when this function returns
+	defer func() {
+		rh.connectionsMu.Lock()
+		for i, conn := range rh.rooms[roomID].Connections {
+			if conn == ws {
+				rh.rooms[roomID].Connections = append(rh.rooms[roomID].Connections[:i], rh.rooms[roomID].Connections[i+1:]...)
+				break
+			}
+		}
+		rh.connectionsMu.Unlock()
+	}()
+
+	// Listen for incoming messages
+	for {
+		var msg models.UserMessage
+		if err := ws.ReadJSON(&msg); err != nil {
+			log.Printf("Error reading message: %v", err)
+			break
+		}
+		// Save message to database
+		// msg.Time = time.Now()
+		// if err := saveMessage(&msg); err != nil {
+		// 	log.Printf("Error saving message: %v", err)
+		// 	continue
+		// }
+
+		// Broadcast message to all members in the room
+		rh.rooms[roomID].Ch <- &msg
+	}
+}
+
+func broadcastMessages(roomID string, rooms map[string]*models.GroupChatRoomRoom) {
+	room := rooms[roomID]
+	for msg := range room.Ch {
+		for _, conn := range room.Connections {
+			if err := conn.WriteJSON(msg); err != nil {
+				log.Printf("Error sending message to connection: %v", err)
+			}
+		}
+	}
 }

@@ -302,9 +302,10 @@ func (c *userClient) SendMessage(message models.UserMessage) (models.UserMessage
 		CreatedAt:  res.Timestamp.AsTime(), // Convert Protobuf timestamp to Go time
 	}, nil
 }
-func (c *userClient) ReadMessages(userid uint32) ([]models.UserMessage, error) {
+func (c *userClient) ReadMessages(userid uint32, senterid uint32) ([]models.UserMessage, error) {
 	req := &pb.ReadMessagesRequest{
-		UserId: userid,
+		ReceiverId: userid,
+		SenterId:   senterid,
 	}
 	res, err := c.Client.ReadMessages(context.Background(), req)
 	if err != nil {
@@ -320,4 +321,27 @@ func (c *userClient) ReadMessages(userid uint32) ([]models.UserMessage, error) {
 		}
 	}
 	return messages, nil
+}
+func (c *userClient) GetConnections(userID uint64) ([]models.UserDetail, error) {
+	// Send gRPC request to server
+	response, err := c.Client.GetConnections(context.Background(), &pb.GetConnectionsRequest{
+		UserId: userID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert []*pb.User to []models.User
+	var users []models.UserDetail
+	for _, u := range response.UserDetails {
+		user := models.UserDetail{
+			ID:        uint(u.Id),
+			Firstname: u.Firstname,
+			Lastname:  u.Lastname,
+			Email:     u.Email,
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
 }

@@ -2,11 +2,8 @@ package handlers
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
-	"sync"
-	"time"
 
 	"github.com/bibin-zoz/api-gateway/pkg/client/interfaces"
 	"github.com/bibin-zoz/api-gateway/pkg/helper"
@@ -14,7 +11,6 @@ import (
 	response "github.com/bibin-zoz/api-gateway/pkg/utils/responce"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/gorilla/websocket"
 )
 
 type UserHandler struct {
@@ -319,13 +315,27 @@ func (ur *UserHandler) GetUserPreferences(c *gin.Context) {
 
 func (ur *UserHandler) ReadMessages(c *gin.Context) {
 	// Extract room ID from request context
-	userID, err := strconv.ParseUint(c.Param("user_id"), 10, 32)
+	authHeader := c.GetHeader("Authorization")
+	token := helper.GetTokenFromHeader(authHeader)
+
+	// Extract user ID from token
+	userID, _, err := helper.ExtractUserIDFromToken(token)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 		return
 	}
 
-	messages, err := ur.GRPC_Client.ReadMessages(uint32(userID))
+	var req struct {
+		UserID int `json:"user_id"`
+	}
+	// Bind the JSON request body to the req struct
+	if err := c.ShouldBindJSON(&req); err != nil {
+		// If binding fails, return a 400 Bad Request response
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	messages, err := ur.GRPC_Client.ReadMessages(uint32(userID), uint32(req.UserID))
 	if err != nil {
 		errorMessage := fmt.Sprintf("Failed to read messages: %s", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": errorMessage})
@@ -333,76 +343,4 @@ func (ur *UserHandler) ReadMessages(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, messages)
-}
-
-var (
-	upgrader      = websocket.Upgrader{}
-	rooms         = make(map[string]*models.WebrtcRoom)
-	connectionsMu sync.Mutex
-)
-
-func (ur *UserHandler) HandleWebSocket(c *gin.Context) {
-	ws, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-	if err != nil {
-		log.Printf("Error upgrading to WebSocket: %v", err)
-		return
-	}
-	defer ws.Close()
-
-	userID, err := strconv.ParseInt(c.Query("user_id"), 10, 64)
-	if err != nil {
-		log.Printf("Invalid user ID: %v", err)
-		return
-	}
-	receiverID, err := strconv.ParseInt(c.Query("receiver_id"), 10, 64)
-	if err != nil {
-		log.Printf("Invalid receiver ID: %v", err)
-		return
-	}
-
-	roomID := helper.GenerateRoomID(userID, receiverID)
-	connectionsMu.Lock()
-	if _, ok := rooms[roomID]; !ok {
-		rooms[roomID] = &models.WebrtcRoom{
-			User1:       userID,
-			User2:       receiverID,
-			Connections: []*websocket.Conn{ws},
-			Ch:          make(chan *models.WebrtcMessage),
-		}
-		go helper.BroadcastMessages(roomID, rooms, &connectionsMu)
-	} else {
-		rooms[roomID].Connections = append(rooms[roomID].Connections, ws)
-	}
-	connectionsMu.Unlock()
-	defer func() {
-		connectionsMu.Lock()
-		for i, conn := range rooms[roomID].Connections {
-			if conn == ws {
-				rooms[roomID].Connections = append(rooms[roomID].Connections[:i], rooms[roomID].Connections[i+1:]...)
-				break
-			}
-		}
-		connectionsMu.Unlock()
-	}()
-
-	for {
-		var msg models.WebrtcMessage
-		if err := ws.ReadJSON(&msg); err != nil {
-			log.Printf("Error reading message: %v", err)
-			break
-		}
-		// Save message to database
-		// msg.Time = time.Now()
-		userMessage := models.UserMessage{
-			SenderID:   uint(msg.SenderID),
-			RecipentID: uint(msg.ReceiverID),
-			Content:    msg.Message,
-			CreatedAt:  time.Now(),
-		}
-		if err := helper.SendMessageKafka(userMessage, c); err != nil {
-			log.Printf("Error saving message: %v", err)
-			continue
-		}
-		rooms[roomID].Ch <- &msg
-	}
 }

@@ -12,4 +12,5 @@ type RoomClient interface {
 	GetRoomMembers(roomID uint32) ([]models.RoomMember, error)
 	SendMessage(message models.Message) (models.Message, error)
 	ReadMessages(roomID uint32) ([]models.Message, error)
+	CheckRoomConnection(userID uint32, roomID uint32) error
 }
