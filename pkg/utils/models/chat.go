@@ -20,3 +20,17 @@ type WebrtcRoom struct {
 	Connections []*websocket.Conn
 	Ch          chan *WebrtcMessage
 }
+type Hub struct {
+	Rooms     map[string]*Room
+	Broadcast chan []byte
+}
+type WebrtcRoomChat struct {
+	RoomID      int
+	Connections []*websocket.Conn
+	Ch          chan *WebrtcMessage
+}
+type GroupChatRoomRoom struct {
+	GroupID     int64
+	Connections []*websocket.Conn
+	Ch          chan *UserMessage
+}

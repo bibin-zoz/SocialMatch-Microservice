@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, adminhandler *handlers.AdminHandler, roomHandler *handlers.RoomHandler) {
+func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, adminhandler *handlers.AdminHandler, roomHandler *handlers.RoomHandler, userChatHandler *handlers.UserChatHandler, videocallHandler *handlers.VideoCallHandler) {
 	router.GET("/ping", handlers.PingHandler)
 	router.POST("/login", userHandler.Userlogin)
 	router.GET("/verify", userHandler.UserOtpReq)
@@ -44,16 +44,26 @@ func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, adminhan
 	router.PUT("/user/room", middleware.UserAuthMiddleware(), roomHandler.EditRoom)
 	router.POST("/user/room/members", middleware.UserAuthMiddleware(), roomHandler.AddMembersToRoom)
 	router.GET("/user/room/members/:room_id", roomHandler.GetRoomMembers)
+	// hub := Hub.NewHub()
+	router.GET("/wsroom", roomHandler.HandleWebSocket)
 
-	//messages
 	router.POST("/user/room/:room_id", roomHandler.SendMessage)
 	router.GET("/user/room/:room_id", roomHandler.ReadMessages)
 	// router.POST("/user/message", userHandler.SendMessageHandler)
 	// router.POST("/user/message", userHandler.SendMessageKafka)
 
 	//friend
+	router.GET("/user/connections", userHandler.GetConnections)
 	router.POST("/user/connections", userHandler.UserFollow)
 	router.DELETE("/user/connections", userHandler.BlockUser)
 
-	router.GET("ws", userHandler.HandleWebSocket)
+	router.GET("ws", userChatHandler.HandleWebSocket)
+	router.GET("/user/message", userHandler.ReadMessages)
+
+	router.Static("/static", "./static")
+	router.LoadHTMLGlob("template/*")
+
+	router.GET("/exit", videocallHandler.ExitPage)
+	router.GET("/error", videocallHandler.ErrorPage)
+	router.GET("/index", videocallHandler.IndexedPage)
 }

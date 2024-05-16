@@ -34,9 +34,20 @@ func BroadcastMessages(roomID string, rooms map[string]*models.WebrtcRoom, conne
 		connectionsMu.Unlock()
 	}
 }
+func BroadcastRoomMessages(roomID string, rooms map[string]*models.WebrtcRoomChat, connectionsMu *sync.Mutex) {
+	room := rooms[roomID]
+	for msg := range room.Ch {
+		connectionsMu.Lock()
+		for _, conn := range room.Connections {
+			if err := conn.WriteJSON(msg); err != nil {
+				log.Printf("Error sending message to connection: %v", err)
+			}
+		}
+		connectionsMu.Unlock()
+	}
+}
 func SendMessageKafka(message models.UserMessage, c *gin.Context) error {
 	fmt.Println("hii kafka")
-	// Initialize Kafka producer
 	producer, err := sarama.NewAsyncProducer([]string{"localhost:9092"}, nil)
 	if err != nil {
 		fmt.Println("err", err)
@@ -51,12 +62,10 @@ func SendMessageKafka(message models.UserMessage, c *gin.Context) error {
 		return err
 	}
 	kafkaMessage := &sarama.ProducerMessage{
-		Topic: "chat", // Adjust topic name here
+		Topic: "chat",
 		Value: sarama.StringEncoder(jsonData),
-		// Add other message attributes as needed
 	}
 
-	// Send message to Kafka topic
 	producer.Input() <- kafkaMessage
 
 	// c.JSON(http.StatusCreated, gin.H{"message": "Message sent to Kafka"})
