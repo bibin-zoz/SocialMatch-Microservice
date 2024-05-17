@@ -18,12 +18,12 @@ type ConnectionsClient struct {
 // NewConnectionsClient creates a new instance of ConnectionsClient.
 func NewConnectionsClient(cfg config.Config) *ConnectionsClient {
 	// Print debug information
-	fmt.Println("Dialing gRPC server at:", cfg.AdminSvcUrl)
+	fmt.Println("Dialing gRPC server at:", cfg.ConnectionSvcUrl)
 
 	// Dial the gRPC server
 	conn, err := grpc.Dial(cfg.AdminSvcUrl, grpc.WithInsecure())
 	if err != nil {
-		fmt.Errorf("failed to dial gRPC server: %w", err)
+		fmt.Println(fmt.Errorf("failed to dial gRPC server: %w", err))
 		return nil
 
 	}

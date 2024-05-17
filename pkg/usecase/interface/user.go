@@ -24,7 +24,7 @@ type UserUseCase interface {
 	FollowUser(senderID, userID int64) error
 	BlockConnection(senderID, userID int64) error
 	SendMessage(message *models.UserMessage) error
-	ConsumeAndProcessMessages()
+	// ConsumeAndProcessMessages()
 	GetMessages(receiverID, senderID uint64) ([]models.UserMessage, error)
 	GetConnections(userID uint64) ([]models.UserDetails, error)
 }

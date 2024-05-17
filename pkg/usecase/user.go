@@ -1,24 +1,20 @@
 package usecase
 
 import (
-	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
-	"os/signal"
 	"strings"
-	"syscall"
+	"time"
 
 	client "github.com/bibin-zoz/social-match-userauth-svc/pkg/client/interface"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/config"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/domain"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/helper"
+	"github.com/bibin-zoz/social-match-userauth-svc/pkg/pb/chat"
 	interfaces "github.com/bibin-zoz/social-match-userauth-svc/pkg/repository/interface"
 	services "github.com/bibin-zoz/social-match-userauth-svc/pkg/usecase/interface"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/utils/models"
 	"github.com/jinzhu/copier"
-	"github.com/segmentio/kafka-go"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -27,14 +23,16 @@ type userUseCase struct {
 	Config           config.Config
 	InterestClient   client.InterestClientInterface
 	ConnectionClient client.ConnectionClientInterface
+	ChatClient       client.ChatClientInterface
 }
 
-func NewUserUseCase(repository interfaces.UserRepository, config config.Config, interestClient client.InterestClientInterface, connectionClient client.ConnectionClientInterface) services.UserUseCase {
+func NewUserUseCase(repository interfaces.UserRepository, config config.Config, interestClient client.InterestClientInterface, connectionClient client.ConnectionClientInterface, chatClient client.ChatClientInterface) services.UserUseCase {
 	return &userUseCase{
 		userRepository:   repository,
 		Config:           config,
 		InterestClient:   interestClient,
 		ConnectionClient: connectionClient,
+		ChatClient:       chatClient,
 	}
 }
 
@@ -421,89 +419,118 @@ func (ur *userUseCase) SendMessage(message *models.UserMessage) error {
 		Content:    message.Content,
 		CreatedAt:  message.CreatedAt,
 	}
-	msgID, err := ur.userRepository.SaveMessage(usermsg)
-	if err != nil {
-		return errors.New("failed to save message")
-	}
+	var media []models.Media
 	if message.Media != nil {
 
 		for _, m := range message.Media {
-			media := &domain.Media{
-				Message_id: int(msgID),
-				Filename:   m.Filename,
-			}
-			fmt.Println("hi2")
-			err := ur.userRepository.SaveMedia(media)
-			if err != nil {
-				return errors.New("failed to save message")
-			}
+			media = append(media, m)
+			// media := &domain.Media{
+			// 	Message_id: int(msgID),
+			// 	Filename:   m.Filename,
+			// }
+			// fmt.Println("hi2")
+			// err := ur.userRepository.SaveMedia(media)
+			// if err != nil {
+			// 	return errors.New("failed to save message")
+			// }
 		}
 
+	}
+	_, err := ur.ChatClient.SendMessage(uint32(usermsg.SenderID), uint32(usermsg.RecipentID), usermsg.Content, media)
+	if err != nil {
+		return err
 	}
 	fmt.Println("messaged saved successfully")
 	return nil
 }
-func (ur *userUseCase) ConsumeAndProcessMessages() {
-	config := kafka.ReaderConfig{
-		Brokers: []string{"localhost:9092"},
-		GroupID: "1",
-		Topic:   "chat",
-	}
 
-	consumer := kafka.NewReader(config)
+// func (ur *userUseCase) ConsumeAndProcessMessages() {
+// 	config := kafka.ReaderConfig{
+// 		Brokers: []string{"localhost:9092"},
+// 		GroupID: "1",
+// 		Topic:   "chat",
+// 	}
 
-	signals := make(chan os.Signal, 1)
-	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
-	defer signal.Stop(signals)
+// 	consumer := kafka.NewReader(config)
 
-	// Handle signals
-	go func() {
-		sig := <-signals
-		fmt.Printf("Received signal: %v\n", sig)
-		fmt.Println("Shutting down...")
+// 	signals := make(chan os.Signal, 1)
+// 	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
+// 	defer signal.Stop(signals)
 
-		// Close Kafka consumer
-		if err := consumer.Close(); err != nil {
-			fmt.Printf("Error closing Kafka consumer: %v\n", err)
-		}
+// 	// Handle signals
+// 	go func() {
+// 		sig := <-signals
+// 		fmt.Printf("Received signal: %v\n", sig)
+// 		fmt.Println("Shutting down...")
 
-		os.Exit(0)
-	}()
+// 		// Close Kafka consumer
+// 		if err := consumer.Close(); err != nil {
+// 			fmt.Printf("Error closing Kafka consumer: %v\n", err)
+// 		}
 
-	// Continuously consume messages
-	for {
-		msg, err := consumer.ReadMessage(context.Background())
-		if err != nil {
-			fmt.Printf("Error reading message: %v\n", err)
-			continue
-		}
+// 		os.Exit(0)
+// 	}()
 
-		var userMessage models.UserMessage
-		if err := json.Unmarshal(msg.Value, &userMessage); err != nil {
-			fmt.Printf("Failed to deserialize message: %v\n", err)
-			continue
-		}
+// 	// Continuously consume messages
+// 	for {
+// 		msg, err := consumer.ReadMessage(context.Background())
+// 		if err != nil {
+// 			fmt.Printf("Error reading message: %v\n", err)
+// 			continue
+// 		}
 
-		usermsg := &models.UserMessage{
-			SenderID:   userMessage.SenderID,
-			RecipentID: userMessage.RecipentID,
-			Content:    userMessage.Content,
-			CreatedAt:  userMessage.CreatedAt,
-		}
+// 		var userMessage models.UserMessage
+// 		if err := json.Unmarshal(msg.Value, &userMessage); err != nil {
+// 			fmt.Printf("Failed to deserialize message: %v\n", err)
+// 			continue
+// 		}
 
-		if err := ur.SendMessage(usermsg); err != nil {
-			fmt.Printf("Failed to process message: %v\n", err)
-		}
-		fmt.Println("usermsg", userMessage)
-	}
-}
+// 		usermsg := &models.UserMessage{
+// 			SenderID:   userMessage.SenderID,
+// 			RecipentID: userMessage.RecipentID,
+// 			Content:    userMessage.Content,
+// 			CreatedAt:  userMessage.CreatedAt,
+// 		}
+
+// 		if err := ur.SendMessage(usermsg); err != nil {
+// 			fmt.Printf("Failed to process message: %v\n", err)
+// 		}
+// 		fmt.Println("usermsg", userMessage)
+// 	}
+// }
 
 func (ur *userUseCase) GetMessages(receiverID, senderID uint64) ([]models.UserMessage, error) {
-	messages, err := ur.userRepository.GetMessages(receiverID, senderID)
+	messages, err := ur.ChatClient.ReadMessages(uint32(receiverID), uint32(senderID))
 	if err != nil {
 		return nil, errors.New("error retrieving messages")
 	}
-	return messages, nil
+
+	// Convert []*pb.Message to []models.UserMessage
+	var userMessages []models.UserMessage
+	for _, msg := range messages {
+		userMessage := models.UserMessage{
+			ID:         uint(msg.MessageId),
+			RecipentID: uint(msg.ReceiverIdId),
+			SenderID:   uint(msg.SenderId),
+			Content:    msg.Content,
+			CreatedAt:  time.Now(), // Assuming models.UserMessage.Timestamp is of the same type
+			Media:      convertMedia(msg.Media),
+		}
+		userMessages = append(userMessages, userMessage)
+	}
+	return userMessages, nil
+}
+
+// Helper function to convert []*pb.Media to []models.Media
+func convertMedia(pbMedia []*chat.Media) []models.Media {
+	var media []models.Media
+	for _, m := range pbMedia {
+		media = append(media, models.Media{
+			Filename: m.Filename,
+			// Add other fields as necessary
+		})
+	}
+	return media
 }
 func (ur *userUseCase) GetConnections(userID uint64) ([]models.UserDetails, error) {
 	// Fetch connections from the ConnectionClient

@@ -18,11 +18,12 @@ func InitializeAPI(cfg config.Config) (*server.Server, error) {
 	}
 	interestClient := client.NewInterestClient(cfg)
 	connectionClient := client.NewConnectionsClient(cfg)
+	chatClient := client.NewChatClient(cfg)
 	userRepository := repository.NewUserRepository(gormDB, mongoClient)
 	// kafkaProducer := kafka.NewProducer(cfg.KafkaBrokers, cfg.KafkaTopic)
 	// kafkaConsumer := kafka.NewConsumer(cfg.KafkaBrokers, cfg.KafkaTopic, "1")
-	userUsecase := usecase.NewUserUseCase(userRepository, cfg, interestClient, connectionClient)
-	go userUsecase.ConsumeAndProcessMessages()
+	userUsecase := usecase.NewUserUseCase(userRepository, cfg, interestClient, connectionClient, chatClient)
+	// go userUsecase.ConsumeAndProcessMessages()
 	userServiceServer := service.NewUserServer(userUsecase)
 	grpcServer, err := server.NewGRPCServer(cfg, userServiceServer)
 
