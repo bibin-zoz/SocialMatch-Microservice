@@ -87,6 +87,11 @@ func (uch *UserChatHandler) HandleWebSocket(c *gin.Context) {
 			Content:    msg.Message,
 			CreatedAt:  time.Now(),
 		}
+		_, err := uch.GRPC_Client.SendMessage(userMessage)
+		if err != nil {
+			log.Printf("invalid user_id,reciever_id: %v", err)
+			break
+		}
 		if err := helper.SendMessageKafka(userMessage, c); err != nil {
 			log.Printf("Error saving message: %v", err)
 			continue
