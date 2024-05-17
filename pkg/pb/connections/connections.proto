@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package connections;
+option go_package = "./pkg/pb/connection";
+
+service Connections {
+    rpc CheckUserConnection (CheckUserConnectionReq) returns (ConnectionResponse);
+}
+
+// Define the response message type
+message ConnectionResponse {
+    bool connected = 1;
+}
+message CheckUserConnectionReq{
+    int32 userID = 1;
+    int32 receiverID = 2;
+}
