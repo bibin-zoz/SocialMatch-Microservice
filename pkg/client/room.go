@@ -7,34 +7,27 @@ import (
 	"github.com/bibin-zoz/api-gateway/pkg/client/interfaces"
 	"github.com/bibin-zoz/api-gateway/pkg/config"
 	"github.com/bibin-zoz/api-gateway/pkg/pb/room"
-	pb "github.com/bibin-zoz/api-gateway/pkg/pb/room"
+
+	// pb "github.com/bibin-zoz/api-gateway/pkg/pb/room"
 	"github.com/bibin-zoz/api-gateway/pkg/utils/models"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 type RoomClient struct {
-	Client     pb.RoomServiceClient
+	// Client     pb.RoomServiceClient
 	RoomClient room.RoomServiceClient
 }
 
 func NewRoomServiceClient(cfg config.Config) interfaces.RoomClient {
-	grpcConnection, err := grpc.Dial(cfg.RoomSvcUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		fmt.Println("Could not connect", err)
-		return nil
-	}
-
-	grpcClient := pb.NewRoomServiceClient(grpcConnection)
 	roomGrpcConnection, err := grpc.Dial(cfg.RoomSvcUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		fmt.Println("Could not connect to room service", err)
 		return nil
 	}
 	roomGrpcClient := room.NewRoomServiceClient(roomGrpcConnection)
-	fmt.Println("grpc", grpcClient)
 	return &RoomClient{
-		Client:     grpcClient,
+
 		RoomClient: roomGrpcClient,
 	}
 
@@ -135,7 +128,7 @@ func (c *RoomClient) GetRoomJoinRequests(roomID uint32) ([]models.RoomJoinReques
 }
 
 func (c *RoomClient) GetAllRooms() ([]models.Room, error) {
-	res, err := c.Client.GetAllRooms(context.Background(), &pb.GetAllRoomsRequest{})
+	res, err := c.RoomClient.GetAllRooms(context.Background(), &room.GetAllRoomsRequest{})
 	if err != nil {
 		return nil, err
 	}

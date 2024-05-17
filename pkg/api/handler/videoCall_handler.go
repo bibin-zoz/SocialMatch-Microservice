@@ -1,17 +1,21 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 	"sync"
 
+	"github.com/bibin-zoz/api-gateway/pkg/client/interfaces"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/pion/webrtc/v2"
 )
 
 type VideoCallHandler struct {
-	mu    sync.Mutex
-	rooms map[string]*Room
+	mu                sync.Mutex
+	rooms             map[string]*Room
+	Connection_Client interfaces.ConnectionClient
 }
 
 type Room struct {
@@ -53,9 +57,38 @@ func (v *VideoCallHandler) handleWebSocket(c *gin.Context) {
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
+		fmt.Println("Error upgrading to WebSocket:", err)
 		return
 	}
 	defer conn.Close()
+
+	userID := c.DefaultQuery("userID", "")
+	receiverID := c.DefaultQuery("receiverID", "")
+
+	// Convert user ID and receiver ID to integers
+	uid, err := strconv.Atoi(userID)
+	if err != nil {
+		fmt.Println("Invalid user ID:", err)
+		return
+	}
+	rid, err := strconv.Atoi(receiverID)
+	if err != nil {
+		fmt.Println("Invalid receiver ID:", err)
+		return
+	}
+
+	// Check user connection
+	connection, err := v.Connection_Client.CheckUserConnection(int32(uid), int32(rid))
+	if err != nil {
+		fmt.Println("Error checking user connection:", err)
+		return
+	}
+
+	// Check if users are connected
+	if !connection {
+		fmt.Println("Users are not connected")
+		return
+	}
 
 	roomId := c.DefaultQuery("room", "")
 	v.mu.Lock()
@@ -74,6 +107,7 @@ func (v *VideoCallHandler) handleWebSocket(c *gin.Context) {
 
 	peerConnection, err := webrtc.NewPeerConnection(webrtc.Configuration{})
 	if err != nil {
+		fmt.Println("Error creating PeerConnection:", err)
 		return
 	}
 	defer peerConnection.Close()
