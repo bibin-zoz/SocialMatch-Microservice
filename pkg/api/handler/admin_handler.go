@@ -9,6 +9,7 @@ import (
 	"github.com/bibin-zoz/api-gateway/pkg/utils/models"
 	response "github.com/bibin-zoz/api-gateway/pkg/utils/responce"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type AdminHandler struct {
@@ -28,6 +29,12 @@ func (ad *AdminHandler) LoginHandler(c *gin.Context) {
 	var adminDetails models.AdminLogin
 	if err := c.ShouldBindJSON(&adminDetails); err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err := validator.New().Struct(adminDetails)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Invalid details", nil, nil)
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
@@ -87,6 +94,11 @@ func (ad *AdminHandler) AddInterest(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
+	if err := validator.New().Struct(interest); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Invalid details", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
 	fmt.Println("interesdddddddddddddddt", interest)
 	_, err := ad.GRPC_Client.AddInterest(interest.Name)
 	if err != nil {
@@ -105,8 +117,13 @@ func (ad *AdminHandler) EditInterest(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
+	if err := validator.New().Struct(interest); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Invalid details", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
 
-	_, err := ad.GRPC_Client.EditInterest(interest.ID, interest.Name)
+	_, err := ad.GRPC_Client.EditInterest(int(interest.ID), interest.Name)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "Failed to edit interest", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errs)
@@ -142,6 +159,11 @@ func (ad *AdminHandler) AddPreference(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
+	if err := validator.New().Struct(preference); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Invalid details", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
 
 	_, err := ad.GRPC_Client.AddPreference(preference.Name)
 	if err != nil {
@@ -160,8 +182,13 @@ func (ad *AdminHandler) EditPreference(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
+	if err := validator.New().Struct(preference); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Invalid details", nil, nil)
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
 
-	_, err := ad.GRPC_Client.EditPreference(preference.ID, preference.Name)
+	_, err := ad.GRPC_Client.EditPreference(int(preference.ID), preference.Name)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "Failed to edit preference", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errs)

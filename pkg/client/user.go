@@ -1,8 +1,11 @@
 package client
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
+	"mime/multipart"
 
 	"github.com/bibin-zoz/api-gateway/pkg/client/interfaces"
 	"github.com/bibin-zoz/api-gateway/pkg/config"
@@ -56,6 +59,7 @@ func (c *userClient) UsersSignUp(user models.UserSignup) (models.TokenUser, erro
 		RefreshToken: res.RefreshToken,
 	}, nil
 }
+
 func (c *userClient) UserLogin(user models.UserLogin) (models.TokenUser, error) {
 	res, err := c.Client.UserLogin(context.Background(), &pb.UserLoginRequest{
 		Email:    user.Email,
@@ -110,7 +114,7 @@ func (c *userClient) UserOtpRequest(user models.UserVerificationRequest) (models
 	}
 	return models.Otp{
 		Email: res.Email,
-		Otp:   int(res.Otp),
+		Otp:   uint(res.Otp),
 	}, nil
 
 }
@@ -127,6 +131,37 @@ func (c *userClient) UserOtpVerificationReq(user models.Otp) (models.UserDetail,
 
 }
 
+func (c *userClient) UpdateProfilePhoto(ID int64, files []*multipart.FileHeader) error {
+	var imagePaths [][]byte
+
+	for _, file := range files {
+		f, err := file.Open()
+		if err != nil {
+			return fmt.Errorf("failed to open file: %w", err)
+		}
+		defer f.Close()
+
+		buffer := new(bytes.Buffer)
+		if _, err := io.Copy(buffer, f); err != nil {
+			return fmt.Errorf("failed to read file: %w", err)
+		}
+
+		imagePaths = append(imagePaths, buffer.Bytes())
+	}
+
+	// Convert user model to gRPC request
+	grpcReq := &pb.UpdateProfilePhotoRequest{
+		Userid:    ID,
+		ImageData: imagePaths,
+	}
+
+	// Call gRPC client function
+	_, err := c.Client.UpdateProfilePhoto(context.Background(), grpcReq)
+	if err != nil {
+		return fmt.Errorf("failed to update profile photo: %w", err)
+	}
+	return nil
+}
 func (c *userClient) GetAllUsers() ([]models.Users, error) {
 	usersResponse, err := c.Client.GetUsers(context.Background(), &pb.GetUsersRequest{})
 	if err != nil {
@@ -144,8 +179,8 @@ func (c *userClient) GetAllUsers() ([]models.Users, error) {
 			Lastname:  u.Lastname,
 			Phone:     u.Phone,
 			Password:  "hidden",
-			Age:       int(u.Age),
-			GenderID:  int(u.GenderId),
+			Age:       uint(u.Age),
+			GenderID:  uint(u.GenderId),
 			Blocked:   u.Blocked,
 		}
 		users = append(users, userModel)

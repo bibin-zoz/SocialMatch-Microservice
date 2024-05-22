@@ -4,7 +4,7 @@
 // - protoc             v4.25.3
 // source: pkg/pb/connections/connections.proto
 
-package connection
+package connections
 
 import (
 	context "context"

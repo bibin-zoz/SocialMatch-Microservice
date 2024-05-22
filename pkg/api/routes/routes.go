@@ -15,7 +15,8 @@ func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, adminhan
 
 	router.POST("/admin/login", adminhandler.LoginHandler)
 
-	router.PUT("/profile", userHandler.UserEditDetails)
+	router.PUT("/user/profile", userHandler.UserEditDetails)
+	router.PATCH("/user/profile", userHandler.UpdateProfilePhoto)
 
 	router.GET("/admin/users", userHandler.GetAllUsers)
 	router.PUT("/admin/users", adminhandler.UpdateUserStatus)
@@ -66,4 +67,5 @@ func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, adminhan
 	router.GET("/exit", videocallHandler.ExitPage)
 	router.GET("/error", videocallHandler.ErrorPage)
 	router.GET("/index", videocallHandler.IndexedPage)
+	router.GET("/wsvideocall", videocallHandler.HandleWebSocket)
 }
