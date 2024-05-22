@@ -1,11 +1,11 @@
 package models
 
 type Intrests struct {
-	ID   int
+	ID   uint
 	Name string `json:"interest_name"  binding:"min=4"`
 }
 type Preferences struct {
-	ID   int
+	ID   uint
 	Name string `json:"preference_name" binding:"min=4"`
 }
 type AddPreferences struct {

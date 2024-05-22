@@ -54,7 +54,7 @@ func (ad *adminClient) GetIntrests() ([]models.Intrests, error) {
 	var Intrests []models.Intrests
 	for _, u := range usersResponse.Interests {
 		userModel := models.Intrests{
-			ID:   int(u.Id),
+			ID:   uint(u.Id),
 			Name: u.InterestName,
 		}
 		Intrests = append(Intrests, userModel)
@@ -72,7 +72,7 @@ func (ad *adminClient) GetPreferences() ([]models.Preferences, error) {
 	var Preferences []models.Preferences
 	for _, u := range usersResponse.Preferences {
 		PreferencesModel := models.Preferences{
-			ID:   int(u.Id),
+			ID:   uint(u.Id),
 			Name: u.PreferenceName,
 		}
 		Preferences = append(Preferences, PreferencesModel)

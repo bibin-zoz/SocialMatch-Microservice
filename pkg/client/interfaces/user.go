@@ -1,6 +1,10 @@
 package interfaces
 
-import "github.com/bibin-zoz/api-gateway/pkg/utils/models"
+import (
+	"mime/multipart"
+
+	"github.com/bibin-zoz/api-gateway/pkg/utils/models"
+)
 
 type UserClient interface {
 	UsersSignUp(user models.UserSignup) (models.TokenUser, error)
@@ -23,4 +27,5 @@ type UserClient interface {
 	SendMessage(message models.UserMessage) (models.UserMessage, error)
 	ReadMessages(userid uint32, senterid uint32) ([]models.UserMessage, error)
 	GetConnections(userID uint64) ([]models.UserDetail, error)
+	UpdateProfilePhoto(ID int64, files []*multipart.FileHeader) error
 }

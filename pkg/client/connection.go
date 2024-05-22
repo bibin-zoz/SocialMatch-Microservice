@@ -6,7 +6,7 @@ import (
 
 	"github.com/bibin-zoz/api-gateway/pkg/client/interfaces"
 	"github.com/bibin-zoz/api-gateway/pkg/config"
-	Connection "github.com/bibin-zoz/api-gateway/pkg/pb/Connections"
+	Connection "github.com/bibin-zoz/api-gateway/pkg/pb/connections"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -14,7 +14,7 @@ import (
 
 type ConnectionClient struct {
 	// Client     pb.ConnectionServiceClient
-	ConnectionClient Connection.ConnectionServiceClient
+	ConnectionClient Connection.ConnectionsClient
 }
 
 func NewConnectionServiceClient(cfg config.Config) interfaces.ConnectionClient {
@@ -23,7 +23,7 @@ func NewConnectionServiceClient(cfg config.Config) interfaces.ConnectionClient {
 		fmt.Println("Could not connect to Connection service", err)
 		return nil
 	}
-	ConnectionGrpcClient := Connection.NewConnectionServiceClient(ConnectionGrpcConnection)
+	ConnectionGrpcClient := Connection.NewConnectionsClient(ConnectionGrpcConnection)
 	return &ConnectionClient{
 
 		ConnectionClient: ConnectionGrpcClient,

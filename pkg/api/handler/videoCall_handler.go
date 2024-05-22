@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/bibin-zoz/api-gateway/pkg/client/interfaces"
+	"github.com/bibin-zoz/api-gateway/pkg/helper"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/pion/webrtc/v2"
@@ -39,14 +40,42 @@ func (v *VideoCallHandler) ErrorPage(c *gin.Context) {
 
 func (v *VideoCallHandler) IndexedPage(c *gin.Context) {
 	room := c.DefaultQuery("room", "")
+	// userID := c.DefaultQuery("userID", "")
+	// receiverID := c.DefaultQuery("receiverID", "")
+
+	// uid, err := strconv.Atoi(userID)
+	// if err != nil {
+	// 	fmt.Println("Invalid user ID:", err)
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+	// 	return
+	// }
+	// rid, err := strconv.Atoi(receiverID)
+	// if err != nil {
+	// 	fmt.Println("Invalid receiver ID:", err)
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid receiver ID"})
+	// 	return
+	// }
+	// fmt.Println(uid, rid)
+
+	// connection, err := v.Connection_Client.CheckUserConnection(int32(uid), int32(rid))
+	// if err != nil {
+	// 	fmt.Println("Error checking user connection:", err)
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Error checking user connection"})
+	// 	return
+	// }
+	// if !connection {
+	// 	c.JSON(http.StatusForbidden, gin.H{"error": "Users are not friends"})
+	// 	return
+	// }
+
 	c.HTML(http.StatusOK, "index.html", gin.H{"room": room})
 }
 
-func (v *VideoCallHandler) SetupRoutes(group *gin.RouterGroup) {
-	group.GET("/ws", v.handleWebSocket)
-}
+// func (v *VideoCallHandler) SetupRoutes(group *gin.RouterGroup) {
+// 	group.GET("/ws", v.handleWebSocket)
+// }
 
-func (v *VideoCallHandler) handleWebSocket(c *gin.Context) {
+func (v *VideoCallHandler) HandleWebSocket(c *gin.Context) {
 	upgrader := websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
@@ -77,20 +106,19 @@ func (v *VideoCallHandler) handleWebSocket(c *gin.Context) {
 		return
 	}
 
-	// Check user connection
 	connection, err := v.Connection_Client.CheckUserConnection(int32(uid), int32(rid))
 	if err != nil {
 		fmt.Println("Error checking user connection:", err)
 		return
 	}
 
-	// Check if users are connected
 	if !connection {
 		fmt.Println("Users are not connected")
 		return
 	}
 
-	roomId := c.DefaultQuery("room", "")
+	// roomId := c.DefaultQuery("room", "")
+	roomId := helper.GenerateRoomID(int64(uid), int64(rid))
 	v.mu.Lock()
 	room, exists := v.rooms[roomId]
 	if !exists {
@@ -112,5 +140,4 @@ func (v *VideoCallHandler) handleWebSocket(c *gin.Context) {
 	}
 	defer peerConnection.Close()
 
-	// Handle WebRTC signaling here
 }

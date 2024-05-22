@@ -27,8 +27,8 @@ type Users struct {
 	Phone     string `json:"phone" gorm:"validate:required"`
 	Blocked   bool   `json:"blocked" gorm:"validate:required"`
 	Username  string `json:"user_name"`
-	GenderID  int    `json:"gender_id"`
-	Age       int    `json:"age"`
+	GenderID  uint   `json:"gender_id"`
+	Age       uint   `json:"age"`
 }
 type UserSignup struct {
 	Email     string `json:"email" validate:"required,email"`
@@ -36,9 +36,9 @@ type UserSignup struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Username  string `json:"user_name"`
-	GenderID  int    `json:"gender_id"`
-	Age       int    `json:"age"`
-	Number    int    `json:"number"`
+	GenderID  uint   `json:"gender_id"`
+	Age       uint   `json:"age"`
+	Number    uint   `json:"number"`
 }
 
 type UserUpdateDetails struct {
@@ -49,6 +49,10 @@ type UserUpdateDetails struct {
 	Password  string `json:"password" validate:"required,min=6"`
 }
 
+type UserProfilePhoto struct {
+	UserID   uint     `bson:"userId"`
+	ImageURL []string `bson:"imageUrl"`
+}
 type UserDetail struct {
 	ID        uint
 	Firstname string
@@ -63,7 +67,7 @@ type TokenUser struct {
 	RefreshToken string
 }
 type UserDetailsResponse struct {
-	Id        int    `json:"id"`
+	Id        uint   `json:"id"`
 	Firstname string `json:"firstname"`
 	Lastname  string `json:"lastname"`
 	Email     string `json:"email"`
@@ -74,5 +78,5 @@ type UserVerificationRequest struct {
 }
 type Otp struct {
 	Email string `json:"email" validate:"required,email"`
-	Otp   int
+	Otp   uint
 }
