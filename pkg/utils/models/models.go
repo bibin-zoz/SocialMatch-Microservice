@@ -47,3 +47,12 @@ type UserMessage struct {
 	Read       bool    `dafault:"false"`
 	Media      []Media `gorm:"foreignKey:MessageID"`
 }
+type UserProfilePhoto struct {
+	UserID    int      `bson:"userId"`
+	ImageData [][]byte `bson:"imageUrl"`
+	ImageURL  []string
+}
+type ProfilePhoto struct {
+	UserID   int      `bson:"userId"`
+	ImageURL []string `bson:"imageUrl"`
+}

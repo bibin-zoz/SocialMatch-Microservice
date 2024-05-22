@@ -36,4 +36,5 @@ type UserRepository interface {
 	SaveMedia(media *domain.Media) error
 	GetMessages(receiverID, senderID uint64) ([]models.UserMessage, error)
 	// GetConnections(userID uint) ([]models.UserDetails, error)
+	SaveProfilePhoto(userID uint32, imageURLs []string) error
 }

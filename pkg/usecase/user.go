@@ -14,6 +14,7 @@ import (
 	interfaces "github.com/bibin-zoz/social-match-userauth-svc/pkg/repository/interface"
 	services "github.com/bibin-zoz/social-match-userauth-svc/pkg/usecase/interface"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/utils/models"
+	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -553,4 +554,33 @@ func (ur *userUseCase) GetConnections(userID uint64) ([]models.UserDetails, erro
 	}
 
 	return userDetails, nil
+}
+func (ur *userUseCase) UpdateProfilePhoto(images models.UserProfilePhoto) (models.ProfilePhoto, error) {
+	uploadedUrl := []string{}
+
+	for _, imageData := range images.ImageData {
+		// Generate a unique file name
+		fileUID := uuid.New()
+		fileName := fileUID.String()
+
+		// Upload to S3
+		url, err := helper.AddImageToAwsS3(imageData, fileName)
+		if err != nil {
+			fmt.Println("error uploading to S3:", err)
+			return models.ProfilePhoto{}, err
+		}
+
+		uploadedUrl = append(uploadedUrl, url)
+	}
+
+	images.ImageURL = uploadedUrl
+	err := ur.userRepository.SaveProfilePhoto(uint32(images.UserID), images.ImageURL)
+	if err != nil {
+		return models.ProfilePhoto{}, err
+	}
+
+	return models.ProfilePhoto{
+		UserID:   images.UserID,
+		ImageURL: images.ImageURL,
+	}, nil
 }

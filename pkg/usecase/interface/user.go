@@ -27,4 +27,5 @@ type UserUseCase interface {
 	// ConsumeAndProcessMessages()
 	GetMessages(receiverID, senderID uint64) ([]models.UserMessage, error)
 	GetConnections(userID uint64) ([]models.UserDetails, error)
+	UpdateProfilePhoto(images models.UserProfilePhoto) (models.ProfilePhoto, error)
 }

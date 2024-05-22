@@ -1,27 +1,48 @@
 package repository
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/domain"
 	interfaces "github.com/bibin-zoz/social-match-userauth-svc/pkg/repository/interface"
 	"github.com/bibin-zoz/social-match-userauth-svc/pkg/utils/models"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
 )
 
 type userRepository struct {
-	DB          *gorm.DB
-	MongoClient *mongo.Client
+	DB      *gorm.DB
+	MongoDB *mongo.Database
 }
 
-func NewUserRepository(DB *gorm.DB, mongoClient *mongo.Client) interfaces.UserRepository {
+func NewUserRepository(DB *gorm.DB, MongoDB *mongo.Database) interfaces.UserRepository {
 	return &userRepository{
-		DB:          DB,
-		MongoClient: mongoClient,
+		DB:      DB,
+		MongoDB: MongoDB,
 	}
 
+}
+func (ur *userRepository) SaveProfilePhoto(userID uint32, imageURLs []string) error {
+	fmt.Println("repo entered")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	data := bson.M{
+		"userid":         userID,
+		"profile_photos": imageURLs,
+	}
+
+	_, err := ur.MongoDB.Collection("userimages").InsertOne(ctx, data)
+	if err != nil {
+		return fmt.Errorf("failed to save profile photos: %v", err)
+	}
+
+	return nil
 }
 
 func (ur *userRepository) CheckUserExistsByEmail(email string) (*domain.User, error) {

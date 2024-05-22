@@ -64,3 +64,7 @@ type UserMessage struct {
 	Read       bool `dafault:"false"`
 	// Media      []Media `json:"media"`
 }
+type UserProfilePhoto struct {
+	UserID   int      `bson:"userId"`
+	ImageURL []string `bson:"imageUrl"`
+}

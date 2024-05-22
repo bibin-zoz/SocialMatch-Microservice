@@ -294,3 +294,18 @@ func (a *UserServer) GetConnections(ctx context.Context, req *pb.GetConnectionsR
 		UserDetails: pbConnections,
 	}, nil
 }
+func (s *UserServer) UpdateProfilePhoto(ctx context.Context, req *pb.UpdateProfilePhotoRequest) (*pb.UpdateUserResponse, error) {
+	userPics := &models.UserProfilePhoto{
+		UserID:    int(req.Userid),
+		ImageData: req.ImageData,
+	}
+	res, err := s.userUseCase.UpdateProfilePhoto(*userPics)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.UpdateUserResponse{
+		Status:   0,
+		Userid:   int64(res.UserID),
+		ImageUrl: res.ImageURL,
+	}, nil
+}

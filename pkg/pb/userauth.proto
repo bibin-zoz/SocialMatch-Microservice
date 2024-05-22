@@ -23,10 +23,19 @@ service User {
   rpc FollowUser(FollowUserRequest)returns(FollowUserResponce){};
   rpc BlockUser(BlockUserRequest)returns(BlockUserResponce){};
   rpc SendMessage(SendMessageRequest) returns (SendMessageResponce);
-
-  // New RPC method to read messages in a room
   rpc ReadMessages(ReadMessagesRequest) returns (ReadMessagesResponse);
-   rpc GetConnections(GetConnectionsRequest) returns (GetConnectionsResponse) {};
+  rpc GetConnections(GetConnectionsRequest) returns (GetConnectionsResponse) {};
+  rpc UpdateProfilePhoto (UpdateProfilePhotoRequest) returns (UpdateUserResponse);
+}
+message UpdateProfilePhotoRequest {
+  int64 userid = 1;
+  repeated bytes image_data = 2;  // List of image data in bytes
+}
+
+message UpdateUserResponse {
+  int64 status=1;
+  int64 userid = 2;
+  repeated string image_url = 3;
 }
 
 message GetConnectionsResponse {
