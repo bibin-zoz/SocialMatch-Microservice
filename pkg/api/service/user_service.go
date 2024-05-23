@@ -226,3 +226,17 @@ func (s *RoomServer) ReadMessages(ctx context.Context, req *pb.ReadMessagesReque
 		Messages: pbMessages,
 	}, nil
 }
+func (s *RoomServer) CheckRoomConnection(ctx context.Context, req *pb.CheckRoomConnectionRequest) (*pb.CheckRoomConnectionResponse, error) {
+	// Call the use case method to check the connection
+	connected, err := s.roomUseCase.CheckRoomConnection(uint(req.UserId), uint(req.RoomId))
+	if err != nil {
+		return nil, err
+	}
+
+	// Create and return the response
+	response := &pb.CheckRoomConnectionResponse{
+		Connected: connected,
+	}
+
+	return response, nil
+}

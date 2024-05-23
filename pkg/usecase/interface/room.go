@@ -15,4 +15,5 @@ type RoomUseCase interface {
 	GetRoomMembers(roomID uint32) ([]models.RoomMember, error)
 	GetMessages(roomID uint) ([]*domain.Message, error)
 	SendMessage(message domain.Message) (*domain.Message, error)
+	CheckRoomConnection(userID, roomID uint) (bool, error)
 }

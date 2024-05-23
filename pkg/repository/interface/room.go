@@ -18,4 +18,5 @@ type RoomRepository interface {
 	SaveMessage(message domain.Message) (*domain.Message, *gorm.DB, error)
 	SaveMedia(tx *gorm.DB, messageID uint, media []domain.Media) ([]*domain.Media, error)
 	GetRoomMembersById(roomID uint, userID uint) (*domain.RoomMember, error)
+	IsUserConnectedToRoom(userID, roomID uint) (bool, error)
 }

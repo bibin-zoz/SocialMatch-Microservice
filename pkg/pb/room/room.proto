@@ -12,7 +12,7 @@ message Room {
   uint32 max_persons = 4;
   string status = 5;
 }
-//beofre pb
+
 message RoomCreateRequest {
   string room_name = 1;
   string description = 2;
@@ -130,4 +130,17 @@ service RoomService {
 
   // New RPC method to read messages in a room
   rpc ReadMessages(ReadMessagesRequest) returns (ReadMessagesResponse);
+
+  // New RPC method to check room connection
+  rpc CheckRoomConnection(CheckRoomConnectionRequest) returns (CheckRoomConnectionResponse);
+}
+
+// New message for checking room connection
+message CheckRoomConnectionRequest {
+  uint32 user_id = 1;
+  uint32 room_id = 2;
+}
+
+message CheckRoomConnectionResponse {
+  bool connected = 1;
 }

@@ -198,3 +198,16 @@ func (uc *roomUseCase) GetMessages(roomID uint) ([]*domain.Message, error) {
 
 	return messages, nil
 }
+func (uc *roomUseCase) CheckRoomConnection(userID, roomID uint) (bool, error) {
+	// Check if the user is connected to the room (Example logic)
+	connected, err := uc.roomRepository.IsUserConnectedToRoom(userID, roomID)
+	if err != nil {
+		return false, err
+	}
+
+	if !connected {
+		return false, errors.New("user is not connected to the room")
+	}
+
+	return true, nil
+}

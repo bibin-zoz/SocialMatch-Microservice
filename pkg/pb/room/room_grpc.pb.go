@@ -28,6 +28,7 @@ const (
 	RoomService_GetGroupMembers_FullMethodName     = "/room.RoomService/GetGroupMembers"
 	RoomService_SendMessage_FullMethodName         = "/room.RoomService/SendMessage"
 	RoomService_ReadMessages_FullMethodName        = "/room.RoomService/ReadMessages"
+	RoomService_CheckRoomConnection_FullMethodName = "/room.RoomService/CheckRoomConnection"
 )
 
 // RoomServiceClient is the client API for RoomService service.
@@ -52,6 +53,8 @@ type RoomServiceClient interface {
 	SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*Message, error)
 	// New RPC method to read messages in a room
 	ReadMessages(ctx context.Context, in *ReadMessagesRequest, opts ...grpc.CallOption) (*ReadMessagesResponse, error)
+	// New RPC method to check room connection
+	CheckRoomConnection(ctx context.Context, in *CheckRoomConnectionRequest, opts ...grpc.CallOption) (*CheckRoomConnectionResponse, error)
 }
 
 type roomServiceClient struct {
@@ -143,6 +146,15 @@ func (c *roomServiceClient) ReadMessages(ctx context.Context, in *ReadMessagesRe
 	return out, nil
 }
 
+func (c *roomServiceClient) CheckRoomConnection(ctx context.Context, in *CheckRoomConnectionRequest, opts ...grpc.CallOption) (*CheckRoomConnectionResponse, error) {
+	out := new(CheckRoomConnectionResponse)
+	err := c.cc.Invoke(ctx, RoomService_CheckRoomConnection_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RoomServiceServer is the server API for RoomService service.
 // All implementations must embed UnimplementedRoomServiceServer
 // for forward compatibility
@@ -165,6 +177,8 @@ type RoomServiceServer interface {
 	SendMessage(context.Context, *SendMessageRequest) (*Message, error)
 	// New RPC method to read messages in a room
 	ReadMessages(context.Context, *ReadMessagesRequest) (*ReadMessagesResponse, error)
+	// New RPC method to check room connection
+	CheckRoomConnection(context.Context, *CheckRoomConnectionRequest) (*CheckRoomConnectionResponse, error)
 	mustEmbedUnimplementedRoomServiceServer()
 }
 
@@ -198,6 +212,9 @@ func (UnimplementedRoomServiceServer) SendMessage(context.Context, *SendMessageR
 }
 func (UnimplementedRoomServiceServer) ReadMessages(context.Context, *ReadMessagesRequest) (*ReadMessagesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReadMessages not implemented")
+}
+func (UnimplementedRoomServiceServer) CheckRoomConnection(context.Context, *CheckRoomConnectionRequest) (*CheckRoomConnectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckRoomConnection not implemented")
 }
 func (UnimplementedRoomServiceServer) mustEmbedUnimplementedRoomServiceServer() {}
 
@@ -374,6 +391,24 @@ func _RoomService_ReadMessages_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RoomService_CheckRoomConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckRoomConnectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoomServiceServer).CheckRoomConnection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RoomService_CheckRoomConnection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoomServiceServer).CheckRoomConnection(ctx, req.(*CheckRoomConnectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RoomService_ServiceDesc is the grpc.ServiceDesc for RoomService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -416,6 +451,10 @@ var RoomService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReadMessages",
 			Handler:    _RoomService_ReadMessages_Handler,
+		},
+		{
+			MethodName: "CheckRoomConnection",
+			Handler:    _RoomService_CheckRoomConnection_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

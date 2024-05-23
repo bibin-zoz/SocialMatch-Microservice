@@ -143,3 +143,12 @@ func (r *roomRepository) GetMessages(roomID uint) ([]*domain.Message, error) {
 
 	return messages, nil
 }
+func (r *roomRepository) IsUserConnectedToRoom(userID, roomID uint) (bool, error) {
+	// Retrieve room members to check if the user is a member of the specified room
+	var members []*domain.RoomMember
+	err := r.DB.Where("room_id = ? and user_id=?", roomID, userID).Find(&members).Error
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
