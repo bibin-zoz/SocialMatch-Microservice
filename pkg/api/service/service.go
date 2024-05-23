@@ -6,6 +6,7 @@ import (
 
 	pb "github.com/bibin-zoz/social-match-admin-svc/pkg/pb/admin"
 	interfaces "github.com/bibin-zoz/social-match-admin-svc/pkg/usecase/interface"
+
 	"github.com/bibin-zoz/social-match-admin-svc/pkg/utils/models"
 )
 
@@ -15,7 +16,6 @@ type AdminServer struct {
 }
 
 func NewAdminServer(useCase interfaces.AdminUseCase) pb.AdminServer {
-
 	return &AdminServer{
 		adminUseCase: useCase,
 	}

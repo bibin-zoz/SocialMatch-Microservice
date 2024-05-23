@@ -1,16 +1,17 @@
 package usecase
 
 import (
-	repository "github.com/bibin-zoz/social-match-admin-svc/pkg/repository/interface" // Import repository package
+	repository "github.com/bibin-zoz/social-match-admin-svc/pkg/repository/interface"
+	services "github.com/bibin-zoz/social-match-admin-svc/pkg/usecase/interface"
 )
 
 type InterestUseCase struct {
 	interestRepo repository.InterestRepository // Assuming you have an InterestRepository interface
 }
 
-func NewInterestUseCase(interestRepo repository.InterestRepository) *InterestUseCase {
+func NewInterestUseCase(interestRep repository.InterestRepository) services.InterestUseCase {
 	return &InterestUseCase{
-		interestRepo: interestRepo,
+		interestRepo: interestRep,
 	}
 }
 
