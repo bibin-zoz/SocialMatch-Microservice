@@ -28,7 +28,28 @@ service User {
   rpc ReadMessages(ReadMessagesRequest) returns (ReadMessagesResponse);
   rpc GetConnections(GetConnectionsRequest) returns (GetConnectionsResponse) {};
   rpc UpdateProfilePhoto (UpdateProfilePhotoRequest) returns (UpdateUserResponse);
+  rpc AddProfilePhoto(AddProfilePhotoRequest) returns (AddProfilePhotoResponse) {}
+  rpc DeleteProfilePhotoByID(DeleteProfilePhotoRequest) returns (DeleteProfilePhotoResponse) {}
 
+}
+
+message AddProfilePhotoRequest {
+  int64 userid = 1;
+ repeated bytes image_data = 2;  // Image data in bytes
+}
+
+message AddProfilePhotoResponse {
+  int64 status = 1;
+  string image_url = 2;  // URL of the uploaded photo
+}
+
+message DeleteProfilePhotoRequest {
+  int64 userid = 1;
+  string image_id = 2;  // ID of the photo to be deleted
+}
+
+message DeleteProfilePhotoResponse {
+  int64 status = 1;
 }
 
 message UpdateProfilePhotoRequest {

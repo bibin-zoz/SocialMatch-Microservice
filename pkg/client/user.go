@@ -131,37 +131,6 @@ func (c *userClient) UserOtpVerificationReq(user models.Otp) (models.UserDetail,
 
 }
 
-func (c *userClient) UpdateProfilePhoto(ID int64, files []*multipart.FileHeader) error {
-	var imagePaths [][]byte
-
-	for _, file := range files {
-		f, err := file.Open()
-		if err != nil {
-			return fmt.Errorf("failed to open file: %w", err)
-		}
-		defer f.Close()
-
-		buffer := new(bytes.Buffer)
-		if _, err := io.Copy(buffer, f); err != nil {
-			return fmt.Errorf("failed to read file: %w", err)
-		}
-
-		imagePaths = append(imagePaths, buffer.Bytes())
-	}
-
-	// Convert user model to gRPC request
-	grpcReq := &pb.UpdateProfilePhotoRequest{
-		Userid:    ID,
-		ImageData: imagePaths,
-	}
-
-	// Call gRPC client function
-	_, err := c.Client.UpdateProfilePhoto(context.Background(), grpcReq)
-	if err != nil {
-		return fmt.Errorf("failed to update profile photo: %w", err)
-	}
-	return nil
-}
 func (c *userClient) GetAllUsers() ([]models.Users, error) {
 	usersResponse, err := c.Client.GetUsers(context.Background(), &pb.GetUsersRequest{})
 	if err != nil {
@@ -380,3 +349,62 @@ func (c *userClient) GetConnections(userID uint64) ([]models.UserDetail, error) 
 
 	return users, nil
 }
+func (c *userClient) UpdateProfilePhoto(ID int64, files []*multipart.FileHeader) error {
+	var imagePaths [][]byte
+
+	for _, file := range files {
+		f, err := file.Open()
+		if err != nil {
+			return fmt.Errorf("failed to open file: %w", err)
+		}
+		defer f.Close()
+
+		buffer := new(bytes.Buffer)
+		if _, err := io.Copy(buffer, f); err != nil {
+			return fmt.Errorf("failed to read file: %w", err)
+		}
+
+		imagePaths = append(imagePaths, buffer.Bytes())
+	}
+
+	// Convert user model to gRPC request
+	grpcReq := &pb.UpdateProfilePhotoRequest{
+		Userid:    ID,
+		ImageData: imagePaths,
+	}
+
+	// Call gRPC client function
+	_, err := c.Client.UpdateProfilePhoto(context.Background(), grpcReq)
+	if err != nil {
+		return fmt.Errorf("failed to update profile photo: %w", err)
+	}
+	return nil
+}
+
+// func (c *userClient) AddProfilePhoto(ID int64, file *multipart.FileHeader) error {
+// 	// Open the file
+// 	f, err := file.Open()
+// 	if err != nil {
+// 		return fmt.Errorf("failed to open file: %w", err)
+// 	}
+// 	defer f.Close()
+
+// 	// Read the file into a buffer
+// 	buffer := new(bytes.Buffer)
+// 	if _, err := io.Copy(buffer, f); err != nil {
+// 		return fmt.Errorf("failed to read file: %w", err)
+// 	}
+
+// 	// Convert user model to gRPC request
+// 	grpcReq := &pb.UpdateProfilePhotoRequest{
+// 		Userid:    ID,
+// 		ImageData: buffer.Bytes(),
+// 	}
+
+// 	// Call gRPC client function
+// 	_, err = c.Client.UpdateProfilePhoto(context.Background(), grpcReq)
+// 	if err != nil {
+// 		return fmt.Errorf("failed to update profile photo: %w", err)
+// 	}
+// 	return nil
+// }
