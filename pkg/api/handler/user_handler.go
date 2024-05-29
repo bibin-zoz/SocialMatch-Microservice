@@ -379,3 +379,38 @@ func (ur *UserHandler) ReadMessages(c *gin.Context) {
 
 	c.JSON(http.StatusOK, messages)
 }
+
+// func (ur *UserHandler) AddProfilePhoto(c *gin.Context) {
+// 	type UpdateProfilePhotoForm struct {
+// 		ImagePaths []string `form:"image_paths"`
+// 	}
+// 	form, err := c.MultipartForm()
+// 	if err != nil {
+// 		errs := response.ClientResponse(http.StatusBadRequest, "Invalid form data", nil, err.Error())
+// 		c.JSON(http.StatusBadRequest, errs)
+// 		return
+// 	}
+
+// 	files := form.File["images"]
+// 	fmt.Println("doneeeeeeeeeeeee", files)
+// 	authHeader := c.GetHeader("Authorization")
+// 	token := helper.GetTokenFromHeader(authHeader)
+
+// 	userID, _, err := helper.ExtractUserIDFromToken(token)
+// 	if err != nil {
+// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+// 		return
+// 	}
+
+// 	// 4. Call gRPC client to update profile photo
+// 	err = ur.GRPC_Client.AddProfilePhoto(int64(userID), files)
+// 	if err != nil {
+// 		errs := response.ClientResponse(http.StatusInternalServerError, "Failed to update profile photo", nil, err.Error())
+// 		c.JSON(http.StatusInternalServerError, errs)
+// 		return
+// 	}
+
+// 	// 5. Handle success and return response
+// 	success := response.ClientResponse(http.StatusOK, "Profile photo updated successfully", nil, nil)
+// 	c.JSON(http.StatusOK, success)
+// }
