@@ -38,7 +38,7 @@ func (ur *userUseCase) UpdateProfilePhoto(images models.UserProfilePhoto) (model
 	}, nil
 }
 
-func (uc *userUseCase) AddProfilePhoto(userID uint32, imageData []byte) (models.ProfilePhoto, error) {
+func (uc *userUseCase) AddProfilePhoto(userID uint32, imageData [][]byte) (models.ProfilePhoto, error) {
 	if uc.profilePhotoRepo.MaxPhotosReached(userID) {
 		return models.ProfilePhoto{}, fmt.Errorf("maximum number of profile photos reached")
 	}
@@ -48,7 +48,7 @@ func (uc *userUseCase) AddProfilePhoto(userID uint32, imageData []byte) (models.
 	fileName := fileUID.String()
 
 	// Upload to S3
-	url, err := helper.AddImageToAwsS3(imageData, fileName)
+	url, err := helper.AddImageToAwsS3(imageData[1], fileName)
 	if err != nil {
 		return models.ProfilePhoto{}, fmt.Errorf("error uploading to S3: %v", err)
 	}

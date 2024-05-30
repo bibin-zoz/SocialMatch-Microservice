@@ -28,4 +28,6 @@ type UserUseCase interface {
 	GetMessages(receiverID, senderID uint64) ([]models.UserMessage, error)
 	GetConnections(userID uint64) ([]models.UserDetails, error)
 	UpdateProfilePhoto(images models.UserProfilePhoto) (models.ProfilePhoto, error)
+	AddProfilePhoto(userID uint32, imageData [][]byte) (models.ProfilePhoto, error)
+	DeleteProfilePhotoByID(userID uint32, imageURL string) (models.ProfilePhoto, error)
 }

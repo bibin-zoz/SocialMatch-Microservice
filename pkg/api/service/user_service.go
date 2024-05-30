@@ -309,3 +309,27 @@ func (s *UserServer) UpdateProfilePhoto(ctx context.Context, req *pb.UpdateProfi
 		ImageUrl: res.ImageURL,
 	}, nil
 }
+func (s *UserServer) AddProfilePhoto(ctx context.Context, req *pb.AddProfilePhotoRequest) (*pb.AddProfilePhotoResponse, error) {
+	// userPics := &models.UserProfilePhoto{
+	// 	UserID:    int(req.Userid),
+	// 	ImageData: req.ImageData,
+	// }
+	_, err := s.userUseCase.AddProfilePhoto(uint32(req.Userid), req.ImageData)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.AddProfilePhotoResponse{
+		Status:   201,
+		ImageUrl: "",
+	}, nil
+}
+
+func (s *UserServer) DeleteProfilePhotoByID(ctx context.Context, req *pb.DeleteProfilePhotoRequest) (*pb.DeleteProfilePhotoResponse, error) {
+	_, err := s.userUseCase.DeleteProfilePhotoByID(uint32(req.Userid), req.ImageId)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.DeleteProfilePhotoResponse{
+		Status: 0,
+	}, nil
+}

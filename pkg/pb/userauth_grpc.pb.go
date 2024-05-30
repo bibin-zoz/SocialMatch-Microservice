@@ -19,27 +19,29 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	User_UserSignUp_FullMethodName           = "/user.User/UserSignUp"
-	User_UserLogin_FullMethodName            = "/user.User/UserLogin"
-	User_UserEditDetails_FullMethodName      = "/user.User/UserEditDetails"
-	User_UserOtpGeneration_FullMethodName    = "/user.User/UserOtpGeneration"
-	User_UserOtpVerification_FullMethodName  = "/user.User/UserOtpVerification"
-	User_GetUsers_FullMethodName             = "/user.User/GetUsers"
-	User_UpdateUserStatus_FullMethodName     = "/user.User/UpdateUserStatus"
-	User_AddUserInterest_FullMethodName      = "/user.User/AddUserInterest"
-	User_EditUserInterest_FullMethodName     = "/user.User/EditUserInterest"
-	User_DeleteUserInterest_FullMethodName   = "/user.User/DeleteUserInterest"
-	User_GetUserInterests_FullMethodName     = "/user.User/GetUserInterests"
-	User_AddUserPreference_FullMethodName    = "/user.User/AddUserPreference"
-	User_EditUserPreference_FullMethodName   = "/user.User/EditUserPreference"
-	User_DeleteUserPreference_FullMethodName = "/user.User/DeleteUserPreference"
-	User_GetUserPreferences_FullMethodName   = "/user.User/GetUserPreferences"
-	User_FollowUser_FullMethodName           = "/user.User/FollowUser"
-	User_BlockUser_FullMethodName            = "/user.User/BlockUser"
-	User_SendMessage_FullMethodName          = "/user.User/SendMessage"
-	User_ReadMessages_FullMethodName         = "/user.User/ReadMessages"
-	User_GetConnections_FullMethodName       = "/user.User/GetConnections"
-	User_UpdateProfilePhoto_FullMethodName   = "/user.User/UpdateProfilePhoto"
+	User_UserSignUp_FullMethodName             = "/user.User/UserSignUp"
+	User_UserLogin_FullMethodName              = "/user.User/UserLogin"
+	User_UserEditDetails_FullMethodName        = "/user.User/UserEditDetails"
+	User_UserOtpGeneration_FullMethodName      = "/user.User/UserOtpGeneration"
+	User_UserOtpVerification_FullMethodName    = "/user.User/UserOtpVerification"
+	User_GetUsers_FullMethodName               = "/user.User/GetUsers"
+	User_UpdateUserStatus_FullMethodName       = "/user.User/UpdateUserStatus"
+	User_AddUserInterest_FullMethodName        = "/user.User/AddUserInterest"
+	User_EditUserInterest_FullMethodName       = "/user.User/EditUserInterest"
+	User_DeleteUserInterest_FullMethodName     = "/user.User/DeleteUserInterest"
+	User_GetUserInterests_FullMethodName       = "/user.User/GetUserInterests"
+	User_AddUserPreference_FullMethodName      = "/user.User/AddUserPreference"
+	User_EditUserPreference_FullMethodName     = "/user.User/EditUserPreference"
+	User_DeleteUserPreference_FullMethodName   = "/user.User/DeleteUserPreference"
+	User_GetUserPreferences_FullMethodName     = "/user.User/GetUserPreferences"
+	User_FollowUser_FullMethodName             = "/user.User/FollowUser"
+	User_BlockUser_FullMethodName              = "/user.User/BlockUser"
+	User_SendMessage_FullMethodName            = "/user.User/SendMessage"
+	User_ReadMessages_FullMethodName           = "/user.User/ReadMessages"
+	User_GetConnections_FullMethodName         = "/user.User/GetConnections"
+	User_UpdateProfilePhoto_FullMethodName     = "/user.User/UpdateProfilePhoto"
+	User_AddProfilePhoto_FullMethodName        = "/user.User/AddProfilePhoto"
+	User_DeleteProfilePhotoByID_FullMethodName = "/user.User/DeleteProfilePhotoByID"
 )
 
 // UserClient is the client API for User service.
@@ -67,6 +69,8 @@ type UserClient interface {
 	ReadMessages(ctx context.Context, in *ReadMessagesRequest, opts ...grpc.CallOption) (*ReadMessagesResponse, error)
 	GetConnections(ctx context.Context, in *GetConnectionsRequest, opts ...grpc.CallOption) (*GetConnectionsResponse, error)
 	UpdateProfilePhoto(ctx context.Context, in *UpdateProfilePhotoRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
+	AddProfilePhoto(ctx context.Context, in *AddProfilePhotoRequest, opts ...grpc.CallOption) (*AddProfilePhotoResponse, error)
+	DeleteProfilePhotoByID(ctx context.Context, in *DeleteProfilePhotoRequest, opts ...grpc.CallOption) (*DeleteProfilePhotoResponse, error)
 }
 
 type userClient struct {
@@ -266,6 +270,24 @@ func (c *userClient) UpdateProfilePhoto(ctx context.Context, in *UpdateProfilePh
 	return out, nil
 }
 
+func (c *userClient) AddProfilePhoto(ctx context.Context, in *AddProfilePhotoRequest, opts ...grpc.CallOption) (*AddProfilePhotoResponse, error) {
+	out := new(AddProfilePhotoResponse)
+	err := c.cc.Invoke(ctx, User_AddProfilePhoto_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) DeleteProfilePhotoByID(ctx context.Context, in *DeleteProfilePhotoRequest, opts ...grpc.CallOption) (*DeleteProfilePhotoResponse, error) {
+	out := new(DeleteProfilePhotoResponse)
+	err := c.cc.Invoke(ctx, User_DeleteProfilePhotoByID_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
@@ -291,6 +313,8 @@ type UserServer interface {
 	ReadMessages(context.Context, *ReadMessagesRequest) (*ReadMessagesResponse, error)
 	GetConnections(context.Context, *GetConnectionsRequest) (*GetConnectionsResponse, error)
 	UpdateProfilePhoto(context.Context, *UpdateProfilePhotoRequest) (*UpdateUserResponse, error)
+	AddProfilePhoto(context.Context, *AddProfilePhotoRequest) (*AddProfilePhotoResponse, error)
+	DeleteProfilePhotoByID(context.Context, *DeleteProfilePhotoRequest) (*DeleteProfilePhotoResponse, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -360,6 +384,12 @@ func (UnimplementedUserServer) GetConnections(context.Context, *GetConnectionsRe
 }
 func (UnimplementedUserServer) UpdateProfilePhoto(context.Context, *UpdateProfilePhotoRequest) (*UpdateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfilePhoto not implemented")
+}
+func (UnimplementedUserServer) AddProfilePhoto(context.Context, *AddProfilePhotoRequest) (*AddProfilePhotoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddProfilePhoto not implemented")
+}
+func (UnimplementedUserServer) DeleteProfilePhotoByID(context.Context, *DeleteProfilePhotoRequest) (*DeleteProfilePhotoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteProfilePhotoByID not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -752,6 +782,42 @@ func _User_UpdateProfilePhoto_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_AddProfilePhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddProfilePhotoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).AddProfilePhoto(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_AddProfilePhoto_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).AddProfilePhoto(ctx, req.(*AddProfilePhotoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_DeleteProfilePhotoByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteProfilePhotoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).DeleteProfilePhotoByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_DeleteProfilePhotoByID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).DeleteProfilePhotoByID(ctx, req.(*DeleteProfilePhotoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -842,6 +908,14 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateProfilePhoto",
 			Handler:    _User_UpdateProfilePhoto_Handler,
+		},
+		{
+			MethodName: "AddProfilePhoto",
+			Handler:    _User_AddProfilePhoto_Handler,
+		},
+		{
+			MethodName: "DeleteProfilePhotoByID",
+			Handler:    _User_DeleteProfilePhotoByID_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
