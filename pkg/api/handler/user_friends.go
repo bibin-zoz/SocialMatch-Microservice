@@ -59,7 +59,7 @@ func (ur *UserHandler) BlockUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	success := response.ClientResponse(http.StatusCreated, "successfully Blocked user", nil, nil)
+	success := response.ClientResponse(http.StatusCreated, "successfully Blocked user", req.Userid, nil)
 	c.JSON(http.StatusCreated, success)
 }
 func (ur *UserHandler) GetConnections(c *gin.Context) {
@@ -77,5 +77,7 @@ func (ur *UserHandler) GetConnections(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	c.JSON(http.StatusOK, connections)
+	success := response.ClientResponse(http.StatusCreated, "conenctions fetched successfully", connections, nil)
+
+	c.JSON(http.StatusOK, success)
 }

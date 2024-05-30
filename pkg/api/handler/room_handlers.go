@@ -33,6 +33,17 @@ func NewRoomHandler(RoomClient interfaces.RoomClient) *RoomHandler {
 	}
 }
 
+// CreateRoom godoc
+// @Summary Create a new room
+// @Description Create a new room for group chat
+// @Tags Rooms
+// @Accept  json
+// @Produce  json
+// @Param roomData body models.RoomData true "Room Data"
+// @Success 201 {object} models.Room
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /rooms [post]
 func (rh *RoomHandler) CreateRoom(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
 	token := helper.GetTokenFromHeader(authHeader)
@@ -62,8 +73,9 @@ func (rh *RoomHandler) CreateRoom(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create room"})
 		return
 	}
+	success := response.ClientResponse(http.StatusCreated, "Room created successfully", createdRoom, nil)
 
-	c.JSON(http.StatusCreated, createdRoom)
+	c.JSON(http.StatusCreated, success)
 }
 
 func (rh *RoomHandler) EditRoom(c *gin.Context) {
@@ -79,8 +91,9 @@ func (rh *RoomHandler) EditRoom(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": errorMessage})
 		return
 	}
+	success := response.ClientResponse(http.StatusCreated, "room edited successfully", editedRoom, nil)
 
-	c.JSON(http.StatusOK, editedRoom)
+	c.JSON(http.StatusOK, success)
 }
 
 func (rh *RoomHandler) ChangeRoomStatus(c *gin.Context) {
@@ -98,8 +111,9 @@ func (rh *RoomHandler) ChangeRoomStatus(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to change room status"})
 		return
 	}
+	success := response.ClientResponse(http.StatusCreated, "room status changed successfully", changedRoom, nil)
 
-	c.JSON(http.StatusOK, changedRoom)
+	c.JSON(http.StatusOK, success)
 }
 
 func (rh *RoomHandler) AddMembersToRoom(c *gin.Context) {
@@ -118,8 +132,9 @@ func (rh *RoomHandler) AddMembersToRoom(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": errorMessage})
 		return
 	}
+	success := response.ClientResponse(http.StatusCreated, "member added to room successfully", updatedRoom, nil)
 
-	c.JSON(http.StatusOK, updatedRoom)
+	c.JSON(http.StatusOK, success)
 }
 
 func (rh *RoomHandler) GetRoomJoinRequests(c *gin.Context) {
@@ -137,8 +152,19 @@ func (rh *RoomHandler) GetRoomJoinRequests(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": errorMessage})
 		return
 	}
-	c.JSON(http.StatusOK, joinRequests)
+	success := response.ClientResponse(http.StatusCreated, "requested sented successfully", joinRequests, nil)
+
+	c.JSON(http.StatusOK, success)
 }
+
+// GetAllRooms godoc
+// @Summary Get all rooms
+// @Description Get a list of all rooms
+// @Tags Rooms
+// @Produce  json
+// @Success 200 {array} []models.Room
+// @Failure 500 {object} response.Response
+// @Router /user/room [get]
 func (rh *RoomHandler) GetAllRooms(c *gin.Context) {
 	rooms, err := rh.GRPC_RoomClient.GetAllRooms()
 	if err != nil {
@@ -163,8 +189,9 @@ func (rh *RoomHandler) GetRoomMembers(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": errorMessage})
 		return
 	}
+	success := response.ClientResponse(http.StatusCreated, "members fetcehd successfully", members, nil)
 
-	c.JSON(http.StatusOK, members)
+	c.JSON(http.StatusOK, success)
 }
 
 func (rh *RoomHandler) SendMessage(c *gin.Context) {
@@ -205,8 +232,9 @@ func (rh *RoomHandler) SendMessage(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": errorMessage})
 		return
 	}
+	success := response.ClientResponse(http.StatusCreated, "msg sented successfully", sentMessage, nil)
 
-	c.JSON(http.StatusCreated, sentMessage)
+	c.JSON(http.StatusCreated, success)
 }
 
 func (rh *RoomHandler) ReadMessages(c *gin.Context) {
