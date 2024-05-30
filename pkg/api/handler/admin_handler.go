@@ -25,6 +25,17 @@ func NewAdminHandler(adminClient interfaces.AdminClient, userClient interfaces.U
 
 }
 
+// LoginHandler godoc
+// @Summary Admin Login
+// @Description Authenticate admin user
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param adminDetails body models.AdminLogin true "Admin Login Details"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /admin/login [post]
 func (ad *AdminHandler) LoginHandler(c *gin.Context) {
 	var adminDetails models.AdminLogin
 	if err := c.ShouldBindJSON(&adminDetails); err != nil {
@@ -50,6 +61,18 @@ func (ad *AdminHandler) LoginHandler(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "Admin authenticated successfully", admin, nil)
 	c.JSON(http.StatusOK, success)
 }
+
+// UpdateUserStatus godoc
+// @Summary Update User Status
+// @Description Update the status of a user
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param id query int true "User ID"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /admin/users [put]
 func (ad *AdminHandler) UpdateUserStatus(c *gin.Context) {
 	userID := c.Query("id")
 	fmt.Println("userid", userID)
@@ -74,6 +97,15 @@ func (ad *AdminHandler) GetInterests(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
+// GetInterests godoc
+// @Summary Get Interests
+// @Description Get all interests
+// @Tags admin
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /admin/interests [get]
 func (ad *AdminHandler) GetPreferences(c *gin.Context) {
 	fmt.Println("hiii")
 	preferences, err := ad.GRPC_Client.GetPreferences()
@@ -86,6 +118,15 @@ func (ad *AdminHandler) GetPreferences(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
+// GetPreferences godoc
+// @Summary Get Preferences
+// @Description Get all preferences
+// @Tags admin
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /admin/preferences [get]
 func (ad *AdminHandler) AddInterest(c *gin.Context) {
 	var interest models.AddInterest
 
@@ -110,6 +151,17 @@ func (ad *AdminHandler) AddInterest(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
+// AddInterest godoc
+// @Summary Add Interest
+// @Description Add a new interest
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param interest body models.AddInterest true "Interest to add"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /admin/interests [post]
 func (ad *AdminHandler) EditInterest(c *gin.Context) {
 	var interest models.Intrests
 	if err := c.ShouldBindJSON(&interest); err != nil {
@@ -133,6 +185,17 @@ func (ad *AdminHandler) EditInterest(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
+// EditInterest godoc
+// @Summary Edit Interest
+// @Description Edit an existing interest
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param interest body models.Intrests true "Interest to edit"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /admin/interests [put]
 func (ad *AdminHandler) DeleteInterest(c *gin.Context) {
 	id := c.Param("id")
 	interestID, err := strconv.Atoi(id)
@@ -152,6 +215,16 @@ func (ad *AdminHandler) DeleteInterest(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
+// DeleteInterest godoc
+// @Summary Delete Interest
+// @Description Delete an existing interest
+// @Tags admin
+// @Produce json
+// @Param id path int true "Interest ID"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /admin/interests/{id} [delete]
 func (ad *AdminHandler) AddPreference(c *gin.Context) {
 	var preference models.AddPreferences
 	if err := c.ShouldBindJSON(&preference); err != nil {
@@ -175,6 +248,17 @@ func (ad *AdminHandler) AddPreference(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
+// AddPreference godoc
+// @Summary Add Preference
+// @Description Add a new preference
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param preference body models.AddPreferences true "Preference to add"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /admin/preferences [post]
 func (ad *AdminHandler) EditPreference(c *gin.Context) {
 	var preference models.Preferences
 	if err := c.ShouldBindJSON(&preference); err != nil {
@@ -198,6 +282,17 @@ func (ad *AdminHandler) EditPreference(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
+// EditPreference godoc
+// @Summary Edit Preference
+// @Description Edit an existing preference
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param preference body models.Preferences true "Preference to edit"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /admin/preferences [put]
 func (ad *AdminHandler) DeletePreference(c *gin.Context) {
 	id := c.Param("id")
 	preferenceID, err := strconv.Atoi(id)

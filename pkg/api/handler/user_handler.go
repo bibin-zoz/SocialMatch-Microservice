@@ -376,8 +376,9 @@ func (ur *UserHandler) ReadMessages(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": errorMessage})
 		return
 	}
+	success := response.ClientResponse(http.StatusOK, "Admin authenticated successfully", messages, nil)
 
-	c.JSON(http.StatusOK, messages)
+	c.JSON(http.StatusOK, success)
 }
 
 // func (ur *UserHandler) AddProfilePhoto(c *gin.Context) {

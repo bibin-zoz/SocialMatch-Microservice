@@ -3,10 +3,28 @@ package main
 import (
 	"log"
 
+	_ "github.com/bibin-zoz/api-gateway/docs" // Import the docs package
 	"github.com/bibin-zoz/api-gateway/pkg/config"
 	"github.com/bibin-zoz/api-gateway/pkg/di"
 )
 
+// @title Social-Match
+// @version 1.0
+// @description This is a sample API Gateway server.
+// @termsOfService http://swagger.io/terms/
+
+// @host localhost:3000
+// @BasePath /
+
+// @securityDefinitions.apikey UserAuthorization
+// @in header
+// @name AccessToken
+// @securityDefinitions.apikey UserConfirmToken
+// @in header
+// @name ConfirmToken
+// @securityDefinitions.apikey AdminAutherisation
+// @in header
+// @name AccessToken
 func main() {
 
 	config, configErr := config.LoadConfig()

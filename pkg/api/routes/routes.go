@@ -7,6 +7,7 @@ import (
 )
 
 func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, adminhandler *handlers.AdminHandler, roomHandler *handlers.RoomHandler, userChatHandler *handlers.UserChatHandler, videocallHandler *handlers.VideoCallHandler) {
+
 	router.GET("/ping", handlers.PingHandler)
 	router.POST("/login", userHandler.Userlogin)
 	router.GET("/verify", userHandler.UserOtpReq)
