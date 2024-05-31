@@ -27,12 +27,16 @@ jobs:
           docker build -t bibinzoz/socialmatch-api-gateway:latest .
           docker push bibinzoz/socialmatch-api-gateway:latest
 
-      - name: Configure Google Cloud CLI
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: noted-hangout-424114-t9
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
+      # Decode service account key and save it to a file
+      - name: Decode service account key
+        run: echo "${{ secrets.GCP_SA_KEY }}" | base64 -d > /tmp/gcp-sa-key.json
+
+      # Authenticate with Google Cloud using service account key
+      - name: Authenticate with Google Cloud
+        run: |
+          gcloud auth activate-service-account --key-file=/tmp/gcp-sa-key.json
+          gcloud config set project noted-hangout-424114-t9  # Replace with your actual project ID
+          gcloud container clusters get-credentials social-match --zone us-central1-c
 
       - name: Deploy to GKE
         run: |
