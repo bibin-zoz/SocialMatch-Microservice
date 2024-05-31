@@ -10,10 +10,10 @@ import (
 
 // @title Social-Match
 // @version 1.0
-// @description This is a sample API Gateway server.
+// @description SOCIAL MATCH API Gateway server.
 // @termsOfService http://swagger.io/terms/
 
-// @host localhost:3000
+// @host exclusivestore.xyz
 // @BasePath /
 
 // @securityDefinitions.apikey UserAuthorization

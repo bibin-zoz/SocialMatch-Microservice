@@ -1,6 +1,9 @@
 package config
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/spf13/viper"
 )
 
@@ -22,10 +25,18 @@ var envs = []string{
 func LoadConfig() (Config, error) {
 	var config Config
 
-	viper.AddConfigPath("./")
-	viper.SetConfigFile(".env")
-	viper.ReadInConfig()
+	// Automatically look for environment variables with the same name
+	viper.AutomaticEnv()
 
+	// Optionally read from a .env file if it exists (useful for local development and Docker)
+	viper.AddConfigPath(".")
+	viper.SetConfigName(".env")
+	viper.SetConfigType("env")
+	if err := viper.ReadInConfig(); err != nil {
+		log.Println("No .env file found, relying on environment variables")
+	}
+
+	// Bind each environment variable
 	for _, env := range envs {
 		if err := viper.BindEnv(env); err != nil {
 			return config, err
@@ -36,6 +47,7 @@ func LoadConfig() (Config, error) {
 		return config, err
 	}
 
-	return config, nil
+	fmt.Println(config.AdminSvcUrl)
 
+	return config, nil
 }
