@@ -28,7 +28,7 @@ jobs:
           docker push bibinzoz/socialmatch-api-gateway:latest
 
       - name: Configure Google Cloud CLI
-        uses: google-github-actions/setup-gcloud@main
+        uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: noted-hangout-424114-t9
           service_account_key: ${{ secrets.GCP_SA_KEY }}
