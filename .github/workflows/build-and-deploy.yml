@@ -24,8 +24,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t gcr.io/your-project-id/socialmatch-api-gateway:latest .
-          docker push gcr.io/your-project-id/socialmatch-api-gateway:latest
+          docker build -t bibinzoz/socialmatch-api-gateway:latest .
+          docker push bibinzoz/socialmatch-api-gateway:latest
 
       - name: Configure Google Cloud CLI
         uses: google-github-actions/setup-gcloud@main
