@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package connections;
+
+option go_package = "./pkg/pb/connections";
+
+service connections {
+  rpc FollowUser(FollowUserRequest)returns(FollowUserResponce){};
+  rpc BlockConnection(BlockConnectionRequest) returns (BlockConnectionResponse);
+  rpc GetConnections(GetConnectionsRequest) returns (GetConnectionsResponse) {};
+  rpc CheckUserConnection (CheckUserConnectionReq) returns (ConnectionResponse);
+}
+
+message GetConnectionsResponse {
+    int64 status = 1;
+    repeated UserDetails UserDetails = 2;
+}
+message ConnectionResponse {
+    bool connected = 1;
+}
+message CheckUserConnectionReq{
+    int32 userID = 1;
+    int32 receiverID = 2;
+}
+message UserDetails  {
+    uint64 id=1;
+}
+message GetConnectionsRequest {
+    uint64 user_id = 1;
+}
+
+
+message BlockConnectionRequest {
+    uint64 sender_id = 1;
+    uint64 user_id = 2;
+}
+
+message BlockConnectionResponse {
+    int32 status = 1;
+}
+message FollowUserRequest{
+    int64 userid=1;
+    int64 senderid=2;
+}
+message FollowUserResponce{
+    int64 status=1;
+}
+
