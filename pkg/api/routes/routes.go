@@ -6,13 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, adminhandler *handlers.AdminHandler, roomHandler *handlers.RoomHandler, userChatHandler *handlers.UserChatHandler, videocallHandler *handlers.VideoCallHandler) {
+func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, userAuthHandler *handlers.UserAuthHandler, adminhandler *handlers.AdminHandler, roomHandler *handlers.RoomHandler, userChatHandler *handlers.UserChatHandler, videocallHandler *handlers.VideoCallHandler) {
 
 	router.GET("/ping", handlers.PingHandler)
-	router.POST("/login", userHandler.Userlogin)
-	router.GET("/verify", userHandler.UserOtpReq)
-	router.POST("/verify", userHandler.UserOtpVerification)
-	router.POST("/signup", userHandler.UserSignup)
+	router.POST("/login", userAuthHandler.Userlogin)
+	router.GET("/verify", userAuthHandler.UserOtpReq)
+	router.POST("/verify", userAuthHandler.UserOtpVerification)
+	router.POST("/signup", userAuthHandler.UserSignup)
 
 	router.POST("/admin/login", adminhandler.LoginHandler)
 

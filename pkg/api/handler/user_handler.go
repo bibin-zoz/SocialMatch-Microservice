@@ -23,72 +23,6 @@ func NewUserHandler(UserClient interfaces.UserClient) *UserHandler {
 	}
 }
 
-// UserSignup godoc
-// @Summary User Signup
-// @Description User signup with details
-// @Tags users
-// @Accept json
-// @Produce json
-// @Param user body models.UserSignup true "Signup details"
-// @Success 201 {object} models.User
-// @Failure 400 {object} response.ErrorResponse
-// @Router /users/signup [post]
-func (ur *UserHandler) UserSignup(c *gin.Context) {
-	var SignupDetail models.UserSignup
-	if err := c.ShouldBindJSON(&SignupDetail); err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "Failed to bind Details not in correct format", nil, nil)
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
-	err := validator.New().Struct(SignupDetail)
-	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "Constraints not statisfied", nil, nil)
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
-	user, err := ur.GRPC_Client.UsersSignUp(SignupDetail)
-
-	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "failed to conenct to server", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
-	success := response.ClientResponse(http.StatusCreated, "User successfully signed up", user, nil)
-	c.JSON(http.StatusCreated, success)
-}
-
-// Userlogin godoc
-// @Summary User Login
-// @Description User login with email and password
-// @Tags users
-// @Accept json
-// @Produce json
-// @Param user body models.UserLogin true "Login details"
-// @Success 201 {object} models.User
-// @Failure 400 {object} response.ErrorResponse
-// @Router /users/login [post]
-func (ur *UserHandler) Userlogin(c *gin.Context) {
-	var UserLoginDetail models.UserLogin
-	if err := c.ShouldBindJSON(&UserLoginDetail); err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errs)
-	}
-	err := validator.New().Struct(UserLoginDetail)
-	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "Constraints not statisfied", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
-	user, err := ur.GRPC_Client.UserLogin(UserLoginDetail)
-	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
-	success := response.ClientResponse(http.StatusCreated, "User successfully logged in with password", user, nil)
-	c.JSON(http.StatusCreated, success)
-}
-
 // UserEditDetails godoc
 // @Summary Edit User Details
 // @Description Edit user details
@@ -97,7 +31,7 @@ func (ur *UserHandler) Userlogin(c *gin.Context) {
 // @Produce json
 // @Param user body models.UserUpdateDetails true "Edit details"
 // @Success 201 {object} models.User
-// @Failure 400 {object} response.ErrorResponse
+// @Failure 400 {object} response.Response
 // @Router /users/edit [put]
 func (ur *UserHandler) UserEditDetails(c *gin.Context) {
 	var EditDetails models.UserUpdateDetails
@@ -131,8 +65,8 @@ func (ur *UserHandler) UserEditDetails(c *gin.Context) {
 // @Accept multipart/form-data
 // @Produce json
 // @Param image_paths formData []file true "Profile photos"
-// @Success 200 {object} response.SuccessResponse
-// @Failure 400 {object} response.ErrorResponse
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
 // @Router /users/profile-photo [post]
 func (ur *UserHandler) UpdateProfilePhoto(c *gin.Context) {
 	type UpdateProfilePhotoForm struct {
@@ -169,84 +103,15 @@ func (ur *UserHandler) UpdateProfilePhoto(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
-// UserOtpReq godoc
-// @Summary Request OTP
-// @Description Request OTP for user verification
+// GetAllUsers godoc
+// @Summary Get All Users
+// @Description Get all users
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param request body models.UserVerificationRequest true "OTP request details"
 // @Success 201 {object} models.User
-// @Failure 400 {object} response.ErrorResponse
-// @Router /users/otp-request [post]
-func (ur *UserHandler) UserOtpReq(c *gin.Context) {
-	var EmailOtp models.UserVerificationRequest
-	if err := c.ShouldBindJSON(&EmailOtp); err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "Email not in correct format", nil, nil)
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
-	err := validator.New().Struct(EmailOtp)
-	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "Constraints not statisfied", nil, nil)
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
-	user, err := ur.GRPC_Client.UserOtpRequest(EmailOtp)
-
-	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "failed to conenct to server", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
-	success := response.ClientResponse(http.StatusCreated, "Otp sented successfully", user, nil)
-	c.JSON(http.StatusCreated, success)
-}
-
-// UserOtpVerification godoc
-// @Summary Verify OTP
-// @Description Verify user OTP
-// @Tags users
-// @Accept json
-// @Produce json
-// @Param request body models.Otp true "OTP verification details"
-// @Success 201 {object} response.SuccessResponse
-// @Failure 400 {object} response.ErrorResponse
-// @Router /users/otp-verify [post]
-func (ur *UserHandler) UserOtpVerification(c *gin.Context) {
-	var EmailOtp models.Otp
-	if err := c.ShouldBindJSON(&EmailOtp); err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "Email not in correct format", nil, nil)
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
-	err := validator.New().Struct(EmailOtp)
-	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "Constraints not statisfied", nil, nil)
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
-	_, err = ur.GRPC_Client.UserOtpVerificationReq(EmailOtp)
-
-	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "failed to conenct to server", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
-	success := response.ClientResponse(http.StatusCreated, "otp verified successfully", nil, nil)
-	c.JSON(http.StatusCreated, success)
-}
-
-// UpdatePassword godoc
-// @Summary Update Password
-// @Description Update user's password
-// @Tags users
-// @Accept json
-// @Produce json
-// @Param request body models.UserPasswordUpdate true "Password update details"
-// @Success 201 {object} response.SuccessResponse
-// @Failure 400 {object} response.ErrorResponse
-// @Router /users/update-password [put]
+// @Failure 400 {object} response.Response
+// @Router /users [get]
 func (ur *UserHandler) GetAllUsers(c *gin.Context) {
 	users, err := ur.GRPC_Client.GetAllUsers()
 	if err != nil {
@@ -259,16 +124,16 @@ func (ur *UserHandler) GetAllUsers(c *gin.Context) {
 
 }
 
-// RemoveAddress godoc
-// @Summary Remove Address
-// @Description Remove user's address
+// AddUserInterest godoc
+// @Summary Add User Interest
+// @Description Add user interest
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param address_id path int true "Address ID"
-// @Success 201 {object} response.SuccessResponse
-// @Failure 400 {object} response.ErrorResponse
-// @Router /users/remove-address/{address_id} [delete]
+// @Param user_id body models.AddUserInterestRequest true "Add interest request"
+// @Success 201 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /users/add-interest [post]
 func (ur *UserHandler) AddUserInterest(c *gin.Context) {
 	var addUserInterest models.AddUserInterestRequest
 	if err := c.ShouldBindJSON(&addUserInterest); err != nil {
@@ -292,16 +157,16 @@ func (ur *UserHandler) AddUserInterest(c *gin.Context) {
 	c.JSON(http.StatusCreated, success)
 }
 
-// AddAddress godoc
-// @Summary Add Address
-// @Description Add a new address for user
+// EditUserInterest godoc
+// @Summary Edit User Interest
+// @Description Edit user interest
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param address body models.Address true "Address details"
-// @Success 201 {object} response.SuccessResponse
-// @Failure 400 {object} response.ErrorResponse
-// @Router /users/add-address [post]
+// @Param user_id body models.EditUserInterestRequest true "Edit interest request"
+// @Success 201 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /users/edit-interest [put]
 func (ur *UserHandler) EditUserInterest(c *gin.Context) {
 	var editUserInterest models.EditUserInterestRequest
 	if err := c.ShouldBindJSON(&editUserInterest); err != nil {
@@ -325,6 +190,16 @@ func (ur *UserHandler) EditUserInterest(c *gin.Context) {
 	c.JSON(http.StatusCreated, success)
 }
 
+// DeleteUserInterest godoc
+// @Summary Delete User Interest
+// @Description Delete user interest
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user_id body models.DeleteUserInterestRequest true "Delete interest request"
+// @Success 201 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /users/delete-interest [delete]
 func (ur *UserHandler) DeleteUserInterest(c *gin.Context) {
 	var deleteUserInterest models.DeleteUserInterestRequest
 	if err := c.ShouldBindJSON(&deleteUserInterest); err != nil {
@@ -347,6 +222,17 @@ func (ur *UserHandler) DeleteUserInterest(c *gin.Context) {
 	success := response.ClientResponse(http.StatusCreated, "User interest deleted successfully", nil, nil)
 	c.JSON(http.StatusCreated, success)
 }
+
+// AddUserPreference godoc
+// @Summary Add User Preference
+// @Description Add user preference
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user_id body models.AddUserPreferenceRequest true "Add preference request"
+// @Success 201 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /users/add-preference [post]
 func (ur *UserHandler) AddUserPreference(c *gin.Context) {
 	var addUserPreference models.AddUserPreferenceRequest
 	if err := c.ShouldBindJSON(&addUserPreference); err != nil {
@@ -370,6 +256,16 @@ func (ur *UserHandler) AddUserPreference(c *gin.Context) {
 	c.JSON(http.StatusCreated, success)
 }
 
+// EditUserPreference godoc
+// @Summary Edit User Preference
+// @Description Edit user preference
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user_id body models.EditUserPreferenceRequest true "Edit preference request"
+// @Success 201 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /users/edit-preference [put]
 func (ur *UserHandler) EditUserPreference(c *gin.Context) {
 	var editUserPreference models.EditUserPreferenceRequest
 	if err := c.ShouldBindJSON(&editUserPreference); err != nil {
@@ -393,6 +289,16 @@ func (ur *UserHandler) EditUserPreference(c *gin.Context) {
 	c.JSON(http.StatusCreated, success)
 }
 
+// DeleteUserPreference godoc
+// @Summary Delete User Preference
+// @Description Delete user preference
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user_id body models.DeleteUserPreferenceRequest true "Delete preference request"
+// @Success 201 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /users/delete-preference [delete]
 func (ur *UserHandler) DeleteUserPreference(c *gin.Context) {
 	var deleteUserPreference models.DeleteUserPreferenceRequest
 	if err := c.ShouldBindJSON(&deleteUserPreference); err != nil {

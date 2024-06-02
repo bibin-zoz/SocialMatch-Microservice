@@ -15,7 +15,7 @@ type ServerHTTP struct {
 	engine *gin.Engine
 }
 
-func NewServerHTTP(userHandlers *handlers.UserHandler, adminHandlers *handlers.AdminHandler, roomHandlers *handlers.RoomHandler, userChatHandlers *handlers.UserChatHandler, videocallHandler *handlers.VideoCallHandler) *ServerHTTP {
+func NewServerHTTP(userHandlers *handlers.UserHandler, userAuthHandler *handlers.UserAuthHandler, adminHandlers *handlers.AdminHandler, roomHandlers *handlers.RoomHandler, userChatHandlers *handlers.UserChatHandler, videocallHandler *handlers.VideoCallHandler) *ServerHTTP {
 	router := gin.New()
 
 	router.Use(gin.Logger())
@@ -28,7 +28,7 @@ func NewServerHTTP(userHandlers *handlers.UserHandler, adminHandlers *handlers.A
 	}))
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // Swagger route
-	routes.SetupRoutes(router, userHandlers, adminHandlers, roomHandlers, userChatHandlers, videocallHandler)
+	routes.SetupRoutes(router, userHandlers, userAuthHandler, adminHandlers, roomHandlers, userChatHandlers, videocallHandler)
 	return &ServerHTTP{engine: router}
 }
 
