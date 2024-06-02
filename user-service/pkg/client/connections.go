@@ -39,6 +39,7 @@ func NewConnectionsClient(cfg config.Config) *ConnectionsClient {
 
 // FollowUser calls the FollowUser method on the ConnectionsService.
 func (c *ConnectionsClient) FollowUser(userID, senderID int64) (int64, error) {
+	fmt.Println("hiiconenctiosnkdkls")
 	request := &pb.FollowUserRequest{
 		Userid:   userID,
 		Senderid: senderID,

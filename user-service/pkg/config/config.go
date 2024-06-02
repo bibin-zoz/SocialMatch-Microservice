@@ -35,7 +35,7 @@ var envs = []string{
 
 func LoadConfig() (Config, error) {
 	var config Config
-
+	viper.AutomaticEnv()
 	viper.AddConfigPath("./")
 	viper.SetConfigFile(".env")
 	viper.ReadInConfig()
