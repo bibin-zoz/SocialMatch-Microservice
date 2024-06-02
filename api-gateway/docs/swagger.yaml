@@ -1,0 +1,411 @@
+basePath: /
+definitions:
+  models.AddInterest:
+    properties:
+      interest_name:
+        minLength: 4
+        type: string
+    type: object
+  models.AddPreferences:
+    properties:
+      preference_name:
+        minLength: 4
+        type: string
+    type: object
+  models.AdminLogin:
+    properties:
+      email:
+        type: string
+      password:
+        maxLength: 20
+        minLength: 6
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.Intrests:
+    properties:
+      id:
+        type: integer
+      interest_name:
+        minLength: 4
+        type: string
+    type: object
+  models.Preferences:
+    properties:
+      id:
+        type: integer
+      preference_name:
+        minLength: 4
+        type: string
+    type: object
+  models.Room:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      max_persons:
+        type: integer
+      preferences:
+        items:
+          type: string
+        type: array
+      room_name:
+        type: string
+      status:
+        type: string
+    type: object
+  models.RoomData:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      max_persons:
+        minimum: 1
+        type: integer
+      preferences:
+        items:
+          type: string
+        type: array
+      room_name:
+        type: string
+      status:
+        enum:
+        - public
+        - private
+        type: string
+    required:
+    - description
+    - max_persons
+    - room_name
+    - status
+    type: object
+  response.Response:
+    properties:
+      data: {}
+      error: {}
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: This is a sample API Gateway server.
+  termsOfService: http://swagger.io/terms/
+  title: Social-Match
+  version: "1.0"
+paths:
+  /admin/interests:
+    get:
+      description: Get all interests
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get Interests
+      tags:
+      - admin
+    post:
+      consumes:
+      - application/json
+      description: Add a new interest
+      parameters:
+      - description: Interest to add
+        in: body
+        name: interest
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddInterest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Add Interest
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      description: Edit an existing interest
+      parameters:
+      - description: Interest to edit
+        in: body
+        name: interest
+        required: true
+        schema:
+          $ref: '#/definitions/models.Intrests'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Edit Interest
+      tags:
+      - admin
+  /admin/interests/{id}:
+    delete:
+      description: Delete an existing interest
+      parameters:
+      - description: Interest ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Delete Interest
+      tags:
+      - admin
+  /admin/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate admin user
+      parameters:
+      - description: Admin Login Details
+        in: body
+        name: adminDetails
+        required: true
+        schema:
+          $ref: '#/definitions/models.AdminLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin Login
+      tags:
+      - admin
+  /admin/preferences:
+    get:
+      description: Get all preferences
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get Preferences
+      tags:
+      - admin
+    post:
+      consumes:
+      - application/json
+      description: Add a new preference
+      parameters:
+      - description: Preference to add
+        in: body
+        name: preference
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddPreferences'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Add Preference
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      description: Edit an existing preference
+      parameters:
+      - description: Preference to edit
+        in: body
+        name: preference
+        required: true
+        schema:
+          $ref: '#/definitions/models.Preferences'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Edit Preference
+      tags:
+      - admin
+  /admin/users:
+    put:
+      consumes:
+      - application/json
+      description: Update the status of a user
+      parameters:
+      - description: User ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Update User Status
+      tags:
+      - admin
+  /rooms:
+    post:
+      consumes:
+      - application/json
+      description: Create a new room for group chat
+      parameters:
+      - description: Room Data
+        in: body
+        name: roomData
+        required: true
+        schema:
+          $ref: '#/definitions/models.RoomData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Room'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Create a new room
+      tags:
+      - Rooms
+  /user/room:
+    get:
+      description: Get a list of all rooms
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/models.Room'
+              type: array
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get all rooms
+      tags:
+      - Rooms
+securityDefinitions:
+  AdminAutherisation:
+    in: header
+    name: AccessToken
+    type: apiKey
+  UserAuthorization:
+    in: header
+    name: AccessToken
+    type: apiKey
+  UserConfirmToken:
+    in: header
+    name: ConfirmToken
+    type: apiKey
+swagger: "2.0"
