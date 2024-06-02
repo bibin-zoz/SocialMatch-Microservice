@@ -1,0 +1,47 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+option go_package = "./pkg/pb/chat";
+
+
+service ChatService {
+    rpc SendMessage(SendMessageRequest) returns (SendMessageResponce);
+    rpc ReadMessages(ReadMessagesRequest) returns (ReadMessagesResponse);
+}
+
+message ReadMessagesResponse {
+  repeated Message messages = 1;
+}
+message ReadMessagesRequest {
+  uint32 senter_id = 1;
+  uint32 receiver_id =2;
+}
+message SendMessageRequest {
+  uint32 senter_id = 1;
+  uint32 receiver_id = 2;
+  string content = 3;
+  repeated Media media = 4;
+}
+message Message {
+  uint32 message_id = 1;
+  uint32 receiver_id_id = 2;
+  uint32 sender_id = 3;
+  string content = 4;
+  google.protobuf.Timestamp timestamp = 5;
+  repeated Media media = 6; // Added media field
+}
+
+
+// New message for receiving a message in a room
+message SendMessageResponce {
+  uint32 message_id = 1;
+   uint32 senter_id = 2;
+  uint32 receiver_id = 3;
+  string content = 4;
+  google.protobuf.Timestamp timestamp = 5;
+  repeated Media media = 6; // Added media field
+}
+message Media {
+
+  string filename = 2;
+  // Add other fields as needed, such as media type, size, etc.
+}
