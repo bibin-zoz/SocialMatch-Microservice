@@ -1,0 +1,293 @@
+syntax = "proto3";
+
+package user;
+import "google/protobuf/timestamp.proto";
+option go_package = "./pkg/pb";
+
+service User {
+  rpc UserSignUp(UserSignUpRequest) returns (UserSignUpResponse) {};
+  rpc UserLogin(UserLoginRequest) returns (UserLoginResponse) {};
+  rpc UserEditDetails(UserEditDetailsRequest) returns (UserEditDetailsResponse) {};
+  rpc UserOtpGeneration(UserOtpRequest) returns (UserOtpRequestResponse){};
+  rpc UserOtpVerification(UserOtpVerificationRequest) returns (UserOtpVerificationResponse){};
+  rpc GetUsers(GetUsersRequest) returns (GetUsersResponse){};
+  rpc UpdateUserStatus(UpdateUserStatusRequest) returns (UpdateUserStatusResponse){};
+  rpc AddUserInterest(AddUserInterestRequest) returns (AddUserInterestResponse) {};
+  rpc EditUserInterest(EditUserInterestRequest) returns (EditUserInterestResponse) {};
+  rpc DeleteUserInterest(DeleteUserInterestRequest) returns (DeleteUserInterestResponse) {};
+  rpc GetUserInterests(GetUserInterestsRequest) returns (GetUserInterestsResponse) {}; // New RPC for interests
+  rpc AddUserPreference(AddUserPreferenceRequest) returns (AddUserPreferenceResponse) {}; // New RPC for preferences
+  rpc EditUserPreference(EditUserPreferenceRequest) returns (EditUserPreferenceResponse) {}; // New RPC for preferences
+  rpc DeleteUserPreference(DeleteUserPreferenceRequest) returns (DeleteUserPreferenceResponse) {}; // New RPC for preferences
+  rpc GetUserPreferences(GetUserPreferencesRequest) returns (GetUserPreferencesResponse) {}; // New RPC for preferences
+  rpc FollowUser(FollowUserRequest)returns(FollowUserResponce){};
+  rpc BlockUser(BlockUserRequest)returns(BlockUserResponce){};
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponce);
+  rpc ReadMessages(ReadMessagesRequest) returns (ReadMessagesResponse);
+  rpc GetConnections(GetConnectionsRequest) returns (GetConnectionsResponse) {};
+  rpc UpdateProfilePhoto (UpdateProfilePhotoRequest) returns (UpdateUserResponse);
+  rpc AddProfilePhoto(AddProfilePhotoRequest) returns (AddProfilePhotoResponse) {}
+  rpc DeleteProfilePhotoByID(DeleteProfilePhotoRequest) returns (DeleteProfilePhotoResponse) {}
+
+}
+
+message AddProfilePhotoRequest {
+  int64 userid = 1;
+ repeated bytes image_data = 2;  // Image data in bytes
+}
+
+message AddProfilePhotoResponse {
+  int64 status = 1;
+  string image_url = 2;  // URL of the uploaded photo
+}
+
+message DeleteProfilePhotoRequest {
+  int64 userid = 1;
+  string image_id = 2;  // ID of the photo to be deleted
+}
+
+message DeleteProfilePhotoResponse {
+  int64 status = 1;
+}
+
+message UpdateProfilePhotoRequest {
+  int64 userid = 1;
+  repeated bytes image_data = 2;  // List of image data in bytes
+}
+
+message UpdateUserResponse {
+  int64 status=1;
+  int64 userid = 2;
+  repeated string image_url = 3;
+}
+
+message GetConnectionsResponse {
+    int64 status = 1;
+    repeated UserDetails UserDetails = 2;
+}
+
+message GetConnectionsRequest {
+    uint64 user_id = 1;
+}
+
+message ReadMessagesRequest {
+  uint32 senter_id = 1;
+  uint32 receiver_id =2;
+}
+
+message ReadMessagesResponse {
+  repeated Message messages = 1;
+}
+message SendMessageRequest {
+  uint32 senter_id = 1;
+  uint32 receiver_id = 2;
+  string content = 3;
+  repeated Media media = 4;
+}
+message Message {
+  uint32 message_id = 1;
+  uint32 receiver_id = 2;
+  uint32 sender_id = 3;
+  string content = 4;
+  google.protobuf.Timestamp timestamp = 5;
+  repeated Media media = 6; // Added media field
+}
+
+
+
+// New message for receiving a message in a room
+message SendMessageResponce {
+  uint32 message_id = 1;
+   uint32 senter_id = 2;
+  uint32 receiver_id = 3;
+  string content = 4;
+  google.protobuf.Timestamp timestamp = 5;
+  repeated Media media = 6; // Added media field
+}
+message Media {
+
+  string filename = 2;
+  // Add other fields as needed, such as media type, size, etc.
+}
+
+message BlockUserRequest{
+    int64 userid=1;
+    int64 senderid=2;
+}
+message BlockUserResponce{
+    int64 status=1;
+}
+message FollowUserRequest{
+    int64 userid=1;
+    int64 senderid=2;
+}
+message FollowUserResponce{
+    int64 status=1;
+}
+
+message UpdateUserStatusRequest{
+    int64 userid=1;
+}
+message UpdateUserStatusResponse{
+    int64 status=1;
+}
+message GetUsersRequest {
+    // You can leave this message empty
+}
+message Users {
+    uint32 id = 1;
+    string firstname = 2;
+    string lastname = 3;
+    string email = 4;
+    string password = 5;
+    string phone = 6;
+    bool blocked = 7;
+    string username = 8;
+    int32 gender_id = 9;
+    int32 age = 10;
+}
+
+message GetUsersResponse {
+    int64 status=1;
+    repeated Users users = 2;
+}
+
+message UserOtpRequest{
+    string email=1;
+}
+message UserOtpRequestResponse{
+    int64 status=1;
+    string email=2;
+    int64 otp=3;
+}
+message UserOtpVerificationRequest{
+    string email=1;
+    int64 otp=2;
+}
+message UserOtpVerificationResponse{
+    int64 status=1;
+    UserDetails  userDetails=2;
+}
+message UserSignUpRequest {
+    string firstname = 1;
+    string lastname = 2;
+    string username = 3;
+    string email = 4;
+    string password = 5;
+    string phone = 6;
+    int32 genderid = 7;
+    int32 age = 8;
+}
+message UserEditDetailsRequest {
+    string firstname = 1;
+    string lastname = 2;
+    string username = 3;
+    string email = 4;
+    string password = 5;
+    string phone = 6;
+    int32 genderid = 7;
+    int32 age = 8;
+}
+
+message UserEditDetailsResponse  {
+    int64 status=1;
+    UserDetails  userDetails=2;
+}
+message UserDetails  {
+    uint64 id=1;
+    string firstname=2;
+    string lastname=3;
+    string email=4;
+    string phone=5;
+}
+message UserSignUpResponse  {
+    int64 status=1;
+    UserDetails  userDetails=2;
+    string AccessToken=3; 
+    string RefreshToken =4;
+}
+message UserLoginRequest{
+    string email=1;
+    string password=2;
+}
+message UserLoginResponse{
+    int64 status=1;
+    UserDetails  userDetails=2;
+    string AccessToken=3; 
+    string RefreshToken =4;
+}
+
+message AddUserInterestRequest {
+    uint64 user_id = 1;
+    uint64 interest_id= 2;
+}
+
+message AddUserInterestResponse {
+    int64 status = 1;
+}
+
+message EditUserInterestRequest {
+    uint64 user_id = 1;
+    uint64 interest_id = 2;
+    string new_interest_name = 3;
+}
+
+message EditUserInterestResponse {
+    int64 status = 1;
+}
+
+message DeleteUserInterestRequest {
+    uint64 user_id = 1;
+    uint64 interest_id = 2;
+}
+
+message DeleteUserInterestResponse {
+    int64 status = 1;
+}
+
+// New messages for managing user preferences
+message AddUserPreferenceRequest {
+    uint64 user_id = 1;
+    uint64 preference_id = 2;
+}
+
+message AddUserPreferenceResponse {
+    int64 status = 1;
+}
+
+message EditUserPreferenceRequest {
+    uint64 user_id = 1;
+    uint64 preference_id = 2;
+    string new_preference_name = 3;
+}
+
+message EditUserPreferenceResponse {
+    int64 status = 1;
+}
+
+message DeleteUserPreferenceRequest {
+    uint64 user_id = 1;
+    uint64 preference_id = 2;
+}
+
+message DeleteUserPreferenceResponse {
+    int64 status = 1;
+}
+
+message GetUserInterestsRequest {
+    uint64 user_id = 1;
+}
+
+message GetUserInterestsResponse {
+    int64 status = 1;
+    repeated string interests = 2;
+}
+
+message GetUserPreferencesRequest {
+    uint64 user_id = 1;
+}
+
+message GetUserPreferencesResponse {
+    int64 status = 1;
+    repeated string preferences = 2;
+}
