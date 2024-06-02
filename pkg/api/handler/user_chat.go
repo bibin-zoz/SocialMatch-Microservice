@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
+	"net/http"
 	"strconv"
 	"sync"
 	"time"
@@ -24,12 +26,36 @@ type UserChatHandler struct {
 // NewUserChatHandler creates a new instance of UserChatHandler
 func NewUserChatHandler(UserClient interfaces.UserClient) *UserChatHandler {
 	return &UserChatHandler{
-		Upgrader: websocket.Upgrader{},
-		Room:     make(map[string]*models.WebrtcRoom),
+		Upgrader: websocket.Upgrader{
+			CheckOrigin: func(r *http.Request) bool {
+				// Allow all connections for now, but you might want to restrict it in production
+				return true
+			},
+		},
+		Room: make(map[string]*models.WebrtcRoom),
 	}
 }
 
+// HandleWebSocket godoc
+// @Summary Handle WebSocket Connections
+// @Description Handle WebSocket connections for real-time communication
+// @Tags websocket
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization Token"
+// @Success 101 {string} string "Switching Protocols"
+// @Failure 400 {object} response.Response
+// @Router /ws [get]
 func (uch *UserChatHandler) HandleWebSocket(c *gin.Context) {
+	headers := c.Request.Header
+	fmt.Println(headers)
+	// Print each header key-value pair
+	for key, values := range headers {
+		for _, value := range values {
+			fmt.Printf("%s: %s\n", key, value)
+		}
+	}
+	fmt.Println("headerprint success")
 	ws, err := uch.Upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Printf("Error upgrading to WebSocket: %v", err)

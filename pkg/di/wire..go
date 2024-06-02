@@ -18,6 +18,7 @@ import (
 func InitializeAPI(cfg config.Config) (*server.ServerHTTP, error) {
 	fmt.Println("initializing")
 	userClient := client.NewUserClient(cfg)
+	userAuthHandler := handlers.NewUserAuthHandler(userClient)
 	userHandler := handlers.NewUserHandler(userClient)
 	adminClient := client.NewAdminClient(cfg)
 	adminHandler := handlers.NewAdminHandler(adminClient, userClient)
@@ -26,7 +27,7 @@ func InitializeAPI(cfg config.Config) (*server.ServerHTTP, error) {
 	roomHandler := handlers.NewRoomHandler(roomClient)
 	UserChatHandler := handlers.NewUserChatHandler(userClient)
 	videocallHandler := handlers.NewVideoCallHandler()
-	serverHTTP := server.NewServerHTTP(userHandler, adminHandler, roomHandler, UserChatHandler, videocallHandler)
+	serverHTTP := server.NewServerHTTP(userHandler, userAuthHandler, adminHandler, roomHandler, UserChatHandler, videocallHandler)
 
 	return serverHTTP, nil
 }

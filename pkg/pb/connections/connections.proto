@@ -3,7 +3,7 @@ syntax = "proto3";
 package connections;
 option go_package = "./pkg/pb/connections";
 
-service Connections {
+service connections {
     rpc CheckUserConnection (CheckUserConnectionReq) returns (ConnectionResponse);
 }
 

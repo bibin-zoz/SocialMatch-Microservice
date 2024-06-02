@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Connections_CheckUserConnection_FullMethodName = "/connections.Connections/CheckUserConnection"
+	Connections_CheckUserConnection_FullMethodName = "/connections.connections/CheckUserConnection"
 )
 
 // ConnectionsClient is the client API for Connections service.
@@ -96,7 +96,7 @@ func _Connections_CheckUserConnection_Handler(srv interface{}, ctx context.Conte
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Connections_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "connections.Connections",
+	ServiceName: "connections.connections",
 	HandlerType: (*ConnectionsServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
