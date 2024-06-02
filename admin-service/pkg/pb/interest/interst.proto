@@ -1,0 +1,15 @@
+// interest.proto
+
+syntax = "proto3";
+option go_package = "./pkg/pb/interest";
+message CheckInterestRequest {
+    string interest_id = 1;
+}
+
+message CheckInterestResponse {
+    bool exists = 1;
+}
+
+service InterestService {
+    rpc CheckInterest(CheckInterestRequest) returns (CheckInterestResponse);
+}
