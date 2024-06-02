@@ -11,13 +11,15 @@ import (
 )
 
 type AdminServer struct {
-	adminUseCase interfaces.AdminUseCase
+	adminUseCase    interfaces.AdminUseCase
+	interestUseCase interfaces.InterestUseCase
 	pb.UnimplementedAdminServer
 }
 
-func NewAdminServer(useCase interfaces.AdminUseCase) pb.AdminServer {
+func NewAdminServer(useCase interfaces.AdminUseCase, interestUseCase interfaces.InterestUseCase) pb.AdminServer {
 	return &AdminServer{
-		adminUseCase: useCase,
+		adminUseCase:    useCase,
+		interestUseCase: interestUseCase,
 	}
 
 }
@@ -62,6 +64,10 @@ func (ad *AdminServer) GetInterests(ctx context.Context, req *pb.GetInterestsReq
 func (ad *AdminServer) AddInterest(ctx context.Context, req *pb.AddInterestRequest) (*pb.AddInterestResponse, error) {
 	interestName := req.InterestName
 	// Call the corresponding use case method to add interest
+	exist, err := ad.interestUseCase.CheckInterest(interestName)
+	if exist {
+		return nil, fmt.Errorf("interest already exist")
+	}
 	id, err := ad.adminUseCase.AddInterest(interestName)
 	if err != nil {
 		return nil, err

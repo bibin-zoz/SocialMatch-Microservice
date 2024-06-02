@@ -11,6 +11,7 @@ import (
 )
 
 func ConnectDatabase(cfg config.Config) (*gorm.DB, error) {
+	fmt.Println("running config")
 	psqlInfo := fmt.Sprintf("host=%s user=%s password=%s port=%s sslmode=disable", cfg.DBHost, cfg.DBUser, cfg.DBPassword, cfg.DBPort)
 	db, dbErr := gorm.Open(postgres.Open(psqlInfo), &gorm.Config{
 		SkipDefaultTransaction: true,
@@ -42,11 +43,30 @@ func ConnectDatabase(cfg config.Config) (*gorm.DB, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	// AutoMigrate the domain models
 	err = db.AutoMigrate(&domain.Admin{}, &domain.Interest{}, &domain.Preference{})
 	if err != nil {
 		log.Fatal(err)
+	}
+	var adminCount int64
+	if err := db.Model(&domain.Admin{}).Count(&adminCount).Error; err != nil {
+		log.Fatal(err)
+	}
+
+	if adminCount == 0 {
+		// Create admin record
+		admin := domain.Admin{
+			// Initialize admin details here
+			// For example:
+			Firstname: "admin",
+			Lastname:  "admin",
+			Email:     "admin@gmail.com",
+			Password:  "$2y$10$jC4ZVDnUxUiNU6OZHnzfNOpegs3pnThVtKIGC1yw.wX//sLTIFFm.",
+		}
+		if err := db.Create(&admin).Error; err != nil {
+			log.Fatal(err)
+		}
+		log.Println("Admin record created")
 	}
 
 	return db, nil

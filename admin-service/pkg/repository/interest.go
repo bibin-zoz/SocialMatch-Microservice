@@ -31,5 +31,15 @@ func (ir *interestRepository) CheckInterest(interestID string) (bool, error) {
 	}
 	return true, nil // Interest exists
 }
+func (ir *interestRepository) CheckInterestByName(interest string) (bool, error) {
+	res := ir.DB.Where(&domain.Interest{InterestName: interest}).First(&interest)
+	if res.Error != nil {
+		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			return false, nil // Interest does not exist
+		}
+		return false, res.Error // Other errors
+	}
+	return true, nil // Interest exists
+}
 
 // Other repository methods related to interests can be implemented here...

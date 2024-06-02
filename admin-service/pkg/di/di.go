@@ -25,7 +25,7 @@ func InitializeAPI(cfg config.Config) (*server.Server, error) {
 	interestUseCase := usecase.NewInterestUseCase(interestRepository)
 
 	// Create service instances
-	adminService := service.NewAdminServer(adminUseCase)
+	adminService := service.NewAdminServer(adminUseCase, interestUseCase)
 	interestService := service.NewInterestServiceServer(interestUseCase)
 
 	// Create and start the gRPC server

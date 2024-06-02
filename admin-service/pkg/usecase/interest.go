@@ -22,3 +22,10 @@ func (uc *InterestUseCase) CheckInterest(interestID string) (bool, error) {
 	}
 	return exists, nil
 }
+func (uc *InterestUseCase) CheckInterestbyName(interestName string) (bool, error) {
+	exists, err := uc.interestRepo.CheckInterestByName(interestName)
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
+}
