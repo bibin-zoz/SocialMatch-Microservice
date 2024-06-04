@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: connections-service-config
+  namespace: socialmatch
+data:
+  PORT: ":50057"
+  DB_HOST: "socialmatch-postgres"
+  DB_NAME: "connection_svc"
+  DB_USER: "postgres"
+  DB_PASSWORD: "8596"
+  DB_PORT: "5432"
+
+  email: "bibinvinod2016@gmail.com"
+  password: "mrgtzkftfenjanec"
+
+  ADMIN_SVC_URL: "socialmatch-admin-service.socialmatch.svc.cluster.local:8003"
+
+  KAFKA_TOPIC: "mytopic"
+  KAFKA_BROKERS: "kafka:9092"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: socialmatch-connections-svc
+  namespace: socialmatch
+spec:
+  selector:
+    matchLabels:
+      app: connections_service
+  template:
+    metadata:
+      labels:
+        app: connections_service
+    spec:
+      containers:
+        - image: bibinzoz/socialmatch-connections-service:latest
+          imagePullPolicy: Always
+          name: social-match-connections-service-container
+          ports:
+            - containerPort: 50057
+          envFrom:
+            - configMapRef:
+                name: connections-service-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: socialmatch-connections-service
+  namespace: socialmatch
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8005
+      targetPort: 50057
+  selector:
+    app: connections_service

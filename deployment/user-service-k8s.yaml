@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-service-config
+  namespace: socialmatch
+data:
+  PORT: ":50051"
+  DB_HOST: "socialmatch-postgres"
+  DB_NAME: "user_svc"
+  DB_USER: "postgres"
+  DB_PASSWORD: "8596"
+  DB_PORT: "5432"
+  email: "bibinvinod2016@gmail.com"
+  password: "mrgtzkftfenjanec"
+  ADMIN_SVC_URL: "socialmatch-admin-service.socialmatch.svc.cluster.local:8003"
+  ROOM_SVC_URL: "socialmatch-room-service.socialmatch.svc.cluster.local:8004"
+  CONNECTION_SVC_URL: "socialmatch-connections-service.socialmatch.svc.cluster.local:8005"
+  CHAT_SVC_URL: "socialmatch-chat-service.socialmatch.svc.cluster.local:8001"
+  KAFKA_TOPIC: "mytopic"
+  KAFKA_BROKERS: "kafka:9092"
+  MONGO_DB_HOST: "socialmatch-mongodb"
+  MONGO_DB_PORT: "27017"
+  MONGO_DB_DATABASE: "socialmatch"
+  AWS_REGION: "eu-north-1"
+  AWS_ACCESS_KEY_ID: "AKIAU6GD2SSNKEEGKW6D"
+  AWS_SECRET_ACCESS_KEY: "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"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: socialmatch-user-svc
+  namespace: socialmatch
+spec:
+  selector:
+    matchLabels:
+      app: user_service
+  template:
+    metadata:
+      labels:
+        app: user_service
+    spec:
+      containers:
+        - image: bibinzoz/socialmatch-user-service:latest
+          imagePullPolicy: Always
+          name: social-match-user-service-container
+          ports:
+            - containerPort: 50051
+          envFrom:
+            - configMapRef:
+                name: user-service-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: socialmatch-user-service
+  namespace: socialmatch
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8002
+      targetPort: 50051
+  selector:
+    app: user_service

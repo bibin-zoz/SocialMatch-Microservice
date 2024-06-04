@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: socialmatch-certificate
+  namespace: socialmatch
+spec:
+  dnsNames:
+    - exclusivestore.xyz
+  secretName: socialmatch-certificate-tls
+  issuerRef:
+    name: letencrypt-cluster-issuer
+    kind: ClusterIssuer
