@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: room-service-config
+  namespace: socialmatch
+data:
+  PORT: ":50058"
+  DB_HOST: "socialmatch-postgres"
+  DB_NAME: "room_svc"
+  DB_USER: "postgres"
+  DB_PASSWORD: "8596"
+  DB_PORT: "5432"
+  email: "bibinvinod2016@gmail.com"
+  password: "mrgtzkftfenjanec"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: socialmatch-room-svc
+  namespace: socialmatch
+spec:
+  selector:
+    matchLabels:
+      app: room_service
+  template:
+    metadata:
+      labels:
+        app: room_service
+    spec:
+      containers:
+        - image: bibinzoz/socialmatch-room-service:latest
+          imagePullPolicy: Always
+          name: social-match-room-service-container
+          ports:
+            - containerPort: 50058
+          envFrom:
+            - configMapRef:
+                name: room-service-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: socialmatch-room-service
+  namespace: socialmatch
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8004
+      targetPort: 50058
+  selector:
+    app: room_service
