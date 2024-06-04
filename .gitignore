@@ -1,0 +1,7 @@
+deployments/user-service-k8s.yaml
+user-service/.env
+admin-service/.env
+room-service/.env
+chat-service/.env
+connections-service/.env
+api-gateway/.env
