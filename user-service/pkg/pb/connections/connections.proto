@@ -5,7 +5,7 @@ package connections;
 option go_package = "./pkg/pb/connections";
 
 
-service Connections {
+service connections {
   rpc FollowUser(FollowUserRequest)returns(FollowUserResponce){};
   rpc BlockConnection(BlockConnectionRequest) returns (BlockConnectionResponse);
   rpc GetConnections(GetConnectionsRequest) returns (GetConnectionsResponse) {};

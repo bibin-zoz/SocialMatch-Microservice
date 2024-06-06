@@ -22,6 +22,7 @@ func NewUserServer(useCase interfaces.ConnectionUseCase) pb.ConnectionsServer {
 
 }
 func (a *ConnectionServer) FollowUser(ctx context.Context, req *pb.FollowUserRequest) (*pb.FollowUserResponce, error) {
+	fmt.Println("conenction service")
 	err := a.connectionUseCase.FollowUser(req.Senderid, req.Userid)
 	if err != nil {
 		return &pb.FollowUserResponce{}, err
@@ -33,6 +34,7 @@ func (a *ConnectionServer) FollowUser(ctx context.Context, req *pb.FollowUserReq
 
 func (a *ConnectionServer) GetConnections(ctx context.Context, req *pb.GetConnectionsRequest) (*pb.GetConnectionsResponse, error) {
 	// Call the use case method to get connections for the specified user ID
+	fmt.Println("conenction service")
 	connections, err := a.connectionUseCase.GetConnections(req.UserId)
 	if err != nil {
 		return nil, err

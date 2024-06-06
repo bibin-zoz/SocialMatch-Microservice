@@ -19,9 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Connections_FollowUser_FullMethodName      = "/connections.Connections/FollowUser"
-	Connections_BlockConnection_FullMethodName = "/connections.Connections/BlockConnection"
-	Connections_GetConnections_FullMethodName  = "/connections.Connections/GetConnections"
+	Connections_FollowUser_FullMethodName      = "/connections.connections/FollowUser"
+	Connections_BlockConnection_FullMethodName = "/connections.connections/BlockConnection"
+	Connections_GetConnections_FullMethodName  = "/connections.connections/GetConnections"
 )
 
 // ConnectionsClient is the client API for Connections service.
@@ -162,7 +162,7 @@ func _Connections_GetConnections_Handler(srv interface{}, ctx context.Context, d
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Connections_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "connections.Connections",
+	ServiceName: "connections.connections",
 	HandlerType: (*ConnectionsServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

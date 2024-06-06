@@ -21,7 +21,7 @@ func NewConnectionsClient(cfg config.Config) *ConnectionsClient {
 	fmt.Println("Dialing gRPC server at:", cfg.ConnectionSvcUrl)
 
 	// Dial the gRPC server
-	conn, err := grpc.Dial(cfg.AdminSvcUrl, grpc.WithInsecure())
+	conn, err := grpc.Dial(cfg.ConnectionSvcUrl, grpc.WithInsecure())
 	if err != nil {
 		fmt.Println(fmt.Errorf("failed to dial gRPC server: %w", err))
 		return nil
@@ -39,7 +39,6 @@ func NewConnectionsClient(cfg config.Config) *ConnectionsClient {
 
 // FollowUser calls the FollowUser method on the ConnectionsService.
 func (c *ConnectionsClient) FollowUser(userID, senderID int64) (int64, error) {
-	fmt.Println("hiiconenctiosnkdkls")
 	request := &pb.FollowUserRequest{
 		Userid:   userID,
 		Senderid: senderID,
@@ -66,6 +65,7 @@ func (c *ConnectionsClient) BlockUserConnection(userID, senderID int64) (int64, 
 
 // GetConnections calls the GetConnections method on the ConnectionsService.
 func (c *ConnectionsClient) GetConnections(userID uint64) ([]*pb.UserDetails, error) {
+	fmt.Println("user connect")
 	request := &pb.GetConnectionsRequest{
 		UserId: userID,
 	}
@@ -73,5 +73,6 @@ func (c *ConnectionsClient) GetConnections(userID uint64) ([]*pb.UserDetails, er
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("res", response)
 	return response.UserDetails, nil
 }
