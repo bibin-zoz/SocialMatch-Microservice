@@ -6,3 +6,4 @@ room-service/.env
 chat-service/.env
 connections-service/.env
 api-gateway/.env
+deployment/user-service-k8s.yaml
