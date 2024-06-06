@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/bibin-zoz/social-match-room-svc/pkg/domain"
 	interfaces "github.com/bibin-zoz/social-match-room-svc/pkg/repository/interface"
@@ -151,4 +152,13 @@ func (r *roomRepository) IsUserConnectedToRoom(userID, roomID uint) (bool, error
 		return false, err
 	}
 	return true, nil
+}
+func (r *roomRepository) CloseExpiredRooms() error {
+	// Update rooms status to 'closed' where the close date is less than or equal to the current date
+	err := r.DB.Model(&domain.Room{}).Where("close_date <= ?", time.Now()).Update("status", "closed").Error
+
+	if err != nil {
+		return err
+	}
+	return nil
 }

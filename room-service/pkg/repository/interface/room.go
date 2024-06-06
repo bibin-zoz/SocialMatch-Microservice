@@ -19,4 +19,5 @@ type RoomRepository interface {
 	SaveMedia(tx *gorm.DB, messageID uint, media []domain.Media) ([]*domain.Media, error)
 	GetRoomMembersById(roomID uint, userID uint) (*domain.RoomMember, error)
 	IsUserConnectedToRoom(userID, roomID uint) (bool, error)
+	CloseExpiredRooms() error
 }

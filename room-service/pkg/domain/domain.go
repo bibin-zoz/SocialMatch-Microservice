@@ -34,7 +34,7 @@ type Room struct {
 	Description  string
 	MaxPersons   uint          `gorm:"not null"`
 	CreatorID    int           `gorm:"not null"`
-	Status       string        `gorm:"check:status IN ('public', 'private')"`
+	Status       string        `gorm:"check:status IN ('public', 'private','closed')"`
 	Preferences  []Preference  `gorm:"many2many:room_preferences;"`
 	RoomMembers  []RoomMember  `gorm:"foreignKey:RoomID"`
 	RoomJoinReqs []RoomJoinReq `gorm:"foreignKey:RoomID"`

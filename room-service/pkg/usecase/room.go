@@ -211,3 +211,11 @@ func (uc *roomUseCase) CheckRoomConnection(userID, roomID uint) (bool, error) {
 
 	return true, nil
 }
+func (uc *roomUseCase) CloseExpiredRooms(userID, roomID uint) error {
+	// Check if the user is connected to the room (Example logic)
+	err := uc.roomRepository.CloseExpiredRooms()
+	if err != nil {
+		return err
+	}
+	return nil
+}
