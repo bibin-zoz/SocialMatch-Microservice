@@ -1,4 +1,5 @@
-deployments/user-service-k8s.yaml
+deployment/user-service-k8s.yaml
+
 user-service/.env
 admin-service/.env
 room-service/.env
