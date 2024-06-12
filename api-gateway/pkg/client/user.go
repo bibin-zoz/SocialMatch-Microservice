@@ -258,6 +258,7 @@ func (c *userClient) GetUserPreferences(userID uint64) ([]string, error) {
 }
 
 func (c *userClient) FollowUser(userID int, senderID int) error {
+	fmt.Println("hiiiiiiiiiiiiiiiii")
 	_, err := c.Client.FollowUser(context.Background(), &pb.FollowUserRequest{
 		Userid:   int64(userID),
 		Senderid: int64(senderID),
