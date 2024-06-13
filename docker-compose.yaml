@@ -1,0 +1,146 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres
+    container_name: socialmatch-postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=8596
+      - POSTGRES_USER=postgres
+    networks:
+      - socialmatch_network
+    volumes:
+      - socialmatch_volume:/var/lib/postgresql/data
+    hostname: postgresDB
+    ports:
+      - 5431:5432
+
+  mongodb:
+    image: mongo
+    container_name: socialmatch-mongodb
+    restart: on-failure
+    networks:
+      - socialmatch_network
+    volumes:
+      - socialmatch_volume:/data/db
+    hostname: mongoDB
+    ports:
+      - 27018:27017
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest  
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000   
+    networks:
+      - socialmatch_network
+    container_name: zookeeper_deploy
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,OUTSIDE://0.0.0.0:9094
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,OUTSIDE://localhost:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+    networks:
+      - socialmatch_network
+    container_name: kafka
+    hostname: kafkaBroker
+    depends_on:
+      - zookeeper
+
+  api-gateway:
+    build:
+      context: ./api-gateway/
+      dockerfile: Dockerfile
+    container_name: socialmatch_api_gateway
+    restart: always
+    depends_on:
+      - postgres
+    networks:
+      - socialmatch_network
+    ports:
+      - 3000:3000
+
+  user-service:
+    build:
+      context: ./user-service/
+      dockerfile: Dockerfile
+    container_name: socialmatch_user_service
+    restart: always
+    depends_on:
+      - postgres
+    networks:
+      - socialmatch_network
+    ports:
+      - 50051:50051
+
+  admin-service:
+    build:
+      context: ./admin-service/
+      dockerfile: Dockerfile
+    container_name: socialmatch_admin_service
+    restart: always
+    depends_on:
+      - postgres
+      - mongodb
+      - kafka
+    networks:
+      - socialmatch_network
+    ports:
+      - 50052:50052
+
+  chat-service:
+    build:
+      context: ./chat-service/
+      dockerfile: Dockerfile
+    container_name: socialmatch_chat_service
+    restart: always
+    depends_on:
+      - postgres
+      - mongodb
+      - kafka
+    networks:
+      - socialmatch_network
+    ports:
+      - 50058:50058
+
+  connections-service:
+    build:
+      context: ./connections-service/
+      dockerfile: Dockerfile
+    container_name: socialmatch_connections_service
+    restart: always
+    depends_on:
+      - postgres
+      - mongodb
+      - kafka
+    networks:
+      - socialmatch_network
+    ports:
+      - 50057:50057
+
+  room-service:
+    build:
+      context: ./room-service/
+      dockerfile: Dockerfile
+    container_name: socialmatch_room_service
+    restart: always
+    depends_on:
+      - postgres
+      - mongodb
+      - kafka
+    networks:
+      - socialmatch_network
+    ports:
+      - 50056:50056
+
+networks:
+  socialmatch_network:
+    driver: bridge
+
+volumes:
+  socialmatch_volume:
