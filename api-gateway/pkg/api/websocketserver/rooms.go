@@ -19,11 +19,14 @@ type RoomMap struct {
 	Map   map[string][]Participant
 }
 
-func (r *RoomMap) Init() {
-	r.Map = make(map[string][]Participant)
+// NewRoomMap initializes and returns a new RoomMap
+func NewRoomMap() *RoomMap {
+	return &RoomMap{
+		Map: make(map[string][]Participant),
+	}
 }
 
-// Get will return the array of participants in the room
+// Get returns the array of participants in the room
 func (r *RoomMap) Get(roomID string) []Participant {
 	r.Mutex.RLock()
 	defer r.Mutex.RUnlock()
@@ -31,7 +34,7 @@ func (r *RoomMap) Get(roomID string) []Participant {
 	return r.Map[roomID]
 }
 
-// CreateRoom generates a unique room ID and returns it -> insert it in the hashmap need to change acorrdignly with user,recv id
+// CreateRoom generates a unique room ID and returns it, and inserts it in the hashmap
 func (r *RoomMap) CreateRoom() string {
 	r.Mutex.Lock()
 	defer r.Mutex.Unlock()
@@ -50,7 +53,7 @@ func (r *RoomMap) CreateRoom() string {
 	return roomID
 }
 
-// Adding participant to hash map
+// InsertIntoRoom adds a participant to the hash map
 func (r *RoomMap) InsertIntoRoom(roomID string, host bool, conn *websocket.Conn) {
 	r.Mutex.Lock()
 	defer r.Mutex.Unlock()

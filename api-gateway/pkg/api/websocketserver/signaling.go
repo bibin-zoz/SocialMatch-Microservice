@@ -9,8 +9,8 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// currwently declared golably need to change
-var AllRooms RoomMap
+// Global RoomMap initialized
+var AllRooms = NewRoomMap()
 
 func CreateRoomRequestHandler(c *gin.Context) {
 	roomID := AllRooms.CreateRoom()
@@ -68,12 +68,14 @@ func JoinRoomRequestHandler(c *gin.Context) {
 	roomID := c.Query("roomID")
 	if roomID == "" {
 		log.Println("roomID missing in URL Parameters")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "roomID missing in URL Parameters"})
 		return
 	}
 
 	ws, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		log.Println("Web Socket Upgrade Error:", err)
+		log.Println("WebSocket Upgrade Error:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "WebSocket Upgrade Error"})
 		return
 	}
 
@@ -81,6 +83,13 @@ func JoinRoomRequestHandler(c *gin.Context) {
 	AllRooms.InsertIntoRoom(roomID, false, ws)
 	clients[ws] = true
 	mutex.Unlock()
+
+	defer func() {
+		mutex.Lock()
+		delete(clients, ws)
+		mutex.Unlock()
+		ws.Close()
+	}()
 
 	for {
 		var msg broadcastMsg
@@ -98,9 +107,4 @@ func JoinRoomRequestHandler(c *gin.Context) {
 
 		broadcast <- msg
 	}
-
-	mutex.Lock()
-	delete(clients, ws)
-	mutex.Unlock()
-	ws.Close()
 }

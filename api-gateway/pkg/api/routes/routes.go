@@ -3,11 +3,12 @@ package routes
 import (
 	handlers "github.com/bibin-zoz/api-gateway/pkg/api/handler"
 	"github.com/bibin-zoz/api-gateway/pkg/api/middleware"
+	"github.com/bibin-zoz/api-gateway/pkg/api/websocketserver"
 	"github.com/gin-gonic/gin"
 )
 
 func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, userAuthHandler *handlers.UserAuthHandler, adminhandler *handlers.AdminHandler, roomHandler *handlers.RoomHandler, userChatHandler *handlers.UserChatHandler, videocallHandler *handlers.VideoCallHandler) {
-
+	// router.Use(middleware.CORSMiddleware())
 	router.GET("/ping", handlers.PingHandler)
 	router.POST("/login", userAuthHandler.Userlogin)
 	router.GET("/verify", userAuthHandler.UserOtpReq)
@@ -69,4 +70,7 @@ func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, userAuth
 	router.GET("/error", videocallHandler.ErrorPage)
 	router.GET("/index", videocallHandler.IndexedPage)
 	router.GET("/wsvideocall", videocallHandler.HandleWebSocket)
+
+	router.POST("/create", websocketserver.CreateRoomRequestHandler)
+	router.GET("/join", websocketserver.JoinRoomRequestHandler)
 }

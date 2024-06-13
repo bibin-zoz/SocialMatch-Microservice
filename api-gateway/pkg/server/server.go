@@ -16,19 +16,17 @@ type ServerHTTP struct {
 }
 
 func NewServerHTTP(userHandlers *handlers.UserHandler, userAuthHandler *handlers.UserAuthHandler, adminHandlers *handlers.AdminHandler, roomHandlers *handlers.RoomHandler, userChatHandlers *handlers.UserChatHandler, videocallHandler *handlers.VideoCallHandler) *ServerHTTP {
-	router := gin.New()
-
-	router.Use(gin.Logger())
+	router := gin.Default()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "http://example.com"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
+		AllowOrigins:     []string{"*"},                                                // Allow all origins
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}, // Allow all methods
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},          // Allow specified headers
+		ExposeHeaders:    []string{"Content-Length"},                                   // Expose Content-Length header
 		AllowCredentials: true,
 	}))
-
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // Swagger route
 	routes.SetupRoutes(router, userHandlers, userAuthHandler, adminHandlers, roomHandlers, userChatHandlers, videocallHandler)
+
 	return &ServerHTTP{engine: router}
 }
 
