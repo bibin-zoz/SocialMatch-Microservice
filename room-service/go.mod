@@ -3,7 +3,6 @@ module github.com/bibin-zoz/social-match-room-svc
 go 1.21.1
 
 require (
-	github.com/bibin-zoz/social-match-userauth-svc v0.0.0-20240419064029-541d06262010
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/spf13/viper v1.18.2

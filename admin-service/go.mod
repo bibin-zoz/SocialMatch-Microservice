@@ -3,7 +3,6 @@ module github.com/bibin-zoz/social-match-admin-svc
 go 1.21.1
 
 require (
-	github.com/bibin-zoz/social-match-userauth-svc v0.0.0-20240407125042-0dc41c63a438
 	github.com/spf13/viper v1.18.2
 )
 

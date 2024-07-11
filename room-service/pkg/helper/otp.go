@@ -7,7 +7,7 @@ import (
 	"net/smtp"
 	"time"
 
-	"github.com/bibin-zoz/social-match-userauth-svc/pkg/config"
+	"github.com/bibin-zoz/social-match-room-svc/pkg/config"
 )
 
 var otpMap = make(map[string]string)

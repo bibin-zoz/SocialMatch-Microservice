@@ -17,6 +17,13 @@ type Room struct {
 	RoomMembers  []RoomMember  `gorm:"foreignKey:RoomID"`
 	RoomJoinReqs []RoomJoinReq `gorm:"foreignKey:RoomID"`
 }
+type UserDetails struct {
+	ID        uint
+	Firstname string
+	Lastname  string
+	Email     string
+	Phone     string
+}
 
 // Preference represents a preference in the system
 

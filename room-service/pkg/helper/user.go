@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/bibin-zoz/social-match-userauth-svc/pkg/utils/models"
+	"github.com/bibin-zoz/social-match-room-svc/pkg/utils/models"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 )

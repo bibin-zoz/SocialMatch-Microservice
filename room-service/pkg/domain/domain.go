@@ -3,7 +3,7 @@ package domain
 import (
 	"time"
 
-	"github.com/bibin-zoz/social-match-userauth-svc/pkg/utils/models"
+	"github.com/bibin-zoz/social-match-room-svc/pkg/utils/models"
 )
 
 type User struct {
