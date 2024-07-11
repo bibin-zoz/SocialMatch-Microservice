@@ -22,18 +22,10 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Create config files
-      run: |
-        echo "${{ secrets.API_GATEWAY_CONFIG }}" > ./api-gateway/config.env
-        echo "${{ secrets.USERSVC_CONFIG }}" > ./user-service/config.env
-        echo "${{ secrets.JOBSVC_CONFIG }}" > ./admin-service/config.env
-        echo "${{ secrets.PROJECTSVC_CONFIG }}" > ./connections-service/config.env
-        echo "${{ secrets.CHATSVC_CONFIG }}" > ./chat-service/config.env
-
     - name: Build and push Docker images
       run: |
-        docker compose -f docker_compose.yaml build
-        docker compose -f docker_compose.yaml push
+        docker compose -f docker-compose.yaml build
+        docker compose -f dockercompose.yaml push
 
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v1
