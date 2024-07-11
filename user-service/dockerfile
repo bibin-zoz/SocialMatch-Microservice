@@ -7,7 +7,7 @@ RUN apk add -U --no-cache ca-certificates
 
 FROM scratch
 COPY --from=FirstBuild /user-service/cmd/build /
-COPY --from=FirstBuild /user-service/.env /
+# COPY --from=FirstBuild /user-service/.env /
 COPY --from=alpine /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 EXPOSE 50051
 CMD [ "/build" ]
