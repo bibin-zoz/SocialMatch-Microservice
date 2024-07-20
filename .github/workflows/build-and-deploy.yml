@@ -26,12 +26,12 @@ jobs:
       run: |
         docker compose -f docker-compose.yaml build
         docker images
-        docker tag combined-api-gateway bibinzoz/socialmatch-api-gateway:latest
-        docker tag combined-user-service bibinzoz/socialmatch-user-gateway:latest
-        docker tag combined-admin-gateway bibinzoz/socialmatch-admin-gateway:latest
-        docker tag combined-connections-gateway bibinzoz/socialmatch-connections-gateway:latest
-        docker tag combined-chat-gateway bibinzoz/socialmatch-chat-gateway:latest
-        docker tag combined-room-gateway bibinzoz/socialmatch-room-gateway:latest
+        docker tag socialmatch-api-gateway bibinzoz/socialmatch-api-gateway:latest
+        docker tag socialmatch-user-service bibinzoz/socialmatch-user-gateway:latest
+        docker tag socialmatch-admin-gateway bibinzoz/socialmatch-admin-gateway:latest
+        docker tag socialmatch-connections-gateway bibinzoz/socialmatch-connections-gateway:latest
+        docker tag socialmatch-chat-gateway bibinzoz/socialmatch-chat-gateway:latest
+        docker tag socialmatch-room-gateway bibinzoz/socialmatch-room-gateway:latest
         docker push bibinzoz/socialmatch-api-gateway:latest
         docker push bibinzoz/socialmatch-user-gateway:latest
         docker push bibinzoz/socialmatch-admin-gateway:latest
