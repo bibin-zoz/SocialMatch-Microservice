@@ -25,8 +25,19 @@ jobs:
     - name: Build and push Docker images
       run: |
         docker compose -f docker-compose.yaml build
-        docker push --tag ${{ secrets.DOCKER_USERNAME }}/<imagename>:<latest>
-        docker compose -f docker-compose.yaml push
+        docker images
+        docker tag combined-api-gateway bibinzoz/socialmatch-api-gateway:latest
+        docker tag combined-user-service bibinzoz/socialmatch-user-gateway:latest
+        docker tag combined-admin-gateway bibinzoz/socialmatch-admin-gateway:latest
+        docker tag combined-connections-gateway bibinzoz/socialmatch-connections-gateway:latest
+        docker tag combined-chat-gateway bibinzoz/socialmatch-chat-gateway:latest
+        docker tag combined-room-gateway bibinzoz/socialmatch-room-gateway:latest
+        docker push bibinzoz/socialmatch-api-gateway:latest
+        docker push bibinzoz/socialmatch-user-gateway:latest
+        docker push bibinzoz/socialmatch-admin-gateway:latest
+        docker push bibinzoz/socialmatch-connections-gateway:latest
+        docker push bibinzoz/socialmatch-chat-gateway:latest
+        docker push bibinzoz/socialmatch-room-gateway:latest
 
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v1
