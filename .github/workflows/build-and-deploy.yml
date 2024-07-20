@@ -26,12 +26,12 @@ jobs:
       run: |
         docker compose -f docker-compose.yaml build
         docker images
-        docker tag socialmatch-api-gateway bibinzoz/socialmatch-api-gateway:latest
-        docker tag socialmatch-user-service bibinzoz/socialmatch-user-gateway:latest
-        docker tag socialmatch-admin-gateway bibinzoz/socialmatch-admin-gateway:latest
-        docker tag socialmatch-connections-gateway bibinzoz/socialmatch-connections-gateway:latest
-        docker tag socialmatch-chat-gateway bibinzoz/socialmatch-chat-gateway:latest
-        docker tag socialmatch-room-gateway bibinzoz/socialmatch-room-gateway:latest
+        docker tag socialmatch-microservice-api-gateway bibinzoz/socialmatch-api-gateway:latest
+        docker tag socialmatch-microservice-user-service bibinzoz/socialmatch-user-gateway:latest
+        docker tag socialmatch-microservice-admin-gateway bibinzoz/socialmatch-admin-gateway:latest
+        docker tag socialmatch-microservice-connections-gateway bibinzoz/socialmatch-connections-gateway:latest
+        docker tag socialmatch-microservice-chat-gateway bibinzoz/socialmatch-chat-gateway:latest
+        docker tag socialmatch-microservice-room-gateway bibinzoz/socialmatch-room-gateway:latest
         docker push bibinzoz/socialmatch-api-gateway:latest
         docker push bibinzoz/socialmatch-user-gateway:latest
         docker push bibinzoz/socialmatch-admin-gateway:latest
@@ -63,7 +63,7 @@ jobs:
 
     - name: Get GKE credentials
       run: |
-        gcloud container clusters get-credentials socialmatch --zone us-central1-c --project ${{ secrets.GCP_PROJECT_ID }}
+        gcloud container clusters get-credentials socialmatch-microservice --zone us-central1-c --project ${{ secrets.GCP_PROJECT_ID }}
 
     - name: Update Kubernetes deployments
       run: |
