@@ -27,17 +27,17 @@ jobs:
         docker compose -f docker-compose.yaml build
         docker images
         docker tag socialmatch-microservice-api-gateway bibinzoz/socialmatch-api-gateway:latest
-        docker tag socialmatch-microservice-user-service bibinzoz/socialmatch-user-gateway:latest
-        docker tag socialmatch-microservice-admin-gateway bibinzoz/socialmatch-admin-gateway:latest
-        docker tag socialmatch-microservice-connections-gateway bibinzoz/socialmatch-connections-gateway:latest
-        docker tag socialmatch-microservice-chat-gateway bibinzoz/socialmatch-chat-gateway:latest
-        docker tag socialmatch-microservice-room-gateway bibinzoz/socialmatch-room-gateway:latest
+        docker tag socialmatch-microservice-user-service bibinzoz/socialmatch-user-service:latest
+        docker tag socialmatch-microservice-admin-service bibinzoz/socialmatch-admin-service:latest
+        docker tag socialmatch-microservice-connections-service bibinzoz/socialmatch-connections-service:latest
+        docker tag socialmatch-microservice-chat-service bibinzoz/socialmatch-chat-service:latest
+        docker tag socialmatch-microservice-room-service bibinzoz/socialmatch-room-service:latest
         docker push bibinzoz/socialmatch-api-gateway:latest
-        docker push bibinzoz/socialmatch-user-gateway:latest
-        docker push bibinzoz/socialmatch-admin-gateway:latest
-        docker push bibinzoz/socialmatch-connections-gateway:latest
-        docker push bibinzoz/socialmatch-chat-gateway:latest
-        docker push bibinzoz/socialmatch-room-gateway:latest
+        docker push bibinzoz/socialmatch-user-service:latest
+        docker push bibinzoz/socialmatch-admin-service:latest
+        docker push bibinzoz/socialmatch-connections-service:latest
+        docker push bibinzoz/socialmatch-chat-service:latest
+        docker push bibinzoz/socialmatch-room-service:latest
 
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v1
