@@ -25,6 +25,7 @@ jobs:
     - name: Build and push Docker images
       run: |
         docker compose -f docker-compose.yaml build
+        docker push --tag ${{ secrets.DOCKER_USERNAME }}/<imagename>:<latest>
         docker compose -f docker-compose.yaml push
 
     - name: Authenticate to Google Cloud
