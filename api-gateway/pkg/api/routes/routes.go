@@ -45,8 +45,10 @@ func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, userAuth
 	router.GET("/user/room", middleware.UserAuthMiddleware(), roomHandler.GetAllRooms)
 	router.POST("/user/room", middleware.UserAuthMiddleware(), roomHandler.CreateRoom)
 	router.PUT("/user/room", middleware.UserAuthMiddleware(), roomHandler.EditRoom)
+	router.PUT("/user/room", middleware.UserAuthMiddleware(), roomHandler.ChangeRoomStatus)
 	router.POST("/user/room/members", middleware.UserAuthMiddleware(), roomHandler.AddMembersToRoom)
 	router.GET("/user/room/members/:room_id", roomHandler.GetRoomMembers)
+	router.GET("/user/room/members/requests", roomHandler.GetRoomJoinRequests)
 	// hub := Hub.NewHub()
 	router.GET("/wsroom", roomHandler.HandleWebSocket)
 
@@ -68,7 +70,7 @@ func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, userAuth
 
 	router.GET("/exit", videocallHandler.ExitPage)
 	router.GET("/error", videocallHandler.ErrorPage)
-	router.GET("/index", videocallHandler.IndexedPage)
+	router.GET("/videocall", videocallHandler.IndexedPage)
 	router.GET("/wsvideocall", videocallHandler.HandleWebSocket)
 
 	router.POST("/create", websocketserver.CreateRoomRequestHandler)

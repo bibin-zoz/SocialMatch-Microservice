@@ -38,6 +38,12 @@ func (v *VideoCallHandler) ErrorPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "error.html", nil)
 }
 
+// @Summary Join a video call room
+// @Description Renders the video call page with room information
+// @Tags Video Call
+// @Produce html
+// @Param room query string false "Room ID to join"
+// @Router /videocall [get]
 func (v *VideoCallHandler) IndexedPage(c *gin.Context) {
 	room := c.DefaultQuery("room", "")
 	// userID := c.DefaultQuery("userID", "")
@@ -75,6 +81,17 @@ func (v *VideoCallHandler) IndexedPage(c *gin.Context) {
 // 	group.GET("/ws", v.handleWebSocket)
 // }
 
+// @Summary Upgrade connection to WebSocket and join video call room
+// @Description Upgrades the connection to WebSocket and joins the user in a video call room
+// @Tags Video Call
+// @Upgrade websocket
+// @Security Bearer  // Assuming authentication is required
+// @Param userID query int true "User ID"
+// @Param receiverID query int true "Receiver ID"
+// @Success 101 {object} string "Switching Protocols"  // Success code for WebSocket upgrade
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /wsvideocall [get]
 func (v *VideoCallHandler) HandleWebSocket(c *gin.Context) {
 	upgrader := websocket.Upgrader{
 		ReadBufferSize:  1024,

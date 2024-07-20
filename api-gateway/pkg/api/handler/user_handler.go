@@ -322,6 +322,14 @@ func (ur *UserHandler) DeleteUserPreference(c *gin.Context) {
 	c.JSON(http.StatusCreated, success)
 }
 
+// @Summary Get user interests
+// @Description Get a list of user interests
+// @Tags users
+// @Produce json
+// @Param user_id path int true "User ID"
+// @Success 200 {array} []string "User interests"
+// @Failure 400 {object} response.Response
+// @Router /users/{user_id}/interests [get]
 func (ur *UserHandler) GetUserInterests(c *gin.Context) {
 	userID := c.Param("user_id")
 	id, err := strconv.Atoi(userID)
@@ -335,6 +343,14 @@ func (ur *UserHandler) GetUserInterests(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
+// @Summary Get user preferences
+// @Description Get a list of user preferences
+// @Tags users
+// @Produce json
+// @Param user_id path int true "User ID"
+// @Success 200 {array} []models.Preference "User preferences"
+// @Failure 400 {object} response.Response
+// @Router /users/{user_id}/preferences [get]
 func (ur *UserHandler) GetUserPreferences(c *gin.Context) {
 	userID := c.Param("user_id")
 	id, _ := strconv.Atoi(userID)

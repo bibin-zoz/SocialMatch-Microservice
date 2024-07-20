@@ -78,6 +78,16 @@ func (rh *RoomHandler) CreateRoom(c *gin.Context) {
 	c.JSON(http.StatusCreated, success)
 }
 
+// @Summary Edit a room
+// @Description Edit an existing room
+// @Tags Rooms
+// @Accept json
+// @Produce json
+// @Param roomData body models.RoomData true "Room Data"
+// @Success 200 {object} models.Room
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /rooms [put]
 func (rh *RoomHandler) EditRoom(c *gin.Context) {
 	var roomData models.RoomData
 	if err := c.ShouldBindJSON(&roomData); err != nil {
@@ -96,6 +106,18 @@ func (rh *RoomHandler) EditRoom(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
+// @Summary Change room status
+// @Description Change the status of a room
+// @Tags Rooms
+// @Accept json
+// @Produce json
+// @Param requestData body object true "Change room status request"
+// @Property requestData.room_id uint32 required "Room ID"
+// @Property requestData.status string required "New status of the room"
+// @Success 200 {object} models.Room
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /room [patch]
 func (rh *RoomHandler) ChangeRoomStatus(c *gin.Context) {
 	var requestData struct {
 		RoomID uint32 `json:"room_id"`
@@ -116,6 +138,18 @@ func (rh *RoomHandler) ChangeRoomStatus(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
+// @Summary Add members to a room
+// @Description Add members to an existing room
+// @Tags Rooms
+// @Accept json
+// @Produce json
+// @Param requestData body object true "Add members request"
+// @Property requestData.room_id uint32 required "Room ID"
+// @Property requestData.user_ids array of uint32 required "User IDs to add"
+// @Success 200 {object} models.Room
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /room/members [put]
 func (rh *RoomHandler) AddMembersToRoom(c *gin.Context) {
 	var requestData struct {
 		RoomID  uint32   `json:"room_id"`
@@ -137,6 +171,16 @@ func (rh *RoomHandler) AddMembersToRoom(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
+// @Summary Get room join requests
+// @Description Get a list of join requests for a room
+// @Tags Rooms
+// @Produce json
+// @Param requestData body object true "Get join requests request"
+// @Property requestData.room_id uint32 required "Room ID"
+// @Success 200 {array} []models.JoinRequest
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /rooms/members/requests [get]
 func (rh *RoomHandler) GetRoomJoinRequests(c *gin.Context) {
 	var requestData struct {
 		RoomID uint32 `json:"room_id"`
@@ -175,6 +219,13 @@ func (rh *RoomHandler) GetAllRooms(c *gin.Context) {
 	c.JSON(http.StatusOK, rooms)
 }
 
+// @Summary Get all rooms
+// @Description Get a list of all rooms
+// @Tags Rooms
+// @Produce json
+// @Success 200 {array} []models.Room
+// @Failure 500 {object} response.Response
+// @Router /user/room [get]
 func (rh *RoomHandler) GetRoomMembers(c *gin.Context) {
 	fmt.Println("hii")
 	roomID, err := strconv.ParseUint(c.Param("room_id"), 10, 32)
@@ -193,6 +244,7 @@ func (rh *RoomHandler) GetRoomMembers(c *gin.Context) {
 
 	c.JSON(http.StatusOK, success)
 }
+
 
 func (rh *RoomHandler) SendMessage(c *gin.Context) {
 	var requestData struct {
