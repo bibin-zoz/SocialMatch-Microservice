@@ -55,6 +55,7 @@ jobs:
 
     - name: Update Kubernetes deployments
       run: |
+        kubectl delete -f deployment/api-gateway-k8s.yaml
         kubectl apply -f deployment/api-gateway-k8s.yaml
         # kubectl apply -f deployment/user-service-k8s.yaml
         kubectl apply -f deployment/admin-service-k8s.yaml
