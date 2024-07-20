@@ -348,7 +348,7 @@ func (ur *UserHandler) GetUserInterests(c *gin.Context) {
 // @Tags users
 // @Produce json
 // @Param user_id path int true "User ID"
-// @Success 200 {array} []models.Preference "User preferences"
+// @Success 200 {array} []models.Preferences "User preferences"
 // @Failure 400 {object} response.Response
 // @Router /users/{user_id}/preferences [get]
 func (ur *UserHandler) GetUserPreferences(c *gin.Context) {

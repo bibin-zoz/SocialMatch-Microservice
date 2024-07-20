@@ -177,7 +177,7 @@ func (rh *RoomHandler) AddMembersToRoom(c *gin.Context) {
 // @Produce json
 // @Param requestData body object true "Get join requests request"
 // @Property requestData.room_id uint32 required "Room ID"
-// @Success 200 {array} []models.JoinRequest
+// @Success 200 {array} models.Room
 // @Failure 400 {object} response.Response
 // @Failure 500 {object} response.Response
 // @Router /rooms/members/requests [get]
@@ -244,7 +244,6 @@ func (rh *RoomHandler) GetRoomMembers(c *gin.Context) {
 
 	c.JSON(http.StatusOK, success)
 }
-
 
 func (rh *RoomHandler) SendMessage(c *gin.Context) {
 	var requestData struct {

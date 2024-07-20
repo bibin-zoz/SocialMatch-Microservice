@@ -1,4 +1,210 @@
 basePath: /
+definitions:
+  models.AddInterest:
+    properties:
+      interest_name:
+        minLength: 4
+        type: string
+    type: object
+  models.AddPreferences:
+    properties:
+      preference_name:
+        minLength: 4
+        type: string
+    type: object
+  models.AddUserInterestRequest:
+    properties:
+      interest_id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  models.AddUserPreferenceRequest:
+    properties:
+      Preference_id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  models.AdminLogin:
+    properties:
+      email:
+        type: string
+      password:
+        maxLength: 20
+        minLength: 6
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.DeleteUserInterestRequest:
+    properties:
+      interest_id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  models.DeleteUserPreferenceRequest:
+    properties:
+      Preference_id:
+        minimum: 4
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  models.EditUserInterestRequest:
+    properties:
+      interest_id:
+        minimum: 4
+        type: integer
+      new_interest_name:
+        minLength: 4
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.EditUserPreferenceRequest:
+    properties:
+      Preference_id:
+        type: integer
+      new_Preference_name:
+        minLength: 4
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.Intrests:
+    properties:
+      id:
+        type: integer
+      interest_name:
+        minLength: 4
+        type: string
+    type: object
+  models.Otp:
+    properties:
+      email:
+        type: string
+      otp:
+        type: integer
+    required:
+    - email
+    type: object
+  models.Preferences:
+    properties:
+      id:
+        type: integer
+      preference_name:
+        minLength: 4
+        type: string
+    type: object
+  models.Room:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      max_persons:
+        type: integer
+      preferences:
+        items:
+          type: string
+        type: array
+      room_name:
+        type: string
+      status:
+        type: string
+    type: object
+  models.RoomData:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      max_persons:
+        minimum: 1
+        type: integer
+      preferences:
+        items:
+          type: string
+        type: array
+      room_name:
+        type: string
+      status:
+        enum:
+        - public
+        - private
+        type: string
+    required:
+    - description
+    - max_persons
+    - room_name
+    - status
+    type: object
+  models.User:
+    properties:
+      name:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.UserLogin:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  models.UserSignup:
+    properties:
+      age:
+        type: integer
+      email:
+        type: string
+      first_name:
+        type: string
+      gender_id:
+        type: integer
+      last_name:
+        type: string
+      number:
+        type: integer
+      password:
+        minLength: 6
+        type: string
+      user_name:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.UserUpdateDetails:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        minLength: 6
+        type: string
+      user_name:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  response.Response:
+    properties:
+      data: {}
+      error: {}
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
 host: exclusivestore.xyz
 info:
   contact: {}
@@ -6,7 +212,957 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Social-Match
   version: "1.0"
-paths: {}
+paths:
+  /admin/interests:
+    get:
+      description: Get all interests
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get Interests
+      tags:
+      - admin
+    post:
+      consumes:
+      - application/json
+      description: Add a new interest
+      parameters:
+      - description: Interest to add
+        in: body
+        name: interest
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddInterest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Add Interest
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      description: Edit an existing interest
+      parameters:
+      - description: Interest to edit
+        in: body
+        name: interest
+        required: true
+        schema:
+          $ref: '#/definitions/models.Intrests'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Edit Interest
+      tags:
+      - admin
+  /admin/interests/{id}:
+    delete:
+      description: Delete an existing interest
+      parameters:
+      - description: Interest ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Delete Interest
+      tags:
+      - admin
+  /admin/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate admin user
+      parameters:
+      - description: Admin Login Details
+        in: body
+        name: adminDetails
+        required: true
+        schema:
+          $ref: '#/definitions/models.AdminLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin Login
+      tags:
+      - admin
+  /admin/preferences:
+    get:
+      description: Get all preferences
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get Preferences
+      tags:
+      - admin
+    post:
+      consumes:
+      - application/json
+      description: Add a new preference
+      parameters:
+      - description: Preference to add
+        in: body
+        name: preference
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddPreferences'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Add Preference
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      description: Edit an existing preference
+      parameters:
+      - description: Preference to edit
+        in: body
+        name: preference
+        required: true
+        schema:
+          $ref: '#/definitions/models.Preferences'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Edit Preference
+      tags:
+      - admin
+  /admin/users:
+    put:
+      consumes:
+      - application/json
+      description: Update the status of a user
+      parameters:
+      - description: User ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Update User Status
+      tags:
+      - admin
+  /room:
+    patch:
+      consumes:
+      - application/json
+      description: Change the status of a room
+      parameters:
+      - description: Change room status request
+        in: body
+        name: requestData
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Room'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Change room status
+      tags:
+      - Rooms
+  /room/members:
+    put:
+      consumes:
+      - application/json
+      description: Add members to an existing room
+      parameters:
+      - description: Add members request
+        in: body
+        name: requestData
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Room'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Add members to a room
+      tags:
+      - Rooms
+  /rooms:
+    post:
+      consumes:
+      - application/json
+      description: Create a new room for group chat
+      parameters:
+      - description: Room Data
+        in: body
+        name: roomData
+        required: true
+        schema:
+          $ref: '#/definitions/models.RoomData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Room'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Create a new room
+      tags:
+      - Rooms
+    put:
+      consumes:
+      - application/json
+      description: Edit an existing room
+      parameters:
+      - description: Room Data
+        in: body
+        name: roomData
+        required: true
+        schema:
+          $ref: '#/definitions/models.RoomData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Room'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Edit a room
+      tags:
+      - Rooms
+  /rooms/members/requests:
+    get:
+      description: Get a list of join requests for a room
+      parameters:
+      - description: Get join requests request
+        in: body
+        name: requestData
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Room'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get room join requests
+      tags:
+      - Rooms
+  /user/block:
+    post:
+      consumes:
+      - application/json
+      description: Allows a user to block another user
+      parameters:
+      - description: User ID to block
+        in: body
+        name: user_id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Block a user
+      tags:
+      - Users
+  /user/connections:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a user's connections
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get user connections
+      tags:
+      - Users
+  /user/follow:
+    post:
+      consumes:
+      - application/json
+      description: Allows a user to follow another user
+      parameters:
+      - description: User ID to follow
+        in: body
+        name: user_id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Follow a user
+      tags:
+      - Users
+  /user/room:
+    get:
+      description: Get a list of all rooms
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/models.Room'
+              type: array
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get all rooms
+      tags:
+      - Rooms
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Get all users
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get All Users
+      tags:
+      - users
+  /users/{user_id}/interests:
+    get:
+      description: Get a list of user interests
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User interests
+          schema:
+            items:
+              items:
+                type: string
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get user interests
+      tags:
+      - users
+  /users/{user_id}/preferences:
+    get:
+      description: Get a list of user preferences
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User preferences
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/models.Preferences'
+              type: array
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get user preferences
+      tags:
+      - users
+  /users/add-interest:
+    post:
+      consumes:
+      - application/json
+      description: Add user interest
+      parameters:
+      - description: Add interest request
+        in: body
+        name: user_id
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddUserInterestRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Add User Interest
+      tags:
+      - users
+  /users/add-preference:
+    post:
+      consumes:
+      - application/json
+      description: Add user preference
+      parameters:
+      - description: Add preference request
+        in: body
+        name: user_id
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddUserPreferenceRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Add User Preference
+      tags:
+      - users
+  /users/delete-interest:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user interest
+      parameters:
+      - description: Delete interest request
+        in: body
+        name: user_id
+        required: true
+        schema:
+          $ref: '#/definitions/models.DeleteUserInterestRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Delete User Interest
+      tags:
+      - users
+  /users/delete-preference:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user preference
+      parameters:
+      - description: Delete preference request
+        in: body
+        name: user_id
+        required: true
+        schema:
+          $ref: '#/definitions/models.DeleteUserPreferenceRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Delete User Preference
+      tags:
+      - users
+  /users/edit:
+    put:
+      consumes:
+      - application/json
+      description: Edit user details
+      parameters:
+      - description: Edit details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserUpdateDetails'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Edit User Details
+      tags:
+      - users
+  /users/edit-interest:
+    put:
+      consumes:
+      - application/json
+      description: Edit user interest
+      parameters:
+      - description: Edit interest request
+        in: body
+        name: user_id
+        required: true
+        schema:
+          $ref: '#/definitions/models.EditUserInterestRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Edit User Interest
+      tags:
+      - users
+  /users/edit-preference:
+    put:
+      consumes:
+      - application/json
+      description: Edit user preference
+      parameters:
+      - description: Edit preference request
+        in: body
+        name: user_id
+        required: true
+        schema:
+          $ref: '#/definitions/models.EditUserPreferenceRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Edit User Preference
+      tags:
+      - users
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: User login with email and password
+      parameters:
+      - description: Login details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User Login
+      tags:
+      - users
+  /users/otp-request:
+    post:
+      consumes:
+      - application/json
+      description: Request OTP for user verification
+      parameters:
+      - description: OTP request details
+        in: body
+        name: request
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Request OTP
+      tags:
+      - users
+  /users/otp-verify:
+    post:
+      consumes:
+      - application/json
+      description: Verify user OTP
+      parameters:
+      - description: OTP verification details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.Otp'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Verify OTP
+      tags:
+      - users
+  /users/profile-photo:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Update user's profile photo
+      parameters:
+      - collectionFormat: csv
+        description: Profile photos
+        in: formData
+        items:
+          type: file
+        name: image_paths
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Update Profile Photo
+      tags:
+      - users
+  /users/signup:
+    post:
+      consumes:
+      - application/json
+      description: User signup with details
+      parameters:
+      - description: Signup details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserSignup'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User Signup
+      tags:
+      - users
+  /videocall:
+    get:
+      description: Renders the video call page with room information
+      parameters:
+      - description: Room ID to join
+        in: query
+        name: room
+        type: string
+      produces:
+      - text/html
+      responses: {}
+      summary: Join a video call room
+      tags:
+      - Video Call
+  /ws:
+    get:
+      consumes:
+      - application/json
+      description: Handle WebSocket connections for real-time communication
+      parameters:
+      - description: Authorization Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "101":
+          description: Switching Protocols
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Handle WebSocket Connections
+      tags:
+      - websocket
+  /wsvideocall:
+    get:
+      description: Upgrades the connection to WebSocket and joins the user in a video
+        call room
+      parameters:
+      - description: User ID
+        in: query
+        name: userID
+        required: true
+        type: integer
+      - description: Receiver ID
+        in: query
+        name: receiverID
+        required: true
+        type: integer
+      responses:
+        "101":
+          description: Switching Protocols"  // Success code for WebSocket upgrade
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer  // Assuming authentication is required: []
+      summary: Upgrade connection to WebSocket and join video call room
+      tags:
+      - Video Call
 securityDefinitions:
   AdminAutherisation:
     in: header
