@@ -8,106 +8,70 @@ import (
 )
 
 func SetupRoutes(router *gin.Engine, userHandler *handlers.UserHandler, userAuthHandler *handlers.UserAuthHandler, adminhandler *handlers.AdminHandler, roomHandler *handlers.RoomHandler, userChatHandler *handlers.UserChatHandler, videocallHandler *handlers.VideoCallHandler) {
-	userAuth := router.Group("/auth")
-	{
-		userAuth.POST("/login", userAuthHandler.Userlogin)
-		userAuth.GET("/verify", userAuthHandler.UserOtpReq)
-		userAuth.POST("/verify", userAuthHandler.UserOtpVerification)
-		userAuth.POST("/signup", userAuthHandler.UserSignup)
-	}
+	router.GET("/ping", handlers.PingHandler)
+	router.POST("/user/login", userAuthHandler.Userlogin)
+	router.POST("/user/otp", userAuthHandler.UserOtpReq)
+	router.PUT("/user/otp", userAuthHandler.UserOtpVerification)
+	router.POST("/user/signup", userAuthHandler.UserSignup)
 
-	// Admin Authentication Routes
-	adminAuth := router.Group("/admin")
-	{
-		adminAuth.POST("/login", adminhandler.LoginHandler)
-	}
+	router.POST("/admin/login", adminhandler.LoginHandler)
 
-	// User Profile Routes
-	userProfile := router.Group("/user/profile")
-	{
-		userProfile.PUT("", userHandler.UserEditDetails)
-		userProfile.PATCH("", userHandler.UpdateProfilePhoto)
-	}
+	router.PUT("/user/profile", userHandler.UserEditDetails)
+	router.PATCH("/user/profile", userHandler.UpdateProfilePhoto)
+	router.GET("/user", userHandler.GetAllUsers)
+	router.GET("/admin/users", userHandler.GetAllUsers)
+	router.PUT("/admin/users", adminhandler.UpdateUserStatus)
+	router.GET("/admin/interests", adminhandler.GetInterests)              // Register the route for fetching interests
+	router.GET("/admin/preferences", adminhandler.GetPreferences)          // Register the route for fetching preferences
+	router.POST("/admin/interests", adminhandler.AddInterest)              // Register the route for adding interest
+	router.PUT("/admin/interests", adminhandler.EditInterest)              // Register the route for editing interest
+	router.DELETE("/admin/interests/:id", adminhandler.DeleteInterest)     // Register the route for deleting interest
+	router.POST("/admin/preferences", adminhandler.AddPreference)          // Register the route for adding preference
+	router.PUT("/admin/preferences", adminhandler.EditPreference)          // Register the route for editing preference
+	router.DELETE("/admin/preferences/:id", adminhandler.DeletePreference) // Register the route for deleting preference
 
-	// Admin User Management Routes
-	adminUser := router.Group("/admin/users")
-	{
-		adminUser.GET("", userHandler.GetAllUsers)
-		adminUser.PUT("", adminhandler.UpdateUserStatus)
-	}
+	// new routes
+	router.GET("/user/:user_id/interests", userHandler.GetUserInterests)
+	router.GET("/user/:user_id/preferences", userHandler.GetUserPreferences)
+	router.POST("/user/interests", userHandler.AddUserInterest)
+	router.PUT("/user/interests", userHandler.EditUserInterest)
+	router.DELETE("/user/interests", userHandler.DeleteUserInterest)
+	router.POST("/user/preferences", userHandler.AddUserPreference)
+	router.PUT("/user/preferences", userHandler.EditUserPreference)
+	router.DELETE("/user/preferences", userHandler.DeleteUserPreference)
 
-	// User Interest and Preference Routes
-	userData := router.Group("/user")
-	{
-		userData.GET("/:user_id/interests", userHandler.GetUserInterests)
-		userData.GET("/:user_id/preferences", userHandler.GetUserPreferences)
-		userData.POST("/interests", userHandler.AddUserInterest)
-		userData.PUT("/interests", userHandler.EditUserInterest)
-		userData.DELETE("/interests", userHandler.DeleteUserInterest)
-		userData.POST("/preferences", userHandler.AddUserPreference)
-		userData.PUT("/preferences", userHandler.EditUserPreference)
-		userData.DELETE("/preferences", userHandler.DeleteUserPreference)
-	}
-
-	// Room Routes
-	room := router.Group("/user/room", middleware.UserAuthMiddleware())
-	{
-		room.GET("", roomHandler.GetAllRooms)
-		room.POST("", roomHandler.CreateRoom)
-		room.PUT("", roomHandler.EditRoom)
-		room.PATCH("", roomHandler.ChangeRoomStatus)
-		room.POST("/members", roomHandler.AddMembersToRoom)
-		room.GET("/members/:room_id", roomHandler.GetRoomMembers)
-		room.GET("/members/requests", roomHandler.GetRoomJoinRequests)
-	}
-	// Admin Interest and Preference Routes
-	adminData := router.Group("/admin")
-	{
-		adminData.GET("/interests", adminhandler.GetInterests)
-		adminData.GET("/preferences", adminhandler.GetPreferences)
-		adminData.POST("/interests", adminhandler.AddInterest)
-		adminData.PUT("/interests", adminhandler.EditInterest)
-		adminData.DELETE("/interests/:id", adminhandler.DeleteInterest)
-		adminData.POST("/preferences", adminhandler.AddPreference)
-		adminData.PUT("/preferences", adminhandler.EditPreference)
-		adminData.DELETE("/preferences/:id", adminhandler.DeletePreference)
-	}
-
-	// WebSocket Routes
+	//rooms
+	router.GET("/user/room", middleware.UserAuthMiddleware(), roomHandler.GetAllRooms)
+	router.POST("/user/room", middleware.UserAuthMiddleware(), roomHandler.CreateRoom)
+	router.PUT("/user/room", middleware.UserAuthMiddleware(), roomHandler.EditRoom)
+	router.PATCH("/user/room", middleware.UserAuthMiddleware(), roomHandler.ChangeRoomStatus)
+	router.POST("/user/room/members", middleware.UserAuthMiddleware(), roomHandler.AddMembersToRoom)
+	router.GET("/user/room/members/:room_id", roomHandler.GetRoomMembers)
+	router.GET("/user/room/members/requests", roomHandler.GetRoomJoinRequests)
+	// hub := Hub.NewHub()
 	router.GET("/wsroom", roomHandler.HandleWebSocket)
+
 	router.POST("/user/room/:room_id", roomHandler.SendMessage)
 	router.GET("/user/room/:room_id", roomHandler.ReadMessages)
+	// router.POST("/user/message", userHandler.SendMessageHandler)
+	// router.POST("/user/message", userHandler.SendMessageKafka)
 
-	// Friend Routes
-	friend := router.Group("/user/connections")
-	{
-		friend.GET("", userHandler.GetConnections)
-		friend.POST("", userHandler.UserFollow)
-		friend.DELETE("", userHandler.BlockUser)
-	}
+	//friend
+	router.GET("/user/connections", userHandler.GetConnections)
+	router.POST("/user/connections", userHandler.UserFollow)
+	router.DELETE("/user/connections", userHandler.BlockUser)
 
-	// Chat Routes
-	chat := router.Group("/chat")
-	{
-		chat.GET("ws", userChatHandler.HandleWebSocket)
-		chat.GET("/user/message", userHandler.ReadMessages)
-	}
+	router.GET("ws", userChatHandler.HandleWebSocket)
+	router.GET("/user/message", userHandler.ReadMessages)
 
-	// Video Call Routes
-	videoCall := router.Group("/videocall")
-	{
-		videoCall.GET("/exit", videocallHandler.ExitPage)
-		videoCall.GET("/error", videocallHandler.ErrorPage)
-		videoCall.GET("/", videocallHandler.IndexedPage)
-		videoCall.GET("/ws", videocallHandler.HandleWebSocket)
-	}
+	router.GET("/exit", videocallHandler.ExitPage)
+	router.GET("/error", videocallHandler.ErrorPage)
+	router.GET("/videocall", videocallHandler.IndexedPage)
+	router.GET("/wsvideocall", videocallHandler.HandleWebSocket)
 
-	// WebSocket Server Routes
-	webSocketServer := router.Group("/websocketserver")
-	{
-		webSocketServer.POST("/create", websocketserver.CreateRoomRequestHandler)
-		webSocketServer.GET("/join", websocketserver.JoinRoomRequestHandler)
-	}
+	router.POST("/create", websocketserver.CreateRoomRequestHandler)
+	router.GET("/join", websocketserver.JoinRoomRequestHandler)
+
 	router.Static("/static", "./static")
 	router.LoadHTMLGlob("template/*")
 }

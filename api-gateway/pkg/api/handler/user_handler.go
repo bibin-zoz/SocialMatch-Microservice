@@ -32,7 +32,7 @@ func NewUserHandler(UserClient interfaces.UserClient) *UserHandler {
 // @Param user body models.UserUpdateDetails true "Edit details"
 // @Success 201 {object} models.User
 // @Failure 400 {object} response.Response
-// @Router /users/edit [put]
+// @Router /user/edit [put]
 func (ur *UserHandler) UserEditDetails(c *gin.Context) {
 	var EditDetails models.UserUpdateDetails
 	fmt.Println("edit", EditDetails)
@@ -67,7 +67,7 @@ func (ur *UserHandler) UserEditDetails(c *gin.Context) {
 // @Param image_paths formData []file true "Profile photos"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /users/profile-photo [post]
+// @Router /user/profile [PATCH]
 func (ur *UserHandler) UpdateProfilePhoto(c *gin.Context) {
 	type UpdateProfilePhotoForm struct {
 		ImagePaths []string `form:"image_paths"`
@@ -90,7 +90,6 @@ func (ur *UserHandler) UpdateProfilePhoto(c *gin.Context) {
 		return
 	}
 
-	// 4. Call gRPC client to update profile photo
 	err = ur.GRPC_Client.UpdateProfilePhoto(int64(userID), files)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "Failed to update profile photo", nil, err.Error())
@@ -98,7 +97,6 @@ func (ur *UserHandler) UpdateProfilePhoto(c *gin.Context) {
 		return
 	}
 
-	// 5. Handle success and return response
 	success := response.ClientResponse(http.StatusOK, "Profile photo updated successfully", nil, nil)
 	c.JSON(http.StatusOK, success)
 }
@@ -111,7 +109,7 @@ func (ur *UserHandler) UpdateProfilePhoto(c *gin.Context) {
 // @Produce json
 // @Success 201 {object} models.User
 // @Failure 400 {object} response.Response
-// @Router /users [get]
+// @Router /user [get]
 func (ur *UserHandler) GetAllUsers(c *gin.Context) {
 	users, err := ur.GRPC_Client.GetAllUsers()
 	if err != nil {
@@ -133,7 +131,7 @@ func (ur *UserHandler) GetAllUsers(c *gin.Context) {
 // @Param user_id body models.AddUserInterestRequest true "Add interest request"
 // @Success 201 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /users/add-interest [post]
+// @Router /user/add-interest [post]
 func (ur *UserHandler) AddUserInterest(c *gin.Context) {
 	var addUserInterest models.AddUserInterestRequest
 	if err := c.ShouldBindJSON(&addUserInterest); err != nil {
@@ -166,7 +164,7 @@ func (ur *UserHandler) AddUserInterest(c *gin.Context) {
 // @Param user_id body models.EditUserInterestRequest true "Edit interest request"
 // @Success 201 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /users/edit-interest [put]
+// @Router /user/edit-interest [put]
 func (ur *UserHandler) EditUserInterest(c *gin.Context) {
 	var editUserInterest models.EditUserInterestRequest
 	if err := c.ShouldBindJSON(&editUserInterest); err != nil {
@@ -199,7 +197,7 @@ func (ur *UserHandler) EditUserInterest(c *gin.Context) {
 // @Param user_id body models.DeleteUserInterestRequest true "Delete interest request"
 // @Success 201 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /users/delete-interest [delete]
+// @Router /user/delete-interest [delete]
 func (ur *UserHandler) DeleteUserInterest(c *gin.Context) {
 	var deleteUserInterest models.DeleteUserInterestRequest
 	if err := c.ShouldBindJSON(&deleteUserInterest); err != nil {
@@ -232,7 +230,7 @@ func (ur *UserHandler) DeleteUserInterest(c *gin.Context) {
 // @Param user_id body models.AddUserPreferenceRequest true "Add preference request"
 // @Success 201 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /users/add-preference [post]
+// @Router /user/add-preference [post]
 func (ur *UserHandler) AddUserPreference(c *gin.Context) {
 	var addUserPreference models.AddUserPreferenceRequest
 	if err := c.ShouldBindJSON(&addUserPreference); err != nil {
@@ -265,7 +263,7 @@ func (ur *UserHandler) AddUserPreference(c *gin.Context) {
 // @Param user_id body models.EditUserPreferenceRequest true "Edit preference request"
 // @Success 201 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /users/edit-preference [put]
+// @Router /user/edit-preference [put]
 func (ur *UserHandler) EditUserPreference(c *gin.Context) {
 	var editUserPreference models.EditUserPreferenceRequest
 	if err := c.ShouldBindJSON(&editUserPreference); err != nil {
@@ -298,7 +296,7 @@ func (ur *UserHandler) EditUserPreference(c *gin.Context) {
 // @Param user_id body models.DeleteUserPreferenceRequest true "Delete preference request"
 // @Success 201 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /users/delete-preference [delete]
+// @Router /user/delete-preference [delete]
 func (ur *UserHandler) DeleteUserPreference(c *gin.Context) {
 	var deleteUserPreference models.DeleteUserPreferenceRequest
 	if err := c.ShouldBindJSON(&deleteUserPreference); err != nil {
@@ -329,7 +327,7 @@ func (ur *UserHandler) DeleteUserPreference(c *gin.Context) {
 // @Param user_id path int true "User ID"
 // @Success 200 {array} []string "User interests"
 // @Failure 400 {object} response.Response
-// @Router /users/{user_id}/interests [get]
+// @Router /user/{user_id}/interests [get]
 func (ur *UserHandler) GetUserInterests(c *gin.Context) {
 	userID := c.Param("user_id")
 	id, err := strconv.Atoi(userID)
@@ -350,7 +348,7 @@ func (ur *UserHandler) GetUserInterests(c *gin.Context) {
 // @Param user_id path int true "User ID"
 // @Success 200 {array} []models.Preferences "User preferences"
 // @Failure 400 {object} response.Response
-// @Router /users/{user_id}/preferences [get]
+// @Router /user/{user_id}/preferences [get]
 func (ur *UserHandler) GetUserPreferences(c *gin.Context) {
 	userID := c.Param("user_id")
 	id, _ := strconv.Atoi(userID)

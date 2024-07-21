@@ -13,7 +13,7 @@ import (
 // @description SOCIAL MATCH API Gateway server.
 // @termsOfService http://swagger.io/terms/
 
-// @host exclusivestore.xyz
+// @host localhost:3000
 // @BasePath /
 
 // @securityDefinitions.apikey UserAuthorization

@@ -29,7 +29,7 @@ func NewUserAuthHandler(UserClient interfaces.UserClient) *UserAuthHandler {
 // @Param user body models.UserSignup true "Signup details"
 // @Success 201 {object} models.User
 // @Failure 400 {object} response.Response
-// @Router /users/signup [post]
+// @Router /user/signup [post]
 func (ur *UserAuthHandler) UserSignup(c *gin.Context) {
 	var SignupDetail models.UserSignup
 	if err := c.ShouldBindJSON(&SignupDetail); err != nil {
@@ -63,7 +63,7 @@ func (ur *UserAuthHandler) UserSignup(c *gin.Context) {
 // @Param user body models.UserLogin true "Login details"
 // @Success 201 {object} models.User
 // @Failure 400 {object} response.Response
-// @Router /users/login [post]
+// @Router /user/login [post]
 func (ur *UserAuthHandler) Userlogin(c *gin.Context) {
 	var UserLoginDetail models.UserLogin
 	if err := c.ShouldBindJSON(&UserLoginDetail); err != nil {
@@ -92,10 +92,10 @@ func (ur *UserAuthHandler) Userlogin(c *gin.Context) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param request body interface{} true "OTP request details"
-// @Success 201 {object} models.User
+// @Param user body models.UserOtp true "email"
+// @Success 201 {object} models.Otp
 // @Failure 400 {object} response.Response
-// @Router /users/otp-request [post]
+// @Router /user/otp [POST]
 func (ur *UserAuthHandler) UserOtpReq(c *gin.Context) {
 	var EmailOtp models.UserVerificationRequest
 	if err := c.ShouldBindJSON(&EmailOtp); err != nil {
@@ -129,7 +129,7 @@ func (ur *UserAuthHandler) UserOtpReq(c *gin.Context) {
 // @Param request body models.Otp true "OTP verification details"
 // @Success 201 {object} response.Response
 // @Failure 400 {object} response.Response
-// @Router /users/otp-verify [post]
+// @Router /user/otp [PUT]
 func (ur *UserAuthHandler) UserOtpVerification(c *gin.Context) {
 	var EmailOtp models.Otp
 	if err := c.ShouldBindJSON(&EmailOtp); err != nil {
